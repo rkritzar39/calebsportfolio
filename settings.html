@@ -386,12 +386,7 @@
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Homepage Sections</h2>
 
-        <label class="setting-card" for="showEducationPageToggle">
-  <div class="setting-icon-container" style="background-color:#5856d6;"><i class="fa-solid fa-graduation-cap"></i></div>
-  <div class="setting-label"><strong class="setting-title">Education Link</strong><p class="setting-description">Show or hide Education navigation links on this device.</p></div>
-  <div class="md-switch"><input type="checkbox" id="showEducationPageToggle" role="switch" checked><div class="track"><div class="thumb"></div></div></div>
-</label>
-<label class="setting-card" for="showSocialLinksToggle">
+        <label class="setting-card" for="showSocialLinksToggle">
           <div class="setting-icon-container" style="background-color: #007aff;">
             <i class="fa-solid fa-share-alt"></i>
           </div>
@@ -1003,6 +998,15 @@
     <span class="dock-label">Beta</span>
   </a>
 
+
+  <a href="/education" class="dock-item" data-education-link>
+    <span class="dock-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
+      </svg>
+    </span>
+    <span class="dock-label">Education</span>
+  </a>
   <a href="/resume" class="dock-item">
     <span class="dock-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
@@ -1683,5 +1687,23 @@
     }
   })();
 </script>
+
+<script data-education-link-settings>
+(() => {
+  const syncEducationLinks = () => {
+    try {
+      const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+      document.querySelectorAll("[data-education-link]").forEach(link => {
+        link.hidden = settings.showEducationPage === "disabled";
+      });
+    } catch (_) {}
+  };
+  syncEducationLinks();
+  window.addEventListener("storage", e => {
+    if (e.key === "websiteSettings") syncEducationLinks();
+  });
+})();
+</script>
+
 </body>
 </html>
