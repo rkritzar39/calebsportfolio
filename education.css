@@ -50,3 +50,40 @@ body.education-page { margin: 0; min-height: 100vh; padding: 2rem 1rem 8rem; col
 @media (max-width: 760px) { .education-hero { align-items: flex-start; min-height: 0; } .education-hero-icon { width: 5rem; border-radius: 1.35rem; } .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .education-two-column, .project-grid { grid-template-columns: 1fr; } .course-list thead { display: none; } .course-list, .course-list tbody, .course-list tr, .course-list td { display: block; width: 100%; } .course-list tr { padding: .7rem 0; border-bottom: 1px solid var(--border-color); } .course-list td { display: flex; justify-content: space-between; gap: 1rem; border: 0; padding: .35rem 1rem; } .course-list td::before { content: attr(data-label); color: var(--secondary-text); font-size: .75rem; font-weight: 700; text-transform: uppercase; } }
 @media (max-width: 460px) { body.education-page { padding-inline: .65rem; } .education-hero-icon { display: none; } .overview-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+
+/* ======================================================= */
+/* Education Layout Refinement                             */
+/* ======================================================= */
+body.education-page {
+  background:
+    radial-gradient(circle at 12% 4%, color-mix(in srgb, var(--accent-color) 10%, transparent), transparent 32rem),
+    radial-gradient(circle at 88% 28%, color-mix(in srgb, var(--accent-color) 7%, transparent), transparent 30rem),
+    var(--bg-color);
+}
+.education-shell { gap: clamp(1.75rem, 4vw, 3.25rem); }
+#education-content { display: grid; gap: clamp(1.75rem, 4vw, 3.25rem); }
+#education-content[hidden] { display: none; }
+.education-page .glass { padding: clamp(1.5rem, 4vw, 2.75rem); }
+.education-hero { margin-top: clamp(.5rem, 2vw, 1.5rem); }
+.section-heading { margin-bottom: clamp(1.35rem, 3vw, 2rem); }
+.overview-grid { gap: clamp(.9rem, 2vw, 1.25rem); }
+.overview-grid article { padding: clamp(1rem, 2.5vw, 1.4rem); }
+.semester-list, .timeline-list, .achievement-list { gap: 1.25rem; }
+.education-two-column { gap: clamp(1.75rem, 4vw, 3.25rem); }
+.project-grid { gap: clamp(1.1rem, 2.5vw, 1.6rem); }
+.education-project { padding: clamp(1.25rem, 3vw, 1.65rem); }
+.education-footer { padding: .75rem 0 1.5rem; }
+html.dark-mode body.education-page,
+body.education-page.dark-mode { color-scheme: dark; }
+html.light-mode body.education-page,
+body.education-page.light-mode { color-scheme: light; }
+body.education-page.high-contrast { background: #000 !important; }
+body.education-page.reduced-motion *,
+body.education-page.reduced-motion *::before,
+body.education-page.reduced-motion *::after { animation: none !important; transition: none !important; }
+@media (max-width: 760px) {
+  .education-shell, #education-content { gap: 1.5rem; }
+  .education-page .glass { padding: 1.3rem; }
+  .education-two-column { gap: 1.5rem; }
+}
