@@ -7380,3 +7380,54 @@ if (document.readyState === "loading") {
 } else {
     initAdminPortalV3();
 }
+
+
+/* ======================================================= */
+/* EDUCATION PAGE MANAGER                                  */
+/* ======================================================= */
+const educationPageRef = doc(db, "site_config", "educationPage");
+const eduEsc = (value = "") => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function educationStatus(message, error = false) {
+  const el = document.getElementById("education-page-status"); if (!el) return;
+  el.textContent = message; el.className = `status-message ${error ? "error" : "success"}`;
+}
+function makeEducationCourse(course = {}) {
+  const row = document.createElement("div"); row.className = "education-course-row";
+  row.innerHTML = `<input class="edu-course-code" placeholder="Course code" value="${eduEsc(course.code || "")}"><input class="edu-course-name" placeholder="Course name" value="${eduEsc(course.name || "")}"><input class="edu-course-credits" type="number" min="0" step="0.5" placeholder="Credits" value="${eduEsc(course.credits ?? "")}"><select class="edu-course-status"><option>Planned</option><option>In Progress</option><option>Completed</option><option>Transfer</option><option>Withdrawn</option></select><input class="edu-course-grade" placeholder="Grade" value="${eduEsc(course.grade || "")}"><button type="button" class="danger-btn">Remove</button>`;
+  row.querySelector(".edu-course-status").value = course.status || "Planned";
+  row.querySelector("button").addEventListener("click", () => row.remove()); return row;
+}
+function makeEducationSemester(semester = {}) {
+  const box = document.createElement("div"); box.className = "education-semester-editor";
+  box.innerHTML = `<div class="education-semester-head"><input class="edu-semester-name" placeholder="Fall 2026" value="${eduEsc(semester.name || "")}"><input class="edu-semester-dates" placeholder="Aug 31 - Dec 18, 2026" value="${eduEsc(semester.dates || "")}"><button type="button" class="danger-btn remove-semester">Remove Semester</button></div><div class="education-courses"></div><button type="button" class="secondary-button add-course">+ Add Course</button>`;
+  const courses = box.querySelector(".education-courses"); (semester.courses || []).forEach(c => courses.appendChild(makeEducationCourse(c)));
+  box.querySelector(".add-course").addEventListener("click", () => courses.appendChild(makeEducationCourse()));
+  box.querySelector(".remove-semester").addEventListener("click", () => box.remove()); return box;
+}
+function makeEducationItem(type, item = {}) {
+  const box = document.createElement("div"); box.className = `education-admin-item ${type === "projects" ? "project" : ""}`;
+  if (type === "projects") box.innerHTML = `<input class="edu-item-title" placeholder="Project name" value="${eduEsc(item.name || item.title || "")}"><input class="edu-item-date" placeholder="Course" value="${eduEsc(item.course || "")}"><input class="edu-item-extra" placeholder="Technologies" value="${eduEsc(item.technologies || "")}"><input class="edu-item-description" placeholder="Description" value="${eduEsc(item.description || "")}"><input class="edu-item-url" type="url" placeholder="Project URL" value="${eduEsc(item.url || "")}"><button type="button" class="danger-btn">Remove</button>`;
+  else box.innerHTML = `<input class="edu-item-title" placeholder="Title" value="${eduEsc(item.title || item.name || "")}"><input class="edu-item-date" placeholder="Date" value="${eduEsc(item.date || "")}"><input class="edu-item-description" placeholder="Description" value="${eduEsc(item.description || "")}"><button type="button" class="danger-btn">Remove</button>`;
+  box.querySelector("button").addEventListener("click", () => box.remove()); return box;
+}
+function renderEducationAdmin(data = {}) {
+  const set = (id, value = "") => { const el = document.getElementById(id); if (el) el.value = value ?? ""; };
+  const pub = document.getElementById("education-public"); if (pub) pub.checked = data.isPublic !== false;
+  set("education-institution", data.profile?.institution); set("education-program", data.profile?.program); set("education-academic-year", data.profile?.academicYear);
+  set("education-current-term", data.currentTerm); set("education-cumulative-gpa", data.cumulativeGpa); set("education-credits-completed", data.creditsCompleted); set("education-intro", data.intro);
+  ["semesters","milestones","achievements","projects"].forEach(type => { const el = document.getElementById(`education-${type}-editor`); if (!el) return; el.innerHTML = ""; (data[type] || []).forEach(item => el.appendChild(type === "semesters" ? makeEducationSemester(item) : makeEducationItem(type,item))); });
+}
+async function loadEducationAdmin() { try { const snap = await getDoc(educationPageRef); renderEducationAdmin(snap.exists() ? snap.data() : {isPublic:true}); } catch (e) { console.error(e); educationStatus("Could not load Education data.", true); } }
+function collectEducationItems(type) {
+  return [...document.querySelectorAll(`#education-${type}-editor .education-admin-item`)].map(el => type === "projects" ? ({name:el.querySelector(".edu-item-title").value.trim(),course:el.querySelector(".edu-item-date").value.trim(),technologies:el.querySelector(".edu-item-extra").value.trim(),description:el.querySelector(".edu-item-description").value.trim(),url:el.querySelector(".edu-item-url").value.trim()}) : ({title:el.querySelector(".edu-item-title").value.trim(),date:el.querySelector(".edu-item-date").value.trim(),description:el.querySelector(".edu-item-description").value.trim()})).filter(x => x.title || x.name);
+}
+function collectEducationSemesters() {
+  return [...document.querySelectorAll("#education-semesters-editor .education-semester-editor")].map(el => ({name:el.querySelector(".edu-semester-name").value.trim(),dates:el.querySelector(".edu-semester-dates").value.trim(),courses:[...el.querySelectorAll(".education-course-row")].map(row => ({code:row.querySelector(".edu-course-code").value.trim(),name:row.querySelector(".edu-course-name").value.trim(),credits:Number(row.querySelector(".edu-course-credits").value) || 0,status:row.querySelector(".edu-course-status").value,grade:row.querySelector(".edu-course-grade").value.trim()})).filter(c => c.code || c.name)})).filter(s => s.name || s.courses.length);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("education-page-form"); if (!form) return;
+  document.getElementById("add-education-semester")?.addEventListener("click", () => document.getElementById("education-semesters-editor")?.appendChild(makeEducationSemester()));
+  document.querySelectorAll("[data-add-education-item]").forEach(btn => btn.addEventListener("click", () => { const type=btn.dataset.addEducationItem; document.getElementById(`education-${type}-editor`)?.appendChild(makeEducationItem(type)); }));
+  form.addEventListener("submit", async event => { event.preventDefault(); try { educationStatus("Saving…"); const num = id => { const v=document.getElementById(id)?.value; return v === "" ? null : Number(v); }; const payload={isPublic:document.getElementById("education-public").checked,intro:document.getElementById("education-intro").value.trim(),profile:{institution:document.getElementById("education-institution").value.trim(),program:document.getElementById("education-program").value.trim(),academicYear:document.getElementById("education-academic-year").value.trim()},currentTerm:document.getElementById("education-current-term").value.trim(),cumulativeGpa:num("education-cumulative-gpa"),creditsCompleted:num("education-credits-completed"),semesters:collectEducationSemesters(),milestones:collectEducationItems("milestones"),achievements:collectEducationItems("achievements"),projects:collectEducationItems("projects"),updatedAt:serverTimestamp()}; await setDoc(educationPageRef,payload,{merge:true}); educationStatus("Education page saved successfully."); } catch(e){console.error(e); educationStatus("Education page could not be saved.",true);} });
+  loadEducationAdmin();
+});
