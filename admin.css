@@ -236,7 +236,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* ÃƒÂ°Ã…Â¸Ã‚ÂªÃ…Â¸ Windows 11 + iOS Glass Login Design (Fixed Desktop) */
+/* ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂªÃƒâ€¦Ã‚Â¸ Windows 11 + iOS Glass Login Design (Fixed Desktop) */
 /* ===================================== */
 
 .modern-login {
@@ -437,7 +437,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â± FINAL RESPONSIVE MOBILE DESIGN     */
+/* ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€šÃ‚Â± FINAL RESPONSIVE MOBILE DESIGN     */
 /* ===================================== */
 @media (max-width: 900px) {
   /* Hide desktop hero */
@@ -600,7 +600,7 @@ a:hover {
 #login-section .g_id_signin > div {
   width: 100% !important;
   max-width: 100% !important;
-  min-width: 0 !important;    /* override GoogleÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s inline min-width */
+  min-width: 0 !important;    /* override GoogleÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢s inline min-width */
   display: block !important;
 }
 
@@ -611,7 +611,7 @@ a:hover {
     overflow: hidden;          /* ensures nothing bleeds out visually */
   }
 
-  /* Keep the GSI button visually ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œnativeÃƒÂ¢Ã¢â€šÂ¬Ã‚Â on mobile */
+  /* Keep the GSI button visually ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“nativeÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â on mobile */
   #login-section .g_id_signin {
     border: none !important;
     background: none !important;
@@ -999,7 +999,7 @@ a:hover {
 }
 
 /* ======================== */
-/* Form Element Styles ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ iOS 26 Onyx Enhanced */
+/* Form Element Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ iOS 26 Onyx Enhanced */
 /* ======================== */
 .form-group {
     margin-bottom: 22px;
@@ -1103,7 +1103,7 @@ select {
 }
 
 /* ======================== */
-/* Toggle Styles ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ iOS 26 Onyx Enhanced (Fixed Alignment) */
+/* Toggle Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ iOS 26 Onyx Enhanced (Fixed Alignment) */
 /* ======================== */
 .checkbox-group {
     display: flex;
@@ -1243,7 +1243,7 @@ select#edit-disability-icon-select {
 }
 
 /* ======================== */
-/* Button Styles ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ iOS 26 Onyx */
+/* Button Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ iOS 26 Onyx */
 /* ======================== */
 button, .button-primary {
     background-color: var(--accent-color);
@@ -2726,7 +2726,7 @@ body.light-mode .shoutout-preview-area .youtube-channel-card span {
 }
 
 /* ======================================== */
-/* Business Info & Admin Styles ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ Onyx Refined */
+/* Business Info & Admin Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ Onyx Refined */
 /* ======================================== */
 
 /* ---------------------------------------- */
@@ -4850,7 +4850,7 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
 
 
 /* ============================================================
-   ADMIN PORTAL 3.0 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Whole Portal Redesign
+   ADMIN PORTAL 3.0 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Whole Portal Redesign
    ------------------------------------------------------------
    A full admin-shell refresh: sidebar navigation, dashboard,
    section filtering, quick actions, modern cards, responsive layout.
@@ -5261,7 +5261,7 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
   }
 }
 /* ============================================================
-   ADMIN CSS V6 Ã¢â‚¬â€ FULL DESIGN, MOTION, SIDEBAR & TOGGLE REFRESH
+   ADMIN CSS V6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â FULL DESIGN, MOTION, SIDEBAR & TOGGLE REFRESH
    ------------------------------------------------------------
    This block intentionally lives at the END of the full original CSS.
    It preserves every existing selector/rule above and overrides the
@@ -7282,3 +7282,17 @@ button,
 #discord-sync-status.error {
   color: #d9485f;
 }
+
+/* ======================================================= */
+/* EDUCATION PAGE ADMIN                                    */
+/* ======================================================= */
+.education-admin-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+.education-admin-grid .full-width { grid-column:1/-1; }
+.education-editor-block { margin:1.5rem 0; padding:1.25rem; border:1px solid var(--border-color); border-radius:var(--border-radius-lg); background:rgba(255,255,255,.025); }
+.education-editor-block .section-title-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.education-semester-editor,.education-admin-item { margin-top:1rem; padding:1rem; border:1px solid var(--border-color); border-radius:var(--border-radius-md); background:var(--input-bg-color); }
+.education-semester-head { display:grid; grid-template-columns:2fr 1.4fr auto; gap:.75rem; align-items:center; }
+.education-course-row { display:grid; grid-template-columns:1fr 2fr .7fr 1fr .7fr auto; gap:.6rem; margin-top:.7rem; align-items:center; }
+.education-admin-item { display:grid; grid-template-columns:1fr 1fr 2fr auto; gap:.7rem; align-items:center; }
+.education-admin-item.project { grid-template-columns:1fr 1fr 1fr 2fr auto; }
+@media(max-width:800px){.education-admin-grid{grid-template-columns:1fr}.education-admin-grid .full-width{grid-column:auto}.education-semester-head,.education-course-row,.education-admin-item,.education-admin-item.project{grid-template-columns:1fr}.education-course-row button,.education-admin-item button{justify-self:start}}
