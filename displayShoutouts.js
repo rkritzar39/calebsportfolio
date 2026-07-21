@@ -844,6 +844,18 @@ let latestOSVersions = {
 
 const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
 
+/* ------------------------------------------------------------
+   RELEASE CHANNEL DATA
+   Keeps stable, public beta, developer beta, and RC data separate.
+------------------------------------------------------------ */
+let latestOSReleaseData = {
+    production_stable: { ...latestOSVersions },
+    public_beta: {},
+    developer_tester: {},
+    release_candidate: {},
+    last_updated: null
+};
+
 
 /* ------------------------------------------------------------
    INIT
@@ -1268,15 +1280,45 @@ async function fetchLatestOSVersions() {
         }
 
         const data = await response.json();
+        const stableVersions =
+            data.production_stable && typeof data.production_stable === "object"
+                ? data.production_stable
+                : data;
 
+        // Preserve the flat lookup used throughout the existing tech system.
         latestOSVersions = {
             ...latestOSVersions,
-            ...data
+            ...stableVersions
         };
 
-        console.log("Latest OS versions updated:", latestOSVersions);
+        // Preserve all structured release channels for the expanded UI.
+        latestOSReleaseData = {
+            production_stable: {
+                ...latestOSReleaseData.production_stable,
+                ...stableVersions
+            },
+            public_beta: {
+                ...latestOSReleaseData.public_beta,
+                ...(data.public_beta || {})
+            },
+            developer_tester: {
+                ...latestOSReleaseData.developer_tester,
+                ...(data.developer_tester || {})
+            },
+            release_candidate: {
+                ...latestOSReleaseData.release_candidate,
+                ...(data.release_candidate || {})
+            },
+            last_updated: data.last_updated || latestOSReleaseData.last_updated
+        };
+
+        console.log("Latest stable OS versions updated:", latestOSVersions);
+        console.log("Latest OS release-channel data updated:", latestOSReleaseData);
     } catch (error) {
         console.warn("Using fallback latest OS versions:", error);
+        latestOSReleaseData.production_stable = {
+            ...latestOSVersions
+        };
     }
 }
 
@@ -1575,9 +1617,58 @@ function compareVersions(a, b) {
 }
 
 // ======================
+// RELEASE CHANNEL HELPERS
+// ======================
+function getReleaseChannelVersion(osType, channel) {
+    if (!osType || !channel) return null;
+
+    const channelData = latestOSReleaseData?.[channel];
+    if (!channelData || typeof channelData !== "object") return null;
+
+    const value = channelData[osType];
+    if (
+        value === null ||
+        value === undefined ||
+        String(value).trim() === "" ||
+        String(value).toLowerCase() === "unavailable"
+    ) {
+        return null;
+    }
+
+    return String(value);
+}
+
+function extractAppleBuildNumber(osVersion) {
+    if (!osVersion) return null;
+
+    const match = String(osVersion).match(/\b(\d{2}[A-Z]\d{2,5}[a-z]?)\b/);
+    return match ? match[1] : null;
+}
+
+function formatReleaseValue(value) {
+    if (!value) return "Unavailable";
+
+    return String(value)
+        .replace(/-qpr(\d+)-b(\d+)/i, " QPR$1 Beta $2")
+        .replace(/-pb(\d+)/i, " Public Beta $1")
+        .replace(/-b(\d+)/i, " Beta $1")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function getOSReleaseInformation(osType) {
+    return {
+        stable: getReleaseChannelVersion(osType, "production_stable"),
+        publicBeta: getReleaseChannelVersion(osType, "public_beta"),
+        developerBeta: getReleaseChannelVersion(osType, "developer_tester"),
+        releaseCandidate: getReleaseChannelVersion(osType, "release_candidate")
+    };
+}
+
+// ======================
 // BETA / CHANNEL DETECTION
 // ======================
-function detectOSChannel(osVersion) {
+function detectOSChannel(osVersion, osType = null) {
     if (!osVersion) return "public";
 
     const os = String(osVersion).toLowerCase();
@@ -1587,7 +1678,25 @@ function detectOSChannel(osVersion) {
     if (os.includes("beta")) return "beta";
     if (os.includes("canary")) return "canary";
     if (os.includes("preview")) return "preview";
-    if (os.includes("rc") || os.includes("release candidate")) return "release-candidate";
+    if (os.includes("release candidate") || /\brc\b/i.test(os)) return "release-candidate";
+
+    const appleTypes = ["ios", "ipados", "macos", "watchos", "tvos", "visionos"];
+
+    // Apple device records may contain a beta build number without the word "beta".
+    if (osType && appleTypes.includes(osType)) {
+        const currentVersion = extractVersionString(osVersion, osType);
+        const stableVersion = latestOSVersions[osType] || null;
+        const buildNumber = extractAppleBuildNumber(osVersion);
+
+        if (
+            currentVersion &&
+            stableVersion &&
+            buildNumber &&
+            compareVersions(currentVersion, stableVersion) > 0
+        ) {
+            return "beta";
+        }
+    }
 
     return "public";
 }
@@ -1601,7 +1710,14 @@ function checkOSStatus(osVersion) {
     const osType = detectOSType(osVersion);
     const currentVersion = extractVersionString(osVersion, osType);
     const latestPublicVersion = latestOSVersions[osType] || null;
-    const channel = detectOSChannel(osVersion);
+    const channel = detectOSChannel(osVersion, osType);
+    const releaseInformation = getOSReleaseInformation(osType);
+    const latestPublicBeta = releaseInformation.publicBeta;
+    const latestDeveloperBeta = releaseInformation.developerBeta;
+    const latestReleaseCandidate = releaseInformation.releaseCandidate;
+    const installedBuild = extractAppleBuildNumber(osVersion);
+    const developerBuild = extractAppleBuildNumber(latestDeveloperBeta);
+    const releaseCandidateBuild = extractAppleBuildNumber(latestReleaseCandidate);
 
     if (!currentVersion) return null;
 
@@ -1612,8 +1728,17 @@ function checkOSStatus(osVersion) {
             osType,
             currentVersion,
             latestPublicVersion: "Unknown",
+            latestPublicBeta,
+            latestDeveloperBeta,
+            latestReleaseCandidate,
+            installedBuild,
+            developerBuild,
+            releaseCandidateBuild,
             releaseChannel: "Unknown",
             description: "Latest public version is not configured for this OS.",
+            betaBuildStatus: null,
+            betaBuildColor: "gray",
+            betaUpdateAvailable: false,
             isBeta: false,
             isPublicLatest: false,
             isBehindPublic: false
@@ -1640,8 +1765,8 @@ function checkOSStatus(osVersion) {
     } else if (channel === "beta") {
         status = "Beta";
         color = "purple";
-        releaseChannel = "Beta";
-        description = "Running a beta build ahead of the public release.";
+        releaseChannel = "Pre-release / Beta";
+        description = "Running beta software ahead of the public release.";
     } else if (channel === "canary") {
         status = "Canary";
         color = "purple";
@@ -1680,14 +1805,44 @@ function checkOSStatus(osVersion) {
         }
     }
 
+    let betaBuildStatus = null;
+    let betaBuildColor = "gray";
+    let betaUpdateAvailable = false;
+
+    if (installedBuild && developerBuild) {
+        if (installedBuild === developerBuild) {
+            betaBuildStatus = "Latest configured developer beta build";
+            betaBuildColor = "green";
+        } else {
+            betaBuildStatus = `Installed ${installedBuild}; configured developer build ${developerBuild}`;
+            betaBuildColor = "yellow";
+            betaUpdateAvailable = true;
+        }
+    }
+
+    if (installedBuild && releaseCandidateBuild && installedBuild === releaseCandidateBuild) {
+        betaBuildStatus = "Latest configured release candidate build";
+        betaBuildColor = "green";
+        betaUpdateAvailable = false;
+    }
+
     return {
         status,
         color,
         osType,
         currentVersion,
         latestPublicVersion,
+        latestPublicBeta,
+        latestDeveloperBeta,
+        latestReleaseCandidate,
+        installedBuild,
+        developerBuild,
+        releaseCandidateBuild,
         releaseChannel,
         description,
+        betaBuildStatus,
+        betaBuildColor,
+        betaUpdateAvailable,
         isBeta: channel !== "public" || comparisonToPublic > 0,
         isPublicLatest: comparisonToPublic === 0 && channel === "public",
         isBehindPublic: comparisonToPublic < 0
@@ -4380,6 +4535,70 @@ function renderTechItemHomepage(itemData) {
     const formattedOSType = osStatus ? formatOSType(osStatus.osType) : "";
     const osIconClass = osStatus ? getOSIconClass(osStatus.osType) : "fas fa-code-branch";
 
+    /* ------------------------------------------------------------
+       RELEASE CHANNEL DISPLAY
+    ------------------------------------------------------------ */
+    let betaReleaseHtml = "";
+
+    if (osStatus) {
+        const publicBetaText = osStatus.latestPublicBeta
+            ? formatReleaseValue(osStatus.latestPublicBeta)
+            : null;
+        const developerBetaText = osStatus.latestDeveloperBeta
+            ? formatReleaseValue(osStatus.latestDeveloperBeta)
+            : null;
+        const releaseCandidateText = osStatus.latestReleaseCandidate
+            ? formatReleaseValue(osStatus.latestReleaseCandidate)
+            : null;
+
+        if (publicBetaText) {
+            betaReleaseHtml += `
+            <div class="tech-detail">
+                <i class="fas fa-users"></i>
+                <span>Public Beta Latest:</span>
+                ${escapeHTML(publicBetaText)}
+            </div>`;
+        }
+
+        if (developerBetaText) {
+            betaReleaseHtml += `
+            <div class="tech-detail">
+                <i class="fas fa-code"></i>
+                <span>Developer Latest:</span>
+                ${escapeHTML(developerBetaText)}
+            </div>`;
+        }
+
+        if (releaseCandidateText) {
+            betaReleaseHtml += `
+            <div class="tech-detail">
+                <i class="fas fa-flag-checkered"></i>
+                <span>Release Candidate:</span>
+                ${escapeHTML(releaseCandidateText)}
+            </div>`;
+        }
+
+        if (osStatus.betaBuildStatus) {
+            betaReleaseHtml += `
+            <div class="tech-detail">
+                <i class="fas fa-code-compare"></i>
+                <span>Beta Build Status:</span>
+                <span class="support-badge ${escapeHTML(osStatus.betaBuildColor)}">
+                    ${escapeHTML(osStatus.betaBuildStatus)}
+                </span>
+            </div>`;
+        }
+
+        if (osStatus.betaUpdateAvailable) {
+            betaReleaseHtml += `
+            <div class="tech-detail">
+                <i class="fas fa-arrow-up-right-dots"></i>
+                <span>Beta Update:</span>
+                Installed build differs from the latest configured developer build
+            </div>`;
+        }
+    }
+
     const advancedDetailsContent = `
         ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeHTML(deviceType)}</div>` : ""}
         ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeHTML(modelYear)}</div>` : ""}
@@ -4461,6 +4680,7 @@ function renderTechItemHomepage(itemData) {
         ` : ""}
 
         ${osUpdateHtml}
+        ${betaReleaseHtml}
         ${supportHtml}
         ${backupHtml}
         ${batteryHtml}
@@ -8488,6 +8708,11 @@ async function initializeHomepageContent() {
                 if (document.hidden) return;
                 await displayBusinessInfo();
             }, 60000); 
+        }
+
+        // Load release-channel data before rendering device cards.
+        if (typeof fetchLatestOSVersions === "function") {
+            await fetchLatestOSVersions();
         }
 
         // --- LOAD ALL CONTENT ---
