@@ -142,29 +142,676 @@
   <script src="settings.js"></script>
   <script type="module" src="education.js"></script>
   <script>
-    (() => {
-      const syncDock = () => {
-        const dock = document.querySelector('.onyx-dock');
-        if (!dock) return;
+  (() => {
+    function initializeOnyxDock() {
+      const dock = document.querySelector(".onyx-dock");
+
+      if (!dock || dock.dataset.onyxReady === "true") {
+        return;
+      }
+
+      const links = Array.from(dock.querySelectorAll(".dock-item"));
+      const lens = dock.querySelector(".dock-active-lens");
+
+      if (!links.length || !lens) {
+        return;
+      }
+
+      dock.dataset.onyxReady = "true";
+
+      let activeLink = null;
+      let pressedLink = null;
+      let dragTarget = null;
+      let activePointerId = null;
+
+      let pointerStartX = 0;
+      let pointerStartY = 0;
+      let currentPointerX = 0;
+
+      let pointerIsDown = false;
+      let dragStarted = false;
+      let suppressNextClick = false;
+
+      let resizeFrame = null;
+      let resizeTimer = null;
+      let navigationTimer = null;
+      let settingsTimer = null;
+      let settlingTimer = null;
+      let suppressionTimer = null;
+
+      const dragThreshold = 7;
+      const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      /* ====================================================== *
+       * Motion Preference                                      *
+       * ====================================================== */
+
+      function motionIsDisabled() {
+        return (
+          reducedMotionQuery.matches ||
+          document.documentElement.classList.contains("motion-disabled") ||
+          document.body.classList.contains("motion-disabled")
+        );
+      }
+
+      /* ====================================================== *
+       * Path Normalization                                     *
+       * ====================================================== */
+
+      function normalizePath(path) {
+        let cleanPath = String(path || "/")
+          .split("?")[0]
+          .split("#")[0]
+          .toLowerCase()
+          .replace(/\/index\.html$/i, "")
+          .replace(/\.html$/i, "")
+          .replace(/\/+$/g, "");
+
+        if (!cleanPath || cleanPath === "/home") {
+          cleanPath = "/";
+        }
+
+        if (!cleanPath.startsWith("/")) {
+          cleanPath = `/${cleanPath}`;
+        }
+
+        return cleanPath;
+      }
+
+      function getLinkPath(link) {
+        const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
+
         try {
-          const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-          dock.querySelectorAll('[data-education-link]').forEach(link => link.hidden = settings.showEducationPage === 'disabled');
-        } catch (_) {}
-        const active = dock.querySelector('.dock-item.active');
-        const lens = dock.querySelector('.dock-active-lens');
-        if (!active || !lens) return;
-        const position = () => {
-          const dockRect = dock.getBoundingClientRect();
-          const activeRect = active.getBoundingClientRect();
-          dock.style.setProperty('--lens-x', `${activeRect.left - dockRect.left}px`);
-          dock.style.setProperty('--lens-width', `${activeRect.width}px`);
-          dock.classList.add('dock-ready');
-        };
-        requestAnimationFrame(() => requestAnimationFrame(position));
-        addEventListener('resize', position, { passive: true });
-      };
-      document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', syncDock, { once: true }) : syncDock();
-    })();
-  </script>
+          return normalizePath(new URL(rawRoute, window.location.origin).pathname);
+        } catch (error) {
+          return normalizePath(rawRoute);
+        }
+      }
+
+      /* ====================================================== *
+       * Route Matching                                         *
+       * ====================================================== */
+
+      function findRouteActiveLink() {
+        const currentPath = normalizePath(window.location.pathname);
+
+        const exactMatch = links.find((link) => {
+          return getLinkPath(link) === currentPath;
+        });
+
+        if (exactMatch) {
+          return exactMatch;
+        }
+
+        const nestedMatches = links
+          .filter((link) => {
+            const targetPath = getLinkPath(link);
+            return targetPath !== "/" && currentPath.startsWith(`${targetPath}/`);
+          })
+          .sort((firstLink, secondLink) => {
+            return getLinkPath(secondLink).length - getLinkPath(firstLink).length;
+          });
+
+        return nestedMatches[0] || links[0];
+      }
+
+      /* ====================================================== *
+       * Active State                                           *
+       * ====================================================== */
+
+      function setActiveLink(link) {
+        if (!link) return;
+
+        activeLink = link;
+
+        links.forEach((dockLink) => {
+          const isActive = dockLink === link;
+          dockLink.classList.toggle("active", isActive);
+
+          if (isActive) {
+            dockLink.setAttribute("aria-current", "page");
+          } else {
+            dockLink.removeAttribute("aria-current");
+          }
+        });
+      }
+
+      /* ====================================================== *
+       * Lens Position                                          *
+       * ====================================================== */
+
+      function moveLensTo(link, animate = true) {
+        if (!link) return;
+
+        const dockRect = dock.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        const lensX = linkRect.left - dockRect.left;
+
+        if (!animate) {
+          lens.style.transition = "none";
+        }
+
+        dock.style.setProperty("--lens-x", `${lensX.toFixed(3)}px`);
+        dock.style.setProperty("--lens-width", `${linkRect.width.toFixed(3)}px`);
+
+        if (!animate) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              lens.style.removeProperty("transition");
+            });
+          });
+        }
+      }
+
+      function moveLensWithPointer(pointerX, targetLink) {
+        if (!targetLink) return;
+
+        const dockRect = dock.getBoundingClientRect();
+        const targetRect = targetLink.getBoundingClientRect();
+        const dockStyle = getComputedStyle(dock);
+
+        const paddingLeft = parseFloat(dockStyle.paddingLeft) || 0;
+        const paddingRight = parseFloat(dockStyle.paddingRight) || 0;
+        const lensWidth = targetRect.width;
+        const halfLensWidth = lensWidth / 2;
+
+        const minimumCenter = dockRect.left + paddingLeft + halfLensWidth;
+        const maximumCenter = dockRect.right - paddingRight - halfLensWidth;
+
+        const constrainedCenter = Math.min(
+          Math.max(pointerX, minimumCenter),
+          maximumCenter
+        );
+
+        const lensX = constrainedCenter - dockRect.left - halfLensWidth;
+
+        dock.style.setProperty("--lens-x", `${lensX.toFixed(3)}px`);
+        dock.style.setProperty("--lens-width", `${lensWidth.toFixed(3)}px`);
+      }
+
+      /* ====================================================== *
+       * Nearest Dock Link                                      *
+       * ====================================================== */
+
+      function getNearestLink(pointerX) {
+        let nearestLink = links[0];
+        let nearestDistance = Number.POSITIVE_INFINITY;
+
+        links.forEach((link) => {
+          const linkRect = link.getBoundingClientRect();
+          const linkCenter = linkRect.left + linkRect.width / 2;
+          const distance = Math.abs(pointerX - linkCenter);
+
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestLink = link;
+          }
+        });
+
+        return nearestLink;
+      }
+
+      /* ====================================================== *
+       * Drag Target                                            *
+       * ====================================================== */
+
+      function setDragTarget(link) {
+        if (dragTarget === link) return;
+
+        links.forEach((dockLink) => {
+          dockLink.classList.remove("is-drag-target");
+        });
+
+        dragTarget = link;
+
+        if (dragTarget) {
+          dragTarget.classList.add("is-drag-target");
+        }
+      }
+
+      function clearInteractionState() {
+        dock.classList.remove("is-pressing", "is-dragging");
+        links.forEach((link) => {
+          link.classList.remove("is-pressed", "is-drag-target");
+        });
+      }
+
+      /* ====================================================== *
+       * Settings Gear Rotation                                 *
+       * ====================================================== */
+
+      function rotateSettingsGear(link) {
+        if (!link || !link.querySelector(".dock-icon-settings") || motionIsDisabled()) {
+          return;
+        }
+
+        if (settingsTimer !== null) {
+          window.clearTimeout(settingsTimer);
+        }
+
+        link.classList.remove("settings-rotating");
+        void link.offsetWidth; // Force reflow
+        link.classList.add("settings-rotating");
+
+        settingsTimer = window.setTimeout(() => {
+          link.classList.remove("settings-rotating");
+          settingsTimer = null;
+        }, 700);
+      }
+
+      /* ====================================================== *
+       * Snap Response                                          *
+       * ====================================================== */
+
+      function runSettlingAnimation(link) {
+        if (!link || motionIsDisabled()) return;
+
+        if (settlingTimer !== null) {
+          window.clearTimeout(settlingTimer);
+        }
+
+        dock.classList.remove("is-settling");
+        links.forEach((dockLink) => {
+          dockLink.classList.remove("is-settling");
+        });
+
+        void dock.offsetWidth; // Force reflow
+
+        dock.classList.add("is-settling");
+        link.classList.add("is-settling");
+
+        settlingTimer = window.setTimeout(() => {
+          dock.classList.remove("is-settling");
+          link.classList.remove("is-settling");
+          settlingTimer = null;
+        }, 540);
+      }
+
+      /* ====================================================== *
+       * Navigation                                             *
+       * ====================================================== */
+
+      function isCurrentDestination(link) {
+        const destination = new URL(link.href, window.location.href);
+        const current = new URL(window.location.href);
+
+        return (
+          normalizePath(destination.pathname) === normalizePath(current.pathname) &&
+          destination.search === current.search &&
+          destination.hash === current.hash
+        );
+      }
+
+      function navigateTo(link) {
+        if (!link || isCurrentDestination(link)) return;
+
+        if (navigationTimer !== null) {
+          window.clearTimeout(navigationTimer);
+        }
+
+        const delay = motionIsDisabled() ? 0 : 180;
+
+        navigationTimer = window.setTimeout(() => {
+          window.location.assign(link.href);
+        }, delay);
+      }
+
+      /* ====================================================== *
+       * Synthetic Click Suppression                            *
+       * ====================================================== */
+
+      function suppressSyntheticClick() {
+        suppressNextClick = true;
+
+        if (suppressionTimer !== null) {
+          window.clearTimeout(suppressionTimer);
+        }
+
+        suppressionTimer = window.setTimeout(() => {
+          suppressNextClick = false;
+          suppressionTimer = null;
+        }, 700);
+      }
+
+      /* ====================================================== *
+       * Pointer Reflection                                     *
+       * ====================================================== */
+
+      function updatePointerReflection(event, link) {
+        if (event.pointerType !== "mouse") return;
+
+        const linkRect = link.getBoundingClientRect();
+        link.style.setProperty("--pointer-x", `${event.clientX - linkRect.left}px`);
+        link.style.setProperty("--pointer-y", `${event.clientY - linkRect.top}px`);
+      }
+
+      function clearPointerReflection(link) {
+        link.style.removeProperty("--pointer-x");
+        link.style.removeProperty("--pointer-y");
+      }
+
+      /* ====================================================== *
+       * Press Start                                            *
+       * ====================================================== */
+
+      function beginPress(event, link) {
+        if (activePointerId !== null) return;
+
+        if (
+          event.pointerType === "mouse" &&
+          (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        ) {
+          return;
+        }
+
+        activePointerId = event.pointerId;
+        pointerIsDown = true;
+        dragStarted = false;
+        pressedLink = link;
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
+        currentPointerX = event.clientX;
+
+        dock.classList.add("is-pressing");
+        link.classList.add("is-pressed");
+
+        setDragTarget(link);
+
+        try {
+          dock.setPointerCapture(event.pointerId);
+        } catch (error) {
+          // Continue if pointer capture is unavailable
+        }
+      }
+
+      /* ====================================================== *
+       * Press and Drag Update                                  *
+       * ====================================================== */
+
+      function updatePress(event) {
+        if (!pointerIsDown || event.pointerId !== activePointerId) return;
+
+        currentPointerX = event.clientX;
+
+        const movementX = event.clientX - pointerStartX;
+        const movementY = event.clientY - pointerStartY;
+        const distance = Math.hypot(movementX, movementY);
+
+        if (!dragStarted && distance >= dragThreshold) {
+          dragStarted = true;
+          dock.classList.add("is-dragging");
+          pressedLink?.classList.remove("is-pressed");
+        }
+
+        if (!dragStarted) return;
+
+        event.preventDefault();
+
+        const nearestLink = getNearestLink(event.clientX);
+        setDragTarget(nearestLink);
+        moveLensWithPointer(event.clientX, nearestLink);
+      }
+
+      /* ====================================================== *
+       * Press Finish                                           *
+       * ====================================================== */
+
+      function finishPress(event, cancelled = false) {
+  if (!pointerIsDown || event.pointerId !== activePointerId) return;
+
+  const wasDragging = dragStarted;
+
+  const selectedLink = cancelled
+    ? activeLink
+    : wasDragging
+      ? getNearestLink(currentPointerX)
+      : pressedLink;
+
+  clearInteractionState();
+
+  try {
+    if (dock.hasPointerCapture(event.pointerId)) {
+      dock.releasePointerCapture(event.pointerId);
+    }
+  } catch (error) {
+    // Continue if pointer capture is unavailable.
+  }
+
+  pointerIsDown = false;
+  dragStarted = false;
+  pressedLink = null;
+  dragTarget = null;
+  activePointerId = null;
+
+  if (!selectedLink) return;
+
+  setActiveLink(selectedLink);
+  moveLensTo(selectedLink, true);
+  runSettlingAnimation(selectedLink);
+
+  if (!cancelled) {
+    rotateSettingsGear(selectedLink);
+
+    // Handle all pointer navigation here
+    suppressSyntheticClick();
+    navigateTo(selectedLink);
+  }
+}
+
+      /* ====================================================== *
+       * Link Events                                            *
+       * ====================================================== */
+
+      links.forEach((link) => {
+        link.addEventListener("pointerdown", (event) => {
+          beginPress(event, link);
+        });
+
+        link.addEventListener("pointermove", (event) => {
+          updatePointerReflection(event, link);
+        });
+
+        link.addEventListener("pointerleave", () => {
+          clearPointerReflection(link);
+        });
+
+        link.addEventListener("click", (event) => {
+  const modifiedClick =
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    event.button !== 0;
+
+  const specialNavigation =
+    link.target === "_blank" ||
+    link.hasAttribute("download");
+
+  if (modifiedClick || specialNavigation) {
+    return;
+  }
+
+  // Ignore the synthetic click after pointerup navigation
+  if (suppressNextClick) {
+    event.preventDefault();
+
+    suppressNextClick = false;
+
+    if (suppressionTimer !== null) {
+      window.clearTimeout(suppressionTimer);
+      suppressionTimer = null;
+    }
+
+    return;
+  }
+
+  // Keyboard activation still works
+  event.preventDefault();
+
+  setActiveLink(link);
+  moveLensTo(link, true);
+  runSettlingAnimation(link);
+  rotateSettingsGear(link);
+  navigateTo(link);
+});
+      });
+
+      /* ====================================================== *
+       * Dock Pointer Events                                    *
+       * ====================================================== */
+
+      dock.addEventListener("pointermove", updatePress);
+      dock.addEventListener("pointerup", (event) => finishPress(event, false));
+      dock.addEventListener("pointercancel", (event) => finishPress(event, true));
+
+      /* ====================================================== *
+       * Keyboard Navigation                                    *
+       * ====================================================== */
+
+      links.forEach((link, index) => {
+        link.addEventListener("keydown", (event) => {
+          let nextIndex = null;
+
+          if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+            nextIndex = (index + 1) % links.length;
+          }
+
+          if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+            nextIndex = (index - 1 + links.length) % links.length;
+          }
+
+          if (event.key === "Home") {
+            nextIndex = 0;
+          }
+
+          if (event.key === "End") {
+            nextIndex = links.length - 1;
+          }
+
+          if (nextIndex === null) return;
+
+          event.preventDefault();
+
+          const nextLink = links[nextIndex];
+          nextLink.focus();
+          setActiveLink(nextLink);
+          moveLensTo(nextLink, true);
+          runSettlingAnimation(nextLink);
+          rotateSettingsGear(nextLink);
+        });
+      });
+
+      /* ====================================================== *
+       * Resize Handling                                        *
+       * ====================================================== */
+
+      function handleResize() {
+        if (resizeFrame !== null) {
+          cancelAnimationFrame(resizeFrame);
+        }
+
+        if (resizeTimer !== null) {
+          window.clearTimeout(resizeTimer);
+        }
+
+        resizeFrame = requestAnimationFrame(() => {
+          moveLensTo(activeLink, false);
+          resizeFrame = null;
+        });
+
+        resizeTimer = window.setTimeout(() => {
+          moveLensTo(activeLink, false);
+          resizeTimer = null;
+        }, 180);
+      }
+
+      /* ====================================================== *
+       * Route State                                            *
+       * ====================================================== */
+
+      function updateRouteState(animate = false) {
+        const routeLink = findRouteActiveLink();
+        setActiveLink(routeLink);
+        moveLensTo(routeLink, animate);
+      }
+
+      /* ====================================================== *
+       * Initialization                                         *
+       * ====================================================== */
+
+      async function initializeLayout() {
+        if (document.fonts?.ready) {
+          try {
+            await document.fonts.ready;
+          } catch (error) {
+            // Continue if font loading cannot finish.
+          }
+        }
+
+        activeLink = findRouteActiveLink();
+        setActiveLink(activeLink);
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            moveLensTo(activeLink, false);
+            dock.classList.add("dock-ready");
+          });
+        });
+
+        const year = document.getElementById("year");
+        if (year) {
+          year.textContent = new Date().getFullYear();
+        }
+      }
+
+      initializeLayout();
+
+      /* ====================================================== *
+       * Browser Events                                         *
+       * ====================================================== */
+
+      window.addEventListener("resize", handleResize, { passive: true });
+      window.addEventListener("orientationchange", handleResize, { passive: true });
+
+      window.addEventListener("pageshow", () => {
+        updateRouteState(false);
+        requestAnimationFrame(() => {
+          dock.classList.add("dock-ready");
+        });
+      });
+
+      window.addEventListener("popstate", () => {
+        updateRouteState(true);
+      });
+
+      window.addEventListener("hashchange", () => {
+        updateRouteState(true);
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initializeOnyxDock, { once: true });
+    } else {
+      initializeOnyxDock();
+    }
+  })();
+</script>
+
+<script data-education-link-settings>
+(() => {
+  const syncEducationLinks = () => {
+    try {
+      const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+      document.querySelectorAll("[data-education-link]").forEach(link => {
+        link.hidden = settings.showEducationPage === "disabled";
+      });
+    } catch (_) {}
+  };
+  syncEducationLinks();
+  window.addEventListener("storage", e => {
+    if (e.key === "websiteSettings") syncEducationLinks();
+  });
+})();
+</script>
 </body>
 </html>
