@@ -123,6 +123,7 @@
                     <a href="#site-settings" data-portal-target="site-settings" class="portal-nav-link"><i class="fa-solid fa-sliders"></i><span>Site Settings</span></a>
                     <a href="#creator-shoutouts" data-portal-target="creator-shoutouts" class="portal-nav-link"><i class="fa-solid fa-bullhorn"></i><span>Creators</span></a>
                     <a href="#resume-admin-section" data-portal-target="resume-admin-section" class="portal-nav-link"><i class="fa-solid fa-file-lines"></i><span>Resume</span></a>
+                    <a href="#education-management" data-portal-target="education-management" class="portal-nav-link"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
                     <a href="#business-info-management" data-portal-target="business-info-management" class="portal-nav-link"><i class="fa-solid fa-briefcase"></i><span>Business Info</span></a>
                     <a href="#tech-management" data-portal-target="tech-management" class="portal-nav-link"><i class="fa-solid fa-microchip"></i><span>Tech</span></a>
                     <a href="#social-links-management" data-portal-target="social-links-management" class="portal-nav-link"><i class="fa-solid fa-share-nodes"></i><span>Social Links</span></a>
@@ -1777,6 +1778,28 @@
 
 
                 
+<section class="admin-section" id="education-management" aria-labelledby="education-management-heading" data-portal-title="Education" data-portal-keywords="education semesters courses grades credits gpa milestones achievements projects">
+  <h3 id="education-management-heading"><i class="fa-solid fa-graduation-cap"></i> Education Page</h3>
+  <p class="section-description">Manage the public Education page, grades, credits, milestones, achievements, and projects.</p>
+  <form id="education-page-form">
+    <div class="form-group checkbox-group"><input type="checkbox" id="education-public"><label for="education-public">Make Education page public</label></div>
+    <div class="education-admin-grid">
+      <div class="form-group"><label for="education-institution">Institution</label><input id="education-institution" type="text" placeholder="University of Toledo"></div>
+      <div class="form-group"><label for="education-program">Program / Major</label><input id="education-program" type="text" placeholder="Exploratory Studies / Information Technology"></div>
+      <div class="form-group"><label for="education-academic-year">Academic Year</label><input id="education-academic-year" type="text" placeholder="Freshman"></div>
+      <div class="form-group"><label for="education-current-term">Current Term</label><input id="education-current-term" type="text" placeholder="Fall 2026"></div>
+      <div class="form-group"><label for="education-cumulative-gpa">Cumulative GPA (optional)</label><input id="education-cumulative-gpa" type="number" min="0" max="4" step="0.01" placeholder="Calculated if blank"></div>
+      <div class="form-group"><label for="education-credits-completed">Credits Completed (optional)</label><input id="education-credits-completed" type="number" min="0" step="0.5" placeholder="Calculated if blank"></div>
+      <div class="form-group full-width"><label for="education-intro">Page Introduction</label><textarea id="education-intro" rows="3" placeholder="A short introduction to your academic journey."></textarea></div>
+    </div>
+    <div class="education-editor-block"><div class="section-title-row"><h4>Semesters</h4><button type="button" id="add-education-semester" class="secondary-button">+ Add Semester</button></div><div id="education-semesters-editor"></div></div>
+    <div class="education-editor-block"><div class="section-title-row"><h4>Milestones</h4><button type="button" class="secondary-button" data-add-education-item="milestones">+ Add Milestone</button></div><div id="education-milestones-editor"></div></div>
+    <div class="education-editor-block"><div class="section-title-row"><h4>Achievements</h4><button type="button" class="secondary-button" data-add-education-item="achievements">+ Add Achievement</button></div><div id="education-achievements-editor"></div></div>
+    <div class="education-editor-block"><div class="section-title-row"><h4>Academic Projects</h4><button type="button" class="secondary-button" data-add-education-item="projects">+ Add Project</button></div><div id="education-projects-editor"></div></div>
+    <div class="form-actions"><button type="submit" class="button-primary">Save Education Page</button></div>
+    <p id="education-page-status" class="status-message" role="status"></p>
+  </form>
+</section>
 <section class="admin-section" id="tech-management" aria-labelledby="tech-heading" data-portal-title="Tech Inventory" data-portal-keywords="tech inventory devices ownership planned active archive lifecycle">
     <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
 
