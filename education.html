@@ -40,17 +40,14 @@
       <div class="hero-orb" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></div>
     </header>
 
-    <nav class="education-section-nav glass" aria-label="Education page sections">
-      <a href="#overview">Overview</a>
-      <a href="#degree-progress">Degree Progress</a>
-      <a href="#academic-profile">Profile</a>
-      <a href="#current-term">Current Term</a>
-      <a href="#coursework">Courses</a>
-      <a href="#analytics">Analytics</a>
-      <a href="#journey">Journey</a>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#credentials">Credentials</a>
+    <nav class="education-section-nav glass" aria-label="Education page sections" data-education-topbar>
+      <div class="education-topbar-header">
+        <span class="education-topbar-title"><i class="fa-solid fa-compass" aria-hidden="true"></i> Explore Education</span>
+        <button class="education-topbar-toggle" type="button" aria-expanded="false" aria-controls="education-topbar-links"><span>Jump to section</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+      </div>
+      <div class="education-topbar-links" id="education-topbar-links">
+        <a href="#overview">Overview</a><a href="#degree-progress">Degree Progress</a><a href="#academic-profile">Profile</a><a href="#current-term">Current Term</a><a href="#coursework">Courses</a><a href="#analytics">Analytics</a><a href="#journey">Journey</a><a href="#projects">Projects</a><a href="#skills">Skills</a><a href="#credentials">Credentials</a>
+      </div>
     </nav>
 
     <section id="education-loading" class="education-state glass" role="status">
@@ -126,6 +123,23 @@
 
     <footer><p>Academic information last updated <span id="education-updated">when published</span>.</p><p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p></footer>
   </main>
+
+  <script>
+    (() => {
+      const bar=document.querySelector('[data-education-topbar]');
+      const button=bar?.querySelector('.education-topbar-toggle');
+      const links=bar?.querySelector('.education-topbar-links');
+      if(!bar||!button||!links)return;
+      const close=()=>{bar.classList.remove('is-open');button.setAttribute('aria-expanded','false')};
+      button.addEventListener('click',()=>{const open=!bar.classList.contains('is-open');bar.classList.toggle('is-open',open);button.setAttribute('aria-expanded',String(open))});
+      links.addEventListener('click',e=>{if(e.target.closest('a'))close()});
+      document.addEventListener('click',e=>{if(!bar.contains(e.target))close()});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'){close();button.focus()}});
+      matchMedia('(min-width:761px)').addEventListener?.('change',e=>{if(e.matches)close()});
+      const sections=[...links.querySelectorAll('a')].map(link=>({link,section:document.querySelector(link.hash)})).filter(x=>x.section);
+      if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{const active=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(!active)return;sections.forEach(x=>{const on=x.section===active.target;x.link.classList.toggle('is-current',on);on?x.link.setAttribute('aria-current','location'):x.link.removeAttribute('aria-current')})},{rootMargin:'-20% 0px -65% 0px',threshold:[.01,.25,.5]});sections.forEach(x=>observer.observe(x.section))}
+    })();
+  </script>
 
   <!-- ======================================================= -->
   <!-- Shared Onyx Navigation Dock                             -->
