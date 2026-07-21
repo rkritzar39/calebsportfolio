@@ -6,9 +6,9 @@
 ![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
 ![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)
 ![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-45.0%25-f1e05a)
-![CSS](https://img.shields.io/badge/CSS-36.2%25-663399)
-![HTML](https://img.shields.io/badge/HTML-18.8%25-e34c26)
+![JavaScript](https://img.shields.io/badge/JavaScript-45.4%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-36.5%25-663399)
+![HTML](https://img.shields.io/badge/HTML-18.1%25-e34c26)
 <!-- AUTO:BADGES-END -->
 
 Welcome to the repository for my Link in Bio Website.
@@ -779,9 +779,9 @@ This project is built with standard web technologies, Firebase services, and sta
 <!-- AUTO:LANGUAGES-START -->
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 45.0% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
-| **CSS** | 36.2% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
-| **HTML** | 18.8% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
+| **JavaScript** | 45.4% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
+| **CSS** | 36.5% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
+| **HTML** | 18.1% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 <!-- AUTO:LANGUAGES-END -->
 
 > **Note:** Language percentages are based on the current GitHub repository language analysis and may change as files are added, removed, or updated.
