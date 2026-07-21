@@ -1771,7 +1771,7 @@ function checkOSStatus(osVersion, explicitChannel = "") {
         .toLowerCase()
         .trim()
         .replace(/[\s_]+/g, "-");
-    const channel = normalizedExplicitChannel || detectOSChannel(osVersion, osType);
+    let channel = normalizedExplicitChannel || detectOSChannel(osVersion, osType);
     const releaseInformation = getOSReleaseInformation(osType);
     const latestPublicBeta = releaseInformation.publicBeta;
     const latestDeveloperBeta = releaseInformation.developerBeta;
@@ -1779,6 +1779,17 @@ function checkOSStatus(osVersion, explicitChannel = "") {
     const installedBuild = extractAppleBuildNumber(osVersion);
     const developerBuild = extractAppleBuildNumber(latestDeveloperBeta);
     const releaseCandidateBuild = extractAppleBuildNumber(latestReleaseCandidate);
+
+    /* Exact configured Apple build matches can identify the channel even
+       when Firestore stores only a version and build number. An explicit
+       osChannel value always takes priority over automatic detection. */
+    if (!normalizedExplicitChannel && installedBuild) {
+        if (releaseCandidateBuild && installedBuild === releaseCandidateBuild) {
+            channel = "release-candidate";
+        } else if (developerBuild && installedBuild === developerBuild) {
+            channel = "developer-beta";
+        }
+    }
 
     if (!currentVersion) return null;
 
@@ -1829,6 +1840,11 @@ function checkOSStatus(osVersion, explicitChannel = "") {
         color = "purple";
         releaseChannel = "Pre-release / Beta";
         description = "Running beta software ahead of the public release.";
+    } else if (channel === "internal") {
+        status = "Internal Beta";
+        color = "purple";
+        releaseChannel = "Internal Testing";
+        description = "Running an internal pre-release build.";
     } else if (channel === "canary") {
         status = "Canary";
         color = "purple";
