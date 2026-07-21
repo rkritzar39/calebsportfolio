@@ -140,192 +140,220 @@
       if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{const active=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(!active)return;sections.forEach(x=>{const on=x.section===active.target;x.link.classList.toggle('is-current',on);on?x.link.setAttribute('aria-current','location'):x.link.removeAttribute('aria-current')})},{rootMargin:'-20% 0px -65% 0px',threshold:[.01,.25,.5]});sections.forEach(x=>observer.observe(x.section))}
     })();
   </script>
+<!-- ======================================================= -->
+<!-- Shared Onyx Navigation Dock                             -->
+<!-- ======================================================= -->
+<nav class="onyx-dock" aria-label="Primary navigation">
+  <span class="dock-active-lens" aria-hidden="true"></span>
+  <a href="/" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-house"></i></span><span class="dock-label">Home</span></a>
+  <a href="/beta" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-flask"></i></span><span class="dock-label">Beta</span></a>
+  <a href="/education" class="dock-item active" data-education-link aria-current="page"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span><span class="dock-label">Education</span></a>
+  <a href="/resume" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span><span class="dock-label">Resume</span></a>
+  <a href="/settings" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span><span class="dock-label">Settings</span></a>
+</nav>
 
-  <!-- ======================================================= -->
-  <!-- Shared Onyx Navigation Dock                             -->
-  <!-- ======================================================= -->
-  <nav class="onyx-dock" aria-label="Primary navigation">
-    <span class="dock-active-lens" aria-hidden="true"></span>
-    <a href="/" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-house"></i></span><span class="dock-label">Home</span></a>
-    <a href="/beta" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-flask"></i></span><span class="dock-label">Beta</span></a>
-    <a href="/education" class="dock-item active" data-education-link aria-current="page"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span><span class="dock-label">Education</span></a>
-    <a href="/resume" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span><span class="dock-label">Resume</span></a>
-    <a href="/settings" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span><span class="dock-label">Settings</span></a>
-  </nav>
+<script src="settings.js"></script>
+<script type="module" src="education.js"></script>
+<script>
+  (() => {
+    const HOLD_DELAY = 260;
+    const MOVE_TOLERANCE = 10;
 
-  <script src="settings.js"></script>
-  <script type="module" src="education.js"></script>
-  <script>
-    (() => {
-      const HOLD_DELAY = 260;
-      const MOVE_TOLERANCE = 10;
+    const initializeDock = () => {
+      const dock = document.querySelector('.onyx-dock');
+      const lens = dock?.querySelector('.dock-active-lens');
+      if (!dock || !lens || dock.dataset.holdDragReady === 'true') return;
+      dock.dataset.holdDragReady = 'true';
 
-      const initializeDock = () => {
-        const dock = document.querySelector('.onyx-dock');
-        const lens = dock?.querySelector('.dock-active-lens');
-        if (!dock || !lens || dock.dataset.holdDragReady === 'true') return;
-        dock.dataset.holdDragReady = 'true';
-
-        try {
-          const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-          dock.querySelectorAll('[data-education-link]').forEach(link => {
-            link.hidden = settings.showEducationPage === 'disabled';
-          });
-        } catch (_) {}
-
-        let links = [];
-        let active = null;
-        let pressed = null;
-        let target = null;
-        let pointerId = null;
-        let startX = 0;
-        let startY = 0;
-        let holding = false;
-        let dragging = false;
-        let suppressClick = false;
-        let holdTimer = 0;
-
-        const refreshLinks = () => {
-          links = [...dock.querySelectorAll('.dock-item:not([hidden])')];
-          active = links.find(link => link.classList.contains('active')) || links[0] || null;
-        };
-
-        const placeLensOn = (link, animate = true) => {
-          if (!link) return;
-          const dockRect = dock.getBoundingClientRect();
-          const linkRect = link.getBoundingClientRect();
-          if (!animate) lens.style.transition = 'none';
-          dock.style.setProperty('--lens-x', `${linkRect.left - dockRect.left}px`);
-          dock.style.setProperty('--lens-width', `${linkRect.width}px`);
-          if (!animate) requestAnimationFrame(() => lens.style.removeProperty('transition'));
-        };
-
-        const nearestLink = clientX => {
-          let nearest = null;
-          let distance = Infinity;
-          links.forEach(link => {
-            const rect = link.getBoundingClientRect();
-            const d = Math.abs(clientX - (rect.left + rect.width / 2));
-            if (d < distance) {
-              distance = d;
-              nearest = link;
-            }
-          });
-          return nearest;
-        };
-
-        const setDragTarget = link => {
-          links.forEach(item => item.classList.toggle('is-drag-target', item === link));
-          target = link;
-          placeLensOn(link, true);
-        };
-
-        const beginHold = () => {
-          if (!pressed || pointerId === null) return;
-          holding = true;
-          dragging = true;
-          suppressClick = true;
-          dock.classList.add('is-dragging');
-          pressed.classList.remove('is-pressed');
-          setDragTarget(pressed);
-          if (navigator.vibrate) navigator.vibrate(10);
-        };
-
-        const reset = (restoreLens = true) => {
-          clearTimeout(holdTimer);
-          dock.classList.remove('is-pressing', 'is-dragging');
-          links.forEach(link => link.classList.remove('is-pressed', 'is-drag-target'));
-          pressed = null;
-          target = null;
-          pointerId = null;
-          holding = false;
-          dragging = false;
-          if (restoreLens) placeLensOn(active, true);
-        };
-
-        refreshLinks();
-        placeLensOn(active, false);
-        requestAnimationFrame(() => dock.classList.add('dock-ready'));
-
-        dock.addEventListener('pointerdown', event => {
-          if (event.button !== undefined && event.button !== 0) return;
-          const link = event.target.closest('.dock-item:not([hidden])');
-          if (!link) return;
-          refreshLinks();
-          pressed = link;
-          pointerId = event.pointerId;
-          startX = event.clientX;
-          startY = event.clientY;
-          suppressClick = false;
-          dock.classList.add('is-pressing');
-          link.classList.add('is-pressed');
-          try { dock.setPointerCapture(pointerId); } catch (_) {}
-          holdTimer = window.setTimeout(beginHold, HOLD_DELAY);
+      try {
+        const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+        dock.querySelectorAll('[data-education-link]').forEach(link => {
+          link.hidden = settings.showEducationPage === 'disabled';
         });
+      } catch (_) {}
 
-        dock.addEventListener('pointermove', event => {
-          if (event.pointerId !== pointerId || !pressed) return;
-          const moved = Math.hypot(event.clientX - startX, event.clientY - startY);
-          if (!holding && moved > MOVE_TOLERANCE) beginHold();
-          if (!dragging) return;
-          event.preventDefault();
-          const next = nearestLink(event.clientX);
-          if (next && next !== target) {
-            setDragTarget(next);
-            if (navigator.vibrate) navigator.vibrate(5);
-          }
-        }, { passive: false });
+      let links = [];
+      let active = null;
+      let pressed = null;
+      let target = null;
+      let pointerId = null;
+      let startX = 0;
+      let startY = 0;
+      let holding = false;
+      let dragging = false;
+      let suppressClick = false;
+      let holdTimer = 0;
 
-        const finish = event => {
-          if (event.pointerId !== pointerId) return;
-          clearTimeout(holdTimer);
-          const destination = dragging ? target : null;
-          const wasDragging = dragging;
-          reset(!destination);
-          try { dock.releasePointerCapture(event.pointerId); } catch (_) {}
-          if (wasDragging && destination) {
-            active = destination;
-            links.forEach(link => {
-              const selected = link === active;
-              link.classList.toggle('active', selected);
-              if (selected) link.setAttribute('aria-current', 'page');
-              else link.removeAttribute('aria-current');
-            });
-            placeLensOn(active, true);
-            window.setTimeout(() => {
-              window.location.href = destination.href;
-            }, 120);
-          }
-        };
-
-        dock.addEventListener('pointerup', finish);
-        dock.addEventListener('pointercancel', event => {
-          if (event.pointerId === pointerId) reset(true);
-        });
-        dock.addEventListener('lostpointercapture', () => {
-          if (pointerId !== null && !dragging) reset(true);
-        });
-        dock.addEventListener('click', event => {
-          if (suppressClick) {
-            event.preventDefault();
-            event.stopPropagation();
-            suppressClick = false;
-          }
-        }, true);
-        dock.addEventListener('contextmenu', event => {
-          if (holding || dragging) event.preventDefault();
-        });
-
-        addEventListener('resize', () => {
-          refreshLinks();
-          placeLensOn(active, false);
-        }, { passive: true });
+      const refreshLinks = () => {
+        links = [...dock.querySelectorAll('.dock-item:not([hidden])')];
+        active = links.find(link => link.classList.contains('active')) || links[0] || null;
       };
 
-      document.readyState === 'loading'
-        ? document.addEventListener('DOMContentLoaded', initializeDock, { once: true })
-        : initializeDock();
-    })();
-  </script>
+      const placeLensOn = (link, animate = true) => {
+        if (!link) return;
+        const dockRect = dock.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        
+        if (!animate) {
+          lens.style.transition = 'none';
+        }
+        
+        dock.style.setProperty('--lens-x', `${linkRect.left - dockRect.left}px`);
+        dock.style.setProperty('--lens-width', `${linkRect.width}px`);
+        
+        if (!animate) {
+          // Force a synchronous reflow so the browser applies the position 
+          // immediately before restoring the transition.
+          void lens.offsetWidth;
+          lens.style.transition = '';
+        }
+      };
+
+      const nearestLink = clientX => {
+        let nearest = null;
+        let distance = Infinity;
+        links.forEach(link => {
+          const rect = link.getBoundingClientRect();
+          const d = Math.abs(clientX - (rect.left + rect.width / 2));
+          if (d < distance) {
+            distance = d;
+            nearest = link;
+          }
+        });
+        return nearest;
+      };
+
+      const setDragTarget = link => {
+        links.forEach(item => item.classList.toggle('is-drag-target', item === link));
+        target = link;
+        placeLensOn(link, true);
+      };
+
+      const beginHold = () => {
+        if (!pressed || pointerId === null) return;
+        holding = true;
+        dragging = true;
+        suppressClick = true;
+        dock.classList.add('is-dragging');
+        pressed.classList.remove('is-pressed');
+        setDragTarget(pressed);
+        if (navigator.vibrate) navigator.vibrate(10);
+      };
+
+      const reset = (restoreLens = true) => {
+        clearTimeout(holdTimer);
+        dock.classList.remove('is-pressing', 'is-dragging');
+        links.forEach(link => link.classList.remove('is-pressed', 'is-drag-target'));
+        pressed = null;
+        target = null;
+        pointerId = null;
+        holding = false;
+        dragging = false;
+        if (restoreLens) placeLensOn(active, true);
+      };
+
+      refreshLinks();
+      placeLensOn(active, false);
+      requestAnimationFrame(() => dock.classList.add('dock-ready'));
+
+      // Accessibility: Move lens when tabbing through links with keyboard
+      dock.addEventListener('focusin', event => {
+        const link = event.target.closest('.dock-item:not([hidden])');
+        if (link) placeLensOn(link, true);
+      });
+      dock.addEventListener('focusout', () => placeLensOn(active, true));
+
+      dock.addEventListener('pointerdown', event => {
+        if (event.button !== undefined && event.button !== 0) return;
+        const link = event.target.closest('.dock-item:not([hidden])');
+        if (!link) return;
+        
+        refreshLinks();
+        pressed = link;
+        pointerId = event.pointerId;
+        startX = event.clientX;
+        startY = event.clientY;
+        suppressClick = false;
+        
+        dock.classList.add('is-pressing');
+        link.classList.add('is-pressed');
+        try { dock.setPointerCapture(pointerId); } catch (_) {}
+        
+        holdTimer = window.setTimeout(beginHold, HOLD_DELAY);
+      });
+
+      dock.addEventListener('pointermove', event => {
+        if (event.pointerId !== pointerId || !pressed) return;
+        const moved = Math.hypot(event.clientX - startX, event.clientY - startY);
+        
+        if (!holding && moved > MOVE_TOLERANCE) beginHold();
+        if (!dragging) return;
+        
+        event.preventDefault();
+        const next = nearestLink(event.clientX);
+        
+        if (next && next !== target) {
+          setDragTarget(next);
+          if (navigator.vibrate) navigator.vibrate(5);
+        }
+      }, { passive: false });
+
+      const finish = event => {
+        if (event.pointerId !== pointerId) return;
+        clearTimeout(holdTimer);
+        const destination = dragging ? target : null;
+        const wasDragging = dragging;
+        
+        reset(!destination);
+        try { dock.releasePointerCapture(event.pointerId); } catch (_) {}
+        
+        if (wasDragging && destination) {
+          active = destination;
+          links.forEach(link => {
+            const selected = link === active;
+            link.classList.toggle('active', selected);
+            if (selected) link.setAttribute('aria-current', 'page');
+            else link.removeAttribute('aria-current');
+          });
+          placeLensOn(active, true);
+          window.setTimeout(() => {
+            window.location.href = destination.href;
+          }, 120);
+        }
+      };
+
+      dock.addEventListener('pointerup', finish);
+      
+      dock.addEventListener('pointercancel', event => {
+        if (event.pointerId === pointerId) reset(true);
+      });
+      
+      dock.addEventListener('lostpointercapture', event => {
+        if (event.pointerId === pointerId) reset(true);
+      });
+      
+      dock.addEventListener('click', event => {
+        if (suppressClick) {
+          event.preventDefault();
+          event.stopPropagation();
+          suppressClick = false;
+        }
+      }, true);
+      
+      dock.addEventListener('contextmenu', event => {
+        if (holding || dragging) event.preventDefault();
+      });
+
+      window.addEventListener('resize', () => {
+        refreshLinks();
+        placeLensOn(active, false);
+      }, { passive: true });
+    };
+
+    document.readyState === 'loading'
+      ? document.addEventListener('DOMContentLoaded', initializeDock, { once: true })
+      : initializeDock();
+  })();
+</script>
 </body>
 </html>
