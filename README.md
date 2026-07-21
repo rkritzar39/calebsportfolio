@@ -101,7 +101,7 @@ Visitors can use the website to:
 <!-- AUTO:PROJECT-AGE-START -->
 Development began on **January 2, 2025**.
 
-The project has been under development for **1 year, 6 months, and 18 days**.
+The project has been under development for **1 year, 6 months, and 19 days**.
 <!-- AUTO:PROJECT-AGE-END -->
 
 ---
