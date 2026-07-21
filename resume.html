@@ -114,6 +114,15 @@ document.getElementById("download-btn").addEventListener("click", function () {
     <span class="dock-label">Beta</span>
   </a>
 
+
+  <a href="/education" class="dock-item" data-education-link>
+    <span class="dock-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
+      </svg>
+    </span>
+    <span class="dock-label">Education</span>
+  </a>
   <a href="/resume" class="dock-item">
     <span class="dock-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
@@ -805,6 +814,24 @@ document.getElementById("download-btn").addEventListener("click", function () {
   type="module"
   src="resume.js"
 ></script>
+
+
+<script data-education-link-settings>
+(() => {
+  const syncEducationLinks = () => {
+    try {
+      const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+      document.querySelectorAll("[data-education-link]").forEach(link => {
+        link.hidden = settings.showEducationPage === "disabled";
+      });
+    } catch (_) {}
+  };
+  syncEducationLinks();
+  window.addEventListener("storage", e => {
+    if (e.key === "websiteSettings") syncEducationLinks();
+  });
+})();
+</script>
 
 </body>
 </html>
