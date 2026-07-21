@@ -1,4 +1,36 @@
 {
+  "ios": "26.5.2",
+  "ipados": "26.5.2",
+  "macos": "26.5.2",
+  "watchos": "26.5",
+  "tvos": "26.5",
+  "visionos": "26.5",
+  "android": "16",
+  "pixelui": "16",
+  "oneui": "8.5",
+  "oxygenos": "16",
+  "coloros": "16",
+  "realmeui": "7",
+  "hyperos": "3",
+  "harmonyos": "5",
+  "nothingos": "4",
+  "windows": "11",
+  "windowsserver": "2025",
+  "chromeos": "latest",
+  "ubuntu": "26.04",
+  "debian": "13",
+  "fedora": "42",
+  "arch": "rolling",
+  "linux": "rolling",
+  "steamos": "3",
+  "playstation": "5",
+  "xbox": "series",
+  "nintendoswitch": "18",
+  "wearos": "7",
+  "fireos": "8",
+  "rokuos": "13",
+  "webos": "24",
+  "tizen": "8",
   "production_stable": {
     "ios": "26.5.2",
     "ipados": "26.5.2",
@@ -6,7 +38,6 @@
     "watchos": "26.5",
     "tvos": "26.5",
     "visionos": "26.5",
-
     "android": "16",
     "pixelui": "16",
     "oneui": "8.5",
@@ -16,8 +47,7 @@
     "hyperos": "3",
     "harmonyos": "5",
     "nothingos": "4",
-
-    "windows": "11 25H2",
+    "windows": "11",
     "windowsserver": "2025",
     "chromeos": "latest",
     "ubuntu": "26.04",
@@ -25,34 +55,29 @@
     "fedora": "42",
     "arch": "rolling",
     "linux": "rolling",
-
     "steamos": "3",
     "playstation": "5",
     "xbox": "series",
     "nintendoswitch": "18",
-
     "wearos": "7",
     "fireos": "8",
     "rokuos": "13",
     "webos": "24",
     "tizen": "8"
   },
-
   "public_beta": {
-    "ios": "27.0-b1",
-    "ipados": "27.0-b1",
-    "macos": "27.0-b1",
-    "watchos": "27.0-b1",
-    "tvos": "27.0-b1",
-    "visionos": "27.0-b1",
-
+    "ios": "27.0-pb1",
+    "ipados": "27.0-pb1",
+    "macos": "27.0-pb1",
+    "watchos": "27.0-pb1",
+    "tvos": "27.0-pb1",
+    "visionos": "unavailable",
     "android": "17-qpr1-b7",
     "pixelui": "17-qpr1-b7",
     "oneui": "9.0-pb",
     "oxygenos": "17-beta",
     "coloros": "17-beta"
   },
-
   "developer_tester": {
     "ios": "iOS 27.0 Beta 4 (24A5390f)",
     "ipados": "iPadOS 27.0 Beta 4 (24A5390f)",
@@ -60,11 +85,19 @@
     "watchos": "watchOS 27.0 Beta 4 (24R5325h)",
     "tvos": "tvOS 27.0 Beta 4 (24J5325d)",
     "visionos": "visionOS 27.0 Beta 4 (24M5326g)",
-
     "android": "Android 17 QPR1 Beta 7",
     "pixelui": "Android 17 QPR1 Beta 7",
     "oneui": "9.0 Internal",
     "oxygenos": "17 Developer Preview",
     "coloros": "17 Developer Preview"
-  }
+  },
+  "release_candidate": {
+    "ios": "iOS 26.6 RC (23G71)",
+    "ipados": "iPadOS 26.6 RC (23G71)",
+    "macos": "macOS 26.6 RC (25G70)",
+    "watchos": "watchOS 26.6 RC (23U67)",
+    "tvos": "tvOS 26.6 RC (23L772)",
+    "visionos": "visionOS 26.6 RC (23O770)"
+  },
+  "last_updated": "2026-07-21"
 }
