@@ -6,7 +6,7 @@
     "watchos": "26.5",
     "tvos": "26.5",
     "visionos": "26.5",
-    
+
     "android": "16",
     "pixelui": "16",
     "oneui": "8.5",
@@ -16,8 +16,8 @@
     "hyperos": "3",
     "harmonyos": "5",
     "nothingos": "4",
-    
-    "windows": "11",
+
+    "windows": "11 25H2",
     "windowsserver": "2025",
     "chromeos": "latest",
     "ubuntu": "26.04",
@@ -25,13 +25,13 @@
     "fedora": "42",
     "arch": "rolling",
     "linux": "rolling",
-    
+
     "steamos": "3",
     "playstation": "5",
     "xbox": "series",
     "nintendoswitch": "18",
-    
-    "wearos": "6",
+
+    "wearos": "7",
     "fireos": "8",
     "rokuos": "13",
     "webos": "24",
@@ -39,65 +39,32 @@
   },
 
   "public_beta": {
-    "ios": "27.0-b2",
-    "ipados": "27.0-b2",
-    "macos": "27.0-b2",
-    "watchos": "27.0-b2",
-    "tvos": "27.0-b2",
-    "visionos": "27.0-b2",
-    
-    "android": "17-beta",
-    "pixelui": "17-beta",
+    "ios": "27.0-b1",
+    "ipados": "27.0-b1",
+    "macos": "27.0-b1",
+    "watchos": "27.0-b1",
+    "tvos": "27.0-b1",
+    "visionos": "27.0-b1",
+
+    "android": "17-qpr1-b7",
+    "pixelui": "17-qpr1-b7",
     "oneui": "9.0-pb",
     "oxygenos": "17-beta",
     "coloros": "17-beta"
   },
 
   "developer_tester": {
-    "ios": "iOS 27.0 (24A5380h)",
-    "ipados": "iPadOS 27.0 (24A5380h)",
-    "macos": "macOS 27.0 (26A5378j)",
-    
-    "android": "17-dp2",
-    "pixelui": "17-dp2",
-    "oneui": "9.0-internal",
-    "oxygenos": "17-dp",
-    "coloros": "17-dp"
-  },
+    "ios": "iOS 27.0 Beta 4 (24A5390f)",
+    "ipados": "iPadOS 27.0 Beta 4 (24A5390f)",
+    "macos": "macOS 27.0 Beta 4 (26A5388g)",
+    "watchos": "watchOS 27.0 Beta 4 (24R5325h)",
+    "tvos": "tvOS 27.0 Beta 4 (24J5325d)",
+    "visionos": "visionOS 27.0 Beta 4 (24M5326g)",
 
-  "deviceModelOverrides": {
-    "ios": {
-      "iPhone Air": "26.5.2",
-      "iPhone 17": "26.5.2",
-      "iPhone 17 Plus": "26.5.2",
-      "iPhone 17 Pro": "26.5.2",
-      "iPhone 17 Pro Max": "26.5.2"
-    }
-  },
-
-  "deviceVersionRules": {
-    "ios": [
-      {
-        "version": "26.5.2",
-        "label": "Stable Public Release",
-        "note": "Uniform global public rollout across all generation lines.",
-        "match": { "deviceFamily": "iphone", "generationMin": 11, "generationMax": 17 }
-      },
-      {
-        "version": "iOS 27.0",
-        "label": "Apple 27 Beta Pipeline",
-        "note": "Addresses the next generational shift featuring Liquid Glass interface frameworks.",
-        "match": { "deviceFamily": "iphone", "generationMin": 11, "generationMax": 17 }
-      }
-    ]
-  },
-
-  "platformCompatibilityNotes": {
-    "ios": "iOS 26.5.2 for stable consumer configurations. iOS 27 tracks available via Beta Profiles.",
-    "macos": "macOS 26.5.2 Tahoe on stable production channels. macOS 27 Golden Gate is active on Apple Silicon systems for beta participants.",
-    "ipados": "iPadOS 26.5.2 for broad deployment; iPadOS 27 features enhanced multi-tasking workflows.",
-    "watchos": "watchOS 26.5 stable baseline; watchOS 27 available for compatible testing units.",
-    "tvos": "tvOS 26.5 production release; tvOS 27 developer channel open.",
-    "visionos": "visionOS 26.5 public baseline; visionOS 27 features expanded spatial environment profiles."
+    "android": "Android 17 QPR1 Beta 7",
+    "pixelui": "Android 17 QPR1 Beta 7",
+    "oneui": "9.0 Internal",
+    "oxygenos": "17 Developer Preview",
+    "coloros": "17 Developer Preview"
   }
 }
