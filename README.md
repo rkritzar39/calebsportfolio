@@ -1,5 +1,6 @@
 # BusArmyDude.org
 
+<!-- BADGES:START -->
 [![Version](https://img.shields.io/badge/version-v27.0--rc.1-blue)](#current-version)
 [![Build](https://img.shields.io/badge/build-2026.07.17-purple)](#current-version)
 [![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)](#release-roadmap)
@@ -8,6 +9,7 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-45.0%25-f1e05a)](#coding-languages-and-technologies)
 [![CSS](https://img.shields.io/badge/CSS-36.2%25-663399)](#coding-languages-and-technologies)
 [![HTML](https://img.shields.io/badge/HTML-18.9%25-e34c26)](#coding-languages-and-technologies)
+<!-- BADGES:END -->
 
 BusArmyDude.org is a responsive personal profile, link-in-bio, live-status, availability, academic portfolio, resume, technology information, accessibility, and content-management website.
 
