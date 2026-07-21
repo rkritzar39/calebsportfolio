@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Caleb Kritzar's education journey, coursework, academic milestones, achievements, and projects.">
+  <title>Education - Caleb's Profile</title>
+  <script>
+    (() => {
+      try {
+        const s = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+        const dark = s.appearanceMode === 'dark' || (s.appearanceMode !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark-mode', dark);
+        document.documentElement.classList.toggle('light-mode', !dark);
+        if (s.fontSize) document.documentElement.style.setProperty('--font-size-base', `${s.fontSize}px`);
+        if (s.accentColor) document.documentElement.style.setProperty('--accent-color', s.accentColor);
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="education.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="education-page">
+  <main class="education-shell" id="main-content">
+    <header class="education-hero glass">
+      <div>
+        <p class="education-eyebrow">Academic journey</p>
+        <h1>Education</h1>
+        <p id="education-intro">Coursework, progress, projects, and milestones from my college journey.</p>
+      </div>
+      <div class="education-hero-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></div>
+    </header>
+
+    <section id="education-loading" class="education-state glass" role="status">
+      <i class="fa-solid fa-spinner fa-spin"></i> Loading academic information…
+    </section>
+    <section id="education-unavailable" class="education-state glass" hidden>
+      <i class="fa-solid fa-eye-slash"></i>
+      <h2>Education page unavailable</h2>
+      <p>This page is not currently public.</p>
+    </section>
+
+    <div id="education-content" hidden>
+      <section class="education-overview glass" aria-labelledby="overview-title">
+        <div class="section-heading"><div><p class="education-eyebrow">Overview</p><h2 id="overview-title">Academic Profile</h2></div></div>
+        <div class="overview-grid">
+          <article><i class="fa-solid fa-building-columns"></i><span>Institution</span><strong id="edu-institution">—</strong></article>
+          <article><i class="fa-solid fa-compass"></i><span>Program</span><strong id="edu-program">—</strong></article>
+          <article><i class="fa-solid fa-user-graduate"></i><span>Academic year</span><strong id="edu-year">—</strong></article>
+          <article><i class="fa-solid fa-calendar-days"></i><span>Current term</span><strong id="edu-current-term">—</strong></article>
+          <article><i class="fa-solid fa-layer-group"></i><span>Credits completed</span><strong id="edu-credits">0</strong></article>
+          <article><i class="fa-solid fa-chart-line"></i><span>Cumulative GPA</span><strong id="edu-gpa">—</strong></article>
+        </div>
+      </section>
+
+      <section class="glass" aria-labelledby="semesters-title">
+        <div class="section-heading"><div><p class="education-eyebrow">Coursework</p><h2 id="semesters-title">Semesters & Courses</h2></div></div>
+        <div id="semester-list" class="semester-list"></div>
+      </section>
+
+      <section class="education-two-column">
+        <div class="glass education-panel" aria-labelledby="milestones-title">
+          <div class="section-heading"><div><p class="education-eyebrow">Progress</p><h2 id="milestones-title">Milestones</h2></div></div>
+          <div id="milestone-list" class="timeline-list"></div>
+        </div>
+        <div class="glass education-panel" aria-labelledby="achievements-title">
+          <div class="section-heading"><div><p class="education-eyebrow">Recognition</p><h2 id="achievements-title">Achievements</h2></div></div>
+          <div id="achievement-list" class="achievement-list"></div>
+        </div>
+      </section>
+
+      <section class="glass" aria-labelledby="projects-title">
+        <div class="section-heading"><div><p class="education-eyebrow">Applied learning</p><h2 id="projects-title">Academic Projects</h2></div></div>
+        <div id="project-list" class="project-grid"></div>
+      </section>
+    </div>
+
+    <p id="education-error" class="education-error" role="alert" hidden></p>
+    <footer class="education-footer"><p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p></footer>
+  </main>
+
+  <nav class="onyx-dock education-dock" aria-label="Primary navigation">
+    <a href="/" class="dock-item"><span class="dock-icon"><i class="fa-solid fa-house"></i></span><span class="dock-label">Home</span></a>
+    <a href="/education" class="dock-item active" aria-current="page"><span class="dock-icon"><i class="fa-solid fa-graduation-cap"></i></span><span class="dock-label">Education</span></a>
+    <a href="/resume" class="dock-item"><span class="dock-icon"><i class="fa-solid fa-file-lines"></i></span><span class="dock-label">Resume</span></a>
+    <a href="/settings" class="dock-item"><span class="dock-icon"><i class="fa-solid fa-gear"></i></span><span class="dock-label">Settings</span></a>
+  </nav>
+  <script type="module" src="education.js"></script>
+</body>
+</html>
