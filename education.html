@@ -145,19 +145,60 @@
 <!-- ======================================================= -->
 <nav class="onyx-dock" aria-label="Primary navigation">
   <span class="dock-active-lens" aria-hidden="true"></span>
-  <a href="/" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-house"></i></span><span class="dock-label">Home</span></a>
-  <a href="/beta" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-flask"></i></span><span class="dock-label">Beta</span></a>
-  <a href="/education" class="dock-item active" data-education-link aria-current="page"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span><span class="dock-label">Education</span></a>
-  <a href="/resume" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span><span class="dock-label">Resume</span></a>
-  <a href="/settings" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span><span class="dock-label">Settings</span></a>
+
+  <a href="/" class="dock-item">
+    <span class="dock-icon" aria-hidden="true">
+      <i class="fa-solid fa-house"></i>
+    </span>
+    <span class="dock-label">Home</span>
+  </a>
+
+  <a href="/beta" class="dock-item">
+    <span class="dock-icon" aria-hidden="true">
+      <i class="fa-solid fa-flask"></i>
+    </span>
+    <span class="dock-label">Beta</span>
+  </a>
+
+  <a href="/education" class="dock-item" data-education-link>
+    <span class="dock-icon" aria-hidden="true">
+      <i class="fa-solid fa-graduation-cap"></i>
+    </span>
+    <span class="dock-label">Education</span>
+  </a>
+
+  <a href="/resume" class="dock-item">
+    <span class="dock-icon" aria-hidden="true">
+      <i class="fa-solid fa-file-lines"></i>
+    </span>
+    <span class="dock-label">Resume</span>
+  </a>
+
+  <a href="/settings" class="dock-item">
+    <span class="dock-icon dock-icon-settings" aria-hidden="true">
+      <i class="fa-solid fa-gear"></i>
+    </span>
+    <span class="dock-label">Settings</span>
+  </a>
 </nav>
 
 <script src="settings.js"></script>
 <script type="module" src="education.js"></script>
+
 <script>
   (() => {
     const HOLD_DELAY = 260;
     const MOVE_TOLERANCE = 10;
+
+    // Handles hiding/showing the education tab based on local storage
+    const syncEducationLinks = () => {
+      try {
+        const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+        document.querySelectorAll('[data-education-link]').forEach(link => {
+          link.hidden = settings.showEducationPage === 'disabled';
+        });
+      } catch (_) {}
+    };
 
     const initializeDock = () => {
       const dock = document.querySelector('.onyx-dock');
@@ -165,12 +206,7 @@
       if (!dock || !lens || dock.dataset.holdDragReady === 'true') return;
       dock.dataset.holdDragReady = 'true';
 
-      try {
-        const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-        dock.querySelectorAll('[data-education-link]').forEach(link => {
-          link.hidden = settings.showEducationPage === 'disabled';
-        });
-      } catch (_) {}
+      syncEducationLinks();
 
       let links = [];
       let active = null;
@@ -184,9 +220,47 @@
       let suppressClick = false;
       let holdTimer = 0;
 
+      // URL Normalization for dynamic active state matching
+      const normalizePath = path => {
+        let clean = String(path || '/').split('?')[0].split('#')[0].toLowerCase()
+          .replace(/\/index\.html$/i, '').replace(/\.html$/i, '').replace(/\/+$/g, '');
+        if (!clean || clean === '/home') clean = '/';
+        if (!clean.startsWith('/')) clean = `/${clean}`;
+        return clean;
+      };
+
+      const getLinkPath = link => {
+        const raw = link.getAttribute('href') || '/';
+        try { 
+          return normalizePath(new URL(raw, window.location.origin).pathname); 
+        } catch (_) { 
+          return normalizePath(raw); 
+        }
+      };
+
+      // Refresh layout and dynamically determine the active route
       const refreshLinks = () => {
         links = [...dock.querySelectorAll('.dock-item:not([hidden])')];
-        active = links.find(link => link.classList.contains('active')) || links[0] || null;
+        const currentPath = normalizePath(window.location.pathname);
+        
+        const exactMatch = links.find(link => getLinkPath(link) === currentPath);
+        if (exactMatch) {
+          active = exactMatch;
+        } else {
+          // Fallback to nested routes (e.g. if you are on /education/schedule)
+          const nested = links.filter(link => {
+            const target = getLinkPath(link);
+            return target !== '/' && currentPath.startsWith(`${target}/`);
+          }).sort((a, b) => getLinkPath(b).length - getLinkPath(a).length);
+          active = nested[0] || links[0];
+        }
+
+        links.forEach(link => {
+          const isActive = link === active;
+          link.classList.toggle('active', isActive);
+          if (isActive) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+        });
       };
 
       const placeLensOn = (link, animate = true) => {
@@ -202,9 +276,7 @@
         dock.style.setProperty('--lens-width', `${linkRect.width}px`);
         
         if (!animate) {
-          // Force a synchronous reflow so the browser applies the position 
-          // immediately before restoring the transition.
-          void lens.offsetWidth;
+          void lens.offsetWidth; // Force synchronous reflow
           lens.style.transition = '';
         }
       };
@@ -252,6 +324,14 @@
         if (restoreLens) placeLensOn(active, true);
       };
 
+      const rotateGear = link => {
+        if (!link || !link.querySelector('.dock-icon-settings')) return;
+        link.classList.remove('settings-rotating');
+        void link.offsetWidth; // Force reflow to restart animation
+        link.classList.add('settings-rotating');
+      };
+
+      // Initialization
       refreshLinks();
       placeLensOn(active, false);
       requestAnimationFrame(() => dock.classList.add('dock-ready'));
@@ -263,6 +343,7 @@
       });
       dock.addEventListener('focusout', () => placeLensOn(active, true));
 
+      // Pointer Events
       dock.addEventListener('pointerdown', event => {
         if (event.button !== undefined && event.button !== 0) return;
         const link = event.target.closest('.dock-item:not([hidden])');
@@ -316,8 +397,10 @@
             else link.removeAttribute('aria-current');
           });
           placeLensOn(active, true);
+          rotateGear(active);
+          
           window.setTimeout(() => {
-            window.location.href = destination.href;
+            window.location.assign(destination.href);
           }, 120);
         }
       };
@@ -333,10 +416,16 @@
       });
       
       dock.addEventListener('click', event => {
+        const link = event.target.closest('.dock-item');
         if (suppressClick) {
           event.preventDefault();
           event.stopPropagation();
           suppressClick = false;
+          return;
+        }
+        
+        if (link && !event.metaKey && !event.ctrlKey) {
+          rotateGear(link);
         }
       }, true);
       
@@ -349,6 +438,15 @@
         placeLensOn(active, false);
       }, { passive: true });
     };
+
+    // Cross-tab syncing: Listen for changes in local storage from other pages
+    window.addEventListener('storage', event => {
+      if (event.key === 'websiteSettings') {
+        syncEducationLinks();
+        // Dispatch resize to fix the lens bounds if the tab disappeared/appeared
+        window.dispatchEvent(new Event('resize'));
+      }
+    });
 
     document.readyState === 'loading'
       ? document.addEventListener('DOMContentLoaded', initializeDock, { once: true })
