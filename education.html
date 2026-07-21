@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Caleb Kritzar's academic portfolio, degree progress, courses, credentials, projects, and achievements.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Caleb Kritzar's academic portfolio, degree progress, coursework, projects, certifications, skills, and achievements.">
   <title>Education - Caleb's Profile</title>
   <script>
     (() => {
       try {
-        const s = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-        const d = s.appearanceMode === 'dark' || (s.appearanceMode !== 'light' && matchMedia('(prefers-color-scheme:dark)').matches);
-        document.documentElement.classList.toggle('dark-mode', d);
-        document.documentElement.classList.toggle('light-mode', !d);
-      } catch {}
+        const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+        const dark = settings.appearanceMode === 'dark' ||
+          (settings.appearanceMode !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark-mode', dark);
+        document.documentElement.classList.toggle('light-mode', !dark);
+        if (settings.fontSize) document.documentElement.style.setProperty('--font-size-base', `${settings.fontSize}px`);
+        if (settings.accentColor) document.documentElement.style.setProperty('--accent-color', settings.accentColor);
+      } catch (_) {}
     })();
   </script>
   <link rel="stylesheet" href="styles.css">
@@ -21,254 +24,147 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="education-page">
+  <a class="skip-link" href="#main-content">Skip to education content</a>
+
   <main class="education-shell" id="main-content">
-    <header class="education-hero glass">
+    <header class="education-hero glass" id="overview">
       <div>
         <p class="eyebrow">Academic portfolio</p>
         <h1>Education</h1>
-        <p id="education-intro">My coursework, progress, credentials, projects, and academic journey.</p>
+        <p id="education-intro">My coursework, degree progress, skills, academic projects, and journey at the University of Toledo.</p>
         <div class="hero-actions">
           <button id="print-summary" type="button"><i class="fa-solid fa-print"></i> Unofficial Summary</button>
           <button id="export-json" type="button" class="secondary-action"><i class="fa-solid fa-download"></i> Export Data</button>
         </div>
       </div>
-      <div class="hero-orb">
-        <i class="fa-solid fa-graduation-cap"></i>
-      </div>
+      <div class="hero-orb" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></div>
     </header>
+
+    <nav class="education-section-nav glass" aria-label="Education page sections">
+      <a href="#overview">Overview</a>
+      <a href="#degree-progress">Degree Progress</a>
+      <a href="#academic-profile">Profile</a>
+      <a href="#current-term">Current Term</a>
+      <a href="#coursework">Courses</a>
+      <a href="#analytics">Analytics</a>
+      <a href="#journey">Journey</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#credentials">Credentials</a>
+    </nav>
 
     <section id="education-loading" class="education-state glass" role="status">
       <i class="fa-solid fa-spinner fa-spin"></i> Loading academic portfolio…
     </section>
-
     <section id="education-unavailable" class="education-state glass" hidden>
-      <i class="fa-solid fa-lock"></i>
-      <h2>Education page unavailable</h2>
-      <p>This portfolio is not currently public.</p>
+      <i class="fa-solid fa-lock"></i><h2>Education page unavailable</h2><p>This portfolio is not currently public.</p>
     </section>
-
     <p id="education-error" class="education-error" role="alert" hidden></p>
 
     <div id="education-content" hidden>
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">At a glance</p>
-            <h2>Academic Dashboard</h2>
-          </div>
-          <span id="publication-status" class="badge">Published</span>
-        </div>
+      <section class="glass" aria-labelledby="dashboard-title">
+        <div class="section-heading"><div><p class="eyebrow">At a glance</p><h2 id="dashboard-title">Academic Dashboard</h2></div><span id="publication-status" class="badge">Published</span></div>
         <div id="stats-grid" class="stats-grid"></div>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Degree tracker</p>
-            <h2>Progress & Requirements</h2>
-          </div>
-        </div>
+      <section class="glass" id="degree-progress" aria-labelledby="degree-title">
+        <div class="section-heading"><div><p class="eyebrow">Degree tracker</p><h2 id="degree-title">Progress & Requirements</h2></div></div>
         <div class="progress-layout">
-          <div class="degree-ring" id="degree-ring">
-            <strong id="degree-percent">0%</strong>
-            <span>complete</span>
-          </div>
-          <div class="progress-details">
-            <h3 id="degree-name">Degree progress</h3>
-            <p id="degree-credit-label">0 of 120 credits</p>
-            <div class="progress-track">
-              <span id="degree-progress-bar"></span>
-            </div>
-            <div id="requirement-list" class="requirement-list"></div>
-          </div>
+          <div class="degree-ring" id="degree-ring" role="img" aria-label="Degree completion progress"><strong id="degree-percent">0%</strong><span>complete</span></div>
+          <div class="progress-details"><h3 id="degree-name">Degree progress</h3><p id="degree-credit-label">0 of 120 credits</p><div class="progress-track"><span id="degree-progress-bar"></span></div><div id="requirement-list" class="requirement-list"></div></div>
         </div>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Profile</p>
-            <h2>Academic Profile</h2>
-          </div>
-        </div>
+      <section class="glass" id="academic-profile" aria-labelledby="profile-title">
+        <div class="section-heading"><div><p class="eyebrow">Profile</p><h2 id="profile-title">Academic Profile</h2></div></div>
         <div id="profile-grid" class="profile-grid"></div>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Current focus</p>
-            <h2>Current Semester</h2>
-          </div>
-        </div>
+      <section class="glass" id="current-term" aria-labelledby="current-title">
+        <div class="section-heading"><div><p class="eyebrow">Current focus</p><h2 id="current-title">Current Semester</h2></div></div>
         <div id="current-semester"></div>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Course explorer</p>
-            <h2>Semesters & Courses</h2>
-          </div>
-        </div>
+      <section class="glass" id="coursework" aria-labelledby="courses-title">
+        <div class="section-heading"><div><p class="eyebrow">Course explorer</p><h2 id="courses-title">Semesters & Courses</h2></div></div>
         <div class="course-tools">
-          <input id="course-search" type="search" placeholder="Search courses or skills…">
-          <select id="course-mode-filter">
-            <option value="">All grading modes</option>
-            <option value="letter">A-F Letter</option>
-            <option value="pass-no-credit">Pass / No Credit</option>
-            <option value="satisfactory-unsatisfactory">Satisfactory / Unsatisfactory</option>
-            <option value="audit">Audit</option>
-            <option value="transfer">Transfer</option>
-            <option value="custom">Custom</option>
+          <input id="course-search" type="search" placeholder="Search courses, subjects, or skills…" aria-label="Search courses">
+          <select id="course-mode-filter" aria-label="Filter by grading mode">
+            <option value="">All grading modes</option><option value="letter">Standard Letter</option><option value="grade-no-credit">Grade / No Credit</option><option value="pass-no-credit">Pass / No Credit</option><option value="satisfactory-unsatisfactory">Satisfactory / Unsatisfactory</option><option value="audit">Audit</option><option value="transfer">Transfer</option><option value="custom">Custom</option>
           </select>
-          <select id="course-status-filter">
-            <option value="">All statuses</option>
-            <option>Planned</option>
-            <option>In Progress</option>
-            <option>Completed</option>
-            <option>Transfer</option>
-            <option>Withdrawn</option>
-          </select>
+          <select id="course-status-filter" aria-label="Filter by course status"><option value="">All statuses</option><option>Planned</option><option>In Progress</option><option>Completed</option><option>Transfer</option><option>Withdrawn</option></select>
         </div>
         <div id="semester-list" class="semester-list"></div>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Performance</p>
-            <h2>Academic Analytics</h2>
-          </div>
-        </div>
+      <section class="glass" id="analytics" aria-labelledby="analytics-title">
+        <div class="section-heading"><div><p class="eyebrow">Performance</p><h2 id="analytics-title">Academic Analytics</h2></div></div>
         <div id="analytics-grid" class="analytics-grid"></div>
       </section>
 
-      <section class="two-column">
-        <article class="glass">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Journey</p>
-              <h2>Timeline</h2>
-            </div>
-          </div>
-          <div id="timeline-list" class="timeline-list"></div>
-        </article>
-        <article class="glass">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Goals</p>
-              <h2>Goals & Milestones</h2>
-            </div>
-          </div>
-          <div id="goal-list" class="card-list"></div>
-        </article>
+      <section class="two-column" id="journey">
+        <article class="glass"><div class="section-heading"><div><p class="eyebrow">Journey</p><h2>Timeline</h2></div></div><div id="timeline-list" class="timeline-list"></div></article>
+        <article class="glass"><div class="section-heading"><div><p class="eyebrow">Goals</p><h2>Goals & Milestones</h2></div></div><div id="goal-list" class="card-list"></div></article>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Degree map</p>
-            <h2>Planned Coursework</h2>
-          </div>
-        </div>
-        <div id="planned-list" class="card-grid"></div>
+      <section class="glass"><div class="section-heading"><div><p class="eyebrow">Roadmap</p><h2>Planned Coursework</h2></div></div><div id="planned-list" class="card-grid"></div></section>
+
+      <section class="two-column" id="credentials">
+        <article class="glass"><div class="section-heading"><div><p class="eyebrow">Recognition</p><h2>Achievements</h2></div></div><div id="achievement-list" class="card-list"></div></article>
+        <article class="glass"><div class="section-heading"><div><p class="eyebrow">Verified learning</p><h2>Certifications</h2></div></div><div id="certification-list" class="card-list"></div></article>
       </section>
 
-      <section class="two-column">
-        <article class="glass">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Recognition</p>
-              <h2>Achievements</h2>
-            </div>
-          </div>
-          <div id="achievement-list" class="card-list"></div>
-        </article>
-        <article class="glass">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Verified learning</p>
-              <h2>Certifications</h2>
-            </div>
-          </div>
-          <div id="certification-list" class="card-list"></div>
-        </article>
+      <section class="glass" id="projects"><div class="section-heading"><div><p class="eyebrow">Applied learning</p><h2>Academic Projects</h2></div></div><div id="project-list" class="card-grid"></div></section>
+
+      <section class="two-column" id="skills">
+        <article class="glass"><div class="section-heading"><div><p class="eyebrow">Capabilities</p><h2>Skills Matrix</h2></div></div><div id="skill-list" class="tag-cloud"></div></article>
+        <article class="glass"><div class="section-heading"><div><p class="eyebrow">Prior learning</p><h2>Transfer Credits</h2></div></div><div id="transfer-list" class="card-list"></div></article>
       </section>
 
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Applied learning</p>
-            <h2>Academic Projects</h2>
-          </div>
-        </div>
-        <div id="project-list" class="card-grid"></div>
-      </section>
-
-      <section class="two-column">
-        <article class="glass">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Capabilities</p>
-              <h2>Skills Matrix</h2>
-            </div>
-          </div>
-          <div id="skill-list" class="tag-cloud"></div>
-        </article>
-        <article class="glass">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Prior learning</p>
-              <h2>Transfer Credits</h2>
-            </div>
-          </div>
-          <div id="transfer-list" class="card-list"></div>
-        </article>
-      </section>
-
-      <section class="glass">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Reference</p>
-            <h2>Grading Modes</h2>
-          </div>
-        </div>
-        <div id="grading-modes" class="grading-grid"></div>
-        <p class="privacy-note"><i class="fa-solid fa-shield-halved"></i> This is a public, unofficial academic portfolio—not an official transcript.</p>
-      </section>
+      <section class="glass" id="grading-reference"><div class="section-heading"><div><p class="eyebrow">Reference</p><h2>Grading Modes</h2></div></div><div id="grading-modes" class="grading-grid"></div><p class="privacy-note"><i class="fa-solid fa-shield-halved"></i> This is an unofficial academic portfolio, not an official University of Toledo transcript.</p></section>
     </div>
 
-    <footer>
-      <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
-    </footer>
+    <footer><p>Academic information last updated <span id="education-updated">when published</span>.</p><p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p></footer>
   </main>
 
+  <!-- ======================================================= -->
+  <!-- Shared Onyx Navigation Dock                             -->
+  <!-- ======================================================= -->
   <nav class="onyx-dock" aria-label="Primary navigation">
     <span class="dock-active-lens" aria-hidden="true"></span>
-    <a href="/" class="dock-item">
-      <span class="dock-icon"><i class="fa-solid fa-house"></i></span>
-      <span class="dock-label">Home</span>
-    </a>
-    <a href="/beta" class="dock-item">
-      <span class="dock-icon"><i class="fa-solid fa-flask"></i></span>
-      <span class="dock-label">Beta</span>
-    </a>
-    <a href="/education" class="dock-item active" aria-current="page">
-      <span class="dock-icon"><i class="fa-solid fa-graduation-cap"></i></span>
-      <span class="dock-label">Education</span>
-    </a>
-    <a href="/resume" class="dock-item">
-      <span class="dock-icon"><i class="fa-solid fa-file-lines"></i></span>
-      <span class="dock-label">Resume</span>
-    </a>
-    <a href="/settings" class="dock-item">
-      <span class="dock-icon"><i class="fa-solid fa-gear"></i></span>
-      <span class="dock-label">Settings</span>
-    </a>
+    <a href="/" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-house"></i></span><span class="dock-label">Home</span></a>
+    <a href="/beta" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-flask"></i></span><span class="dock-label">Beta</span></a>
+    <a href="/education" class="dock-item active" data-education-link aria-current="page"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span><span class="dock-label">Education</span></a>
+    <a href="/resume" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span><span class="dock-label">Resume</span></a>
+    <a href="/settings" class="dock-item"><span class="dock-icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span><span class="dock-label">Settings</span></a>
   </nav>
 
   <script src="settings.js"></script>
   <script type="module" src="education.js"></script>
+  <script>
+    (() => {
+      const syncDock = () => {
+        const dock = document.querySelector('.onyx-dock');
+        if (!dock) return;
+        try {
+          const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+          dock.querySelectorAll('[data-education-link]').forEach(link => link.hidden = settings.showEducationPage === 'disabled');
+        } catch (_) {}
+        const active = dock.querySelector('.dock-item.active');
+        const lens = dock.querySelector('.dock-active-lens');
+        if (!active || !lens) return;
+        const position = () => {
+          const dockRect = dock.getBoundingClientRect();
+          const activeRect = active.getBoundingClientRect();
+          dock.style.setProperty('--lens-x', `${activeRect.left - dockRect.left}px`);
+          dock.style.setProperty('--lens-width', `${activeRect.width}px`);
+          dock.classList.add('dock-ready');
+        };
+        requestAnimationFrame(() => requestAnimationFrame(position));
+        addEventListener('resize', position, { passive: true });
+      };
+      document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', syncDock, { once: true }) : syncDock();
+    })();
+  </script>
 </body>
 </html>
