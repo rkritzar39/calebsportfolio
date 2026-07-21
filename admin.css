@@ -236,7 +236,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂªÃƒâ€¦Ã‚Â¸ Windows 11 + iOS Glass Login Design (Fixed Desktop) */
+/* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂªÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ Windows 11 + iOS Glass Login Design (Fixed Desktop) */
 /* ===================================== */
 
 .modern-login {
@@ -437,7 +437,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€šÃ‚Â± FINAL RESPONSIVE MOBILE DESIGN     */
+/* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± FINAL RESPONSIVE MOBILE DESIGN     */
 /* ===================================== */
 @media (max-width: 900px) {
   /* Hide desktop hero */
@@ -600,7 +600,7 @@ a:hover {
 #login-section .g_id_signin > div {
   width: 100% !important;
   max-width: 100% !important;
-  min-width: 0 !important;    /* override GoogleÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢s inline min-width */
+  min-width: 0 !important;    /* override GoogleÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s inline min-width */
   display: block !important;
 }
 
@@ -611,7 +611,7 @@ a:hover {
     overflow: hidden;          /* ensures nothing bleeds out visually */
   }
 
-  /* Keep the GSI button visually ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“nativeÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â on mobile */
+  /* Keep the GSI button visually ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œnativeÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â on mobile */
   #login-section .g_id_signin {
     border: none !important;
     background: none !important;
@@ -999,7 +999,7 @@ a:hover {
 }
 
 /* ======================== */
-/* Form Element Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ iOS 26 Onyx Enhanced */
+/* Form Element Styles ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ iOS 26 Onyx Enhanced */
 /* ======================== */
 .form-group {
     margin-bottom: 22px;
@@ -1103,7 +1103,7 @@ select {
 }
 
 /* ======================== */
-/* Toggle Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ iOS 26 Onyx Enhanced (Fixed Alignment) */
+/* Toggle Styles ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ iOS 26 Onyx Enhanced (Fixed Alignment) */
 /* ======================== */
 .checkbox-group {
     display: flex;
@@ -1243,7 +1243,7 @@ select#edit-disability-icon-select {
 }
 
 /* ======================== */
-/* Button Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ iOS 26 Onyx */
+/* Button Styles ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ iOS 26 Onyx */
 /* ======================== */
 button, .button-primary {
     background-color: var(--accent-color);
@@ -2726,7 +2726,7 @@ body.light-mode .shoutout-preview-area .youtube-channel-card span {
 }
 
 /* ======================================== */
-/* Business Info & Admin Styles ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ Onyx Refined */
+/* Business Info & Admin Styles ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Onyx Refined */
 /* ======================================== */
 
 /* ---------------------------------------- */
@@ -4850,7 +4850,7 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
 
 
 /* ============================================================
-   ADMIN PORTAL 3.0 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Whole Portal Redesign
+   ADMIN PORTAL 3.0 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Whole Portal Redesign
    ------------------------------------------------------------
    A full admin-shell refresh: sidebar navigation, dashboard,
    section filtering, quick actions, modern cards, responsive layout.
@@ -5261,7 +5261,7 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
   }
 }
 /* ============================================================
-   ADMIN CSS V6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â FULL DESIGN, MOTION, SIDEBAR & TOGGLE REFRESH
+   ADMIN CSS V6 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â FULL DESIGN, MOTION, SIDEBAR & TOGGLE REFRESH
    ------------------------------------------------------------
    This block intentionally lives at the END of the full original CSS.
    It preserves every existing selector/rule above and overrides the
@@ -7296,3 +7296,8 @@ button,
 .education-admin-item { display:grid; grid-template-columns:1fr 1fr 2fr auto; gap:.7rem; align-items:center; }
 .education-admin-item.project { grid-template-columns:1fr 1fr 1fr 2fr auto; }
 @media(max-width:800px){.education-admin-grid{grid-template-columns:1fr}.education-admin-grid .full-width{grid-column:auto}.education-semester-head,.education-course-row,.education-admin-item,.education-admin-item.project{grid-template-columns:1fr}.education-course-row button,.education-admin-item button{justify-self:start}}
+
+/* ======================================================= */
+/* Advanced Education Admin                                */
+/* ======================================================= */
+.advanced-education-admin details{margin:1.25rem 0;padding:1rem;border:1px solid var(--border-color);border-radius:1rem;background:color-mix(in srgb,var(--content-bg) 82%,transparent)}.advanced-education-admin summary{cursor:pointer;font-weight:750;font-size:1.05rem}.education-publish-bar{display:grid;grid-template-columns:1fr 1fr auto auto;gap:1rem;align-items:end}.education-admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1rem}.education-admin-grid label{display:flex;flex-direction:column;gap:.45rem}.education-admin-grid .full-width{grid-column:1/-1}.privacy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:1rem}.privacy-grid label{padding:.75rem;border:1px solid var(--border-color);border-radius:.75rem}.advanced-semester-editor{margin:1rem 0;padding:1rem;border:1px solid var(--border-color);border-radius:1rem}.semester-admin-head{display:grid;grid-template-columns:1.5fr 1.5fr 1fr auto auto;gap:.65rem;align-items:center}.advanced-course-list{display:grid;gap:.7rem;margin-top:1rem}.advanced-course-row{display:grid;grid-template-columns:.7fr 1.5fr .5fr 1fr .8fr .8fr 1fr 1.2fr .9fr auto;gap:.5rem;align-items:center;padding:.75rem;border-radius:.8rem;background:color-mix(in srgb,var(--bg-color) 65%,transparent)}.json-editor{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-height:12rem;margin-top:1rem}.import-label{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:10px 20px;border-radius:var(--border-radius-md)}.sticky-save{position:sticky;bottom:1rem;z-index:5;padding:1rem;background:color-mix(in srgb,var(--content-bg) 88%,transparent);backdrop-filter:blur(20px);border-radius:1rem}@media(max-width:1100px){.education-admin-grid,.privacy-grid{grid-template-columns:repeat(2,1fr)}.advanced-course-row{grid-template-columns:repeat(3,1fr)}.education-publish-bar{grid-template-columns:1fr 1fr}}@media(max-width:650px){.education-admin-grid,.privacy-grid,.education-publish-bar,.semester-admin-head,.advanced-course-row{grid-template-columns:1fr}}
