@@ -52,6 +52,7 @@ class SettingsManager {
       rearrangingEnabled: "disabled",
 
       // Homepage sections visibility
+      showEducationPage: "enabled",
       showSocialLinks: "enabled",
       showPresidentSection: "enabled",
       showTiktokShoutouts: "enabled",
