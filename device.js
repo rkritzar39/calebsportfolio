@@ -13,7 +13,7 @@
  * 🧾 WEBSITE VERSION CONFIG
  * Single source of truth for Version Information section
  * =========================================================== */
-const WEBSITE_VERSION = "v27.0-rc.2";
+const WEBSITE_VERSION = "v27.0 RC 2";
 const WEBSITE_BUILD = "2026.07.22";
 const RELEASE_TRACK = "Release Candidate";
 const REVAMP_STATUS = "Release candidate development and testing in progress";
