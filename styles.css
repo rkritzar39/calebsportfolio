@@ -10440,591 +10440,959 @@ body.light-e .creator-sort-controls select option {
     color: #ffffff !important;
 }
 
-/* = / 
-/ Beta Preview Page — Theme-Aware Liquid Glass Fix        / 
-/ = */
+/* ====================================================== */
+/* Beta Preview Page - Readable Theme-Aware Liquid Glass  */
+/* ====================================================== */
 
-:root { 
---beta-surface: 
-radial-gradient( 
-circle at 36% 0%, 
-rgba(255, 255, 255, 0.12), 
-transparent 52% 
-), 
-var(--bubble-gradient), 
-var(--liquid-refraction), 
-color-mix(in srgb, var(--content-bg) 88%, black 12%);
+:root {
+  --beta-surface:
+    radial-gradient(
+      circle at 36% 0%,
+      rgba(255, 255, 255, 0.12),
+      transparent 52%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 92%, black 8%);
 
---beta-card-surface: 
-linear-gradient( 
-180deg, 
-rgba(255, 255, 255, 0.08), 
-rgba(255, 255, 255, 0.02) 52%, 
-rgba(0, 0, 0, 0.14) 
-), 
-color-mix(in srgb, var(--content-bg) 88%, black 12%);
+  --beta-card-surface:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.035) 52%,
+      rgba(0, 0, 0, 0.12)
+    ),
+    color-mix(in srgb, var(--content-bg) 92%, black 8%);
 
---beta-border: color-mix(in srgb, var(--border-color) 78%, transparent); 
---beta-card-border: color-mix(in srgb, var(--border-color) 58%, transparent);
+  --beta-border: color-mix(in srgb, var(--border-color) 82%, transparent);
+  --beta-card-border: color-mix(in srgb, var(--border-color) 68%, transparent);
 
---beta-shadow: 
-var(--bubble-highlight), 
-0 30px 70px color-mix(in srgb, var(--shadow-color) 86%, transparent), 
-inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  --beta-shadow:
+    var(--bubble-highlight),
+    0 24px 58px color-mix(in srgb, var(--shadow-color) 76%, transparent),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
 
---beta-card-shadow: 
-0 10px 24px color-mix(in srgb, var(--shadow-color) 44%, transparent), 
-inset 0 1px 0 rgba(255, 255, 255, 0.09); 
+  --beta-card-shadow:
+    0 10px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  --beta-reading-width: 74ch;
+  --beta-section-gap: 30px;
+  --beta-line-height: 1.7;
 }
 
-/* Light mode support for all your theme class styles */ 
-html.light-mode body, 
-html.light-e body, 
-html[data-theme="light"] body, 
-body.light-mode, 
-body.light-e, 
-body[data-theme="light"] { 
---beta-surface: 
-radial-gradient( 
-circle at 40% 0%, 
-rgba(255, 255, 255, 0.9), 
-transparent 56% 
-), 
-var(--bubble-gradient), 
-var(--liquid-refraction), 
-color-mix(in srgb, var(--content-bg) 88%, white 12%);
+/* ====================================================== */
+/* Light Mode                                             */
+/* ====================================================== */
 
---beta-card-surface: 
-linear-gradient( 
-180deg, 
-rgba(255, 255, 255, 0.72), 
-rgba(255, 255, 255, 0.36) 52%, 
-rgba(225, 241, 255, 0.28) 
-), 
-color-mix(in srgb, var(--content-bg) 88%, white 12%);
+html.light-mode body,
+html.light-e body,
+html[data-theme="light"] body,
+body.light-mode,
+body.light-e,
+body[data-theme="light"] {
+  --beta-surface:
+    radial-gradient(
+      circle at 40% 0%,
+      rgba(255, 255, 255, 0.92),
+      transparent 56%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 94%, white 6%);
 
---beta-border: color-mix(in srgb, var(--border-color) 88%, white 12%); 
---beta-card-border: color-mix(in srgb, var(--border-color) 76%, white 10%);
+  --beta-card-surface:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.82),
+      rgba(255, 255, 255, 0.52) 52%,
+      rgba(225, 241, 255, 0.35)
+    ),
+    color-mix(in srgb, var(--content-bg) 94%, white 6%);
 
---beta-shadow: 
-var(--bubble-highlight), 
-0 22px 56px color-mix(in srgb, var(--shadow-color) 68%, transparent), 
-inset 0 -1px 0 rgba(0, 0, 0, 0.045);
+  --beta-border: color-mix(in srgb, var(--border-color) 90%, white 10%);
+  --beta-card-border: color-mix(in srgb, var(--border-color) 82%, white 8%);
 
---beta-card-shadow: 
-0 10px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent), 
-inset 0 1px 0 rgba(255, 255, 255, 0.86); 
+  --beta-shadow:
+    var(--bubble-highlight),
+    0 20px 48px color-mix(in srgb, var(--shadow-color) 58%, transparent),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+
+  --beta-card-shadow:
+    0 8px 22px color-mix(in srgb, var(--shadow-color) 34%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+/* ====================================================== */
+/* Dark Mode                                              */
+/* ====================================================== */
 
-/* Dark mode support */ 
-html.dark-mode body, 
-html.dark-e body, 
-html[data-theme="dark"] body, 
-body.dark-mode, 
-body.dark-e, 
-body[data-theme="dark"] { 
---beta-surface: 
-radial-gradient( 
-circle at 36% 0%, 
-rgba(255, 255, 255, 0.12), 
-transparent 52% 
-), 
-var(--bubble-gradient), 
-var(--liquid-refraction), 
-color-mix(in srgb, var(--content-bg) 88%, black 12%);
+html.dark-mode body,
+html.dark-e body,
+html[data-theme="dark"] body,
+body.dark-mode,
+body.dark-e,
+body[data-theme="dark"] {
+  --beta-surface:
+    radial-gradient(
+      circle at 36% 0%,
+      rgba(255, 255, 255, 0.12),
+      transparent 52%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 92%, black 8%);
 
---beta-card-surface: 
-linear-gradient( 
-180deg, 
-rgba(255, 255, 255, 0.08), 
-rgba(255, 255, 255, 0.02) 52%, 
-rgba(0, 0, 0, 0.14) 
-), 
-color-mix(in srgb, var(--content-bg) 88%, black 12%);
+  --beta-card-surface:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.035) 52%,
+      rgba(0, 0, 0, 0.12)
+    ),
+    color-mix(in srgb, var(--content-bg) 92%, black 8%);
 
---beta-border: color-mix(in srgb, var(--border-color) 78%, transparent); 
---beta-card-border: color-mix(in srgb, var(--border-color) 58%, transparent);
+  --beta-border: color-mix(in srgb, var(--border-color) 82%, transparent);
+  --beta-card-border: color-mix(in srgb, var(--border-color) 68%, transparent);
 
---beta-shadow: 
-var(--bubble-highlight), 
-0 30px 70px color-mix(in srgb, var(--shadow-color) 86%, transparent), 
-inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  --beta-shadow:
+    var(--bubble-highlight),
+    0 24px 58px color-mix(in srgb, var(--shadow-color) 76%, transparent),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
 
---beta-card-shadow: 
-0 10px 24px color-mix(in srgb, var(--shadow-color) 44%, transparent), 
-inset 0 1px 0 rgba(255, 255, 255, 0.09); 
+  --beta-card-shadow:
+    0 10px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* = / 
-/ Custom Wallpaper Adaptive Transparency                  / 
-/ = */
+/* ====================================================== */
+/* Custom Wallpaper                                      */
+/* ====================================================== */
 
-/* Dark Mode Wallpaper Tuning for Beta */ 
-body.custom-background-active { 
---beta-surface: 
-radial-gradient(circle at 36% 0%, rgba(255, 255, 255, 0.12), transparent 52%), 
-var(--bubble-gradient), 
-var(--liquid-refraction), 
-color-mix(in srgb, var(--content-bg) 35%, transparent) !important;
+body.custom-background-active {
+  --beta-surface:
+    radial-gradient(
+      circle at 36% 0%,
+      rgba(255, 255, 255, 0.14),
+      transparent 52%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 58%, transparent);
 
---beta-card-surface: 
-linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01) 52%, rgba(0, 0, 0, 0.1)), 
-color-mix(in srgb, var(--content-bg) 25%, transparent) !important; 
+  --beta-card-surface:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.035) 52%,
+      rgba(0, 0, 0, 0.14)
+    ),
+    color-mix(in srgb, var(--content-bg) 50%, transparent);
 }
 
-/* Light Mode Wallpaper Tuning & Background Rescue */ 
-html.light-mode body.custom-background-active, 
-html[data-theme="light"] body.custom-background-active, 
-body.light-mode.custom-background-active, 
-body[data-theme="light"].custom-background-active { 
-background: 
-var(--custom-background-image), 
-var(--bg-color) !important; 
-background-size: var(--custom-background-size, cover) !important; 
-background-position: var(--custom-background-position, center) !important; 
-background-attachment: var(--custom-background-attachment, fixed) !important; 
-background-repeat: var(--custom-background-repeat, no-repeat) !important;
+html.light-mode body.custom-background-active,
+html.light-e body.custom-background-active,
+html[data-theme="light"] body.custom-background-active,
+body.light-mode.custom-background-active,
+body.light-e.custom-background-active,
+body[data-theme="light"].custom-background-active {
+  background:
+    var(--custom-background-image),
+    var(--bg-color) !important;
+  background-size: var(--custom-background-size, cover) !important;
+  background-position: var(--custom-background-position, center) !important;
+  background-attachment: var(--custom-background-attachment, fixed) !important;
+  background-repeat: var(--custom-background-repeat, no-repeat) !important;
 
---light-content-bg: rgba(255, 255, 255, 0.28) !important; 
---content-bg: var(--light-content-bg) !important;
+  --light-content-bg: rgba(255, 255, 255, 0.5) !important;
+  --content-bg: var(--light-content-bg) !important;
 
---beta-surface: 
-radial-gradient(circle at 40% 0%, rgba(255, 255, 255, 0.65), transparent 56%), 
-var(--bubble-gradient), 
-var(--liquid-refraction), 
-color-mix(in srgb, var(--content-bg) 45%, transparent) !important;
+  --beta-surface:
+    radial-gradient(
+      circle at 40% 0%,
+      rgba(255, 255, 255, 0.78),
+      transparent 56%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 68%, transparent);
 
---beta-card-surface: 
-linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15) 52%, rgba(225, 241, 255, 0.1)), 
-color-mix(in srgb, var(--content-bg) 35%, transparent) !important; 
+  --beta-card-surface:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.68),
+      rgba(255, 255, 255, 0.4) 52%,
+      rgba(225, 241, 255, 0.24)
+    ),
+    color-mix(in srgb, var(--content-bg) 58%, transparent);
 }
 
-/* = / 
-/ Page Container                                          / 
-/ = */
+/* ====================================================== */
+/* Page Container                                        */
+/* ====================================================== */
 
-.beta-page .container { 
-max-width: 1100px; 
-margin: 0 auto; 
-padding-bottom: 120px; 
+.beta-page .container {
+  width: min(100% - 32px, 1100px);
+  margin: 0 auto;
+  padding-bottom: 120px;
 }
 
-/* = / 
-/ Main Beta Glass Section                                 / 
-/ = */
+/* ====================================================== */
+/* Main Glass Sections                                   */
+/* ====================================================== */
 
-.beta-page .beta-page-section { 
-position: relative; 
-isolation: isolate; 
-overflow: hidden;
+.beta-page .beta-page-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
 
-padding: 30px; 
-margin-bottom: 28px;
+  padding: clamp(22px, 4vw, 34px);
+  margin-bottom: var(--beta-section-gap);
 
-color: var(--text-color);
+  color: var(--text-color);
+  background: var(--beta-surface) !important;
+  border: 1px solid var(--beta-border) !important;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--beta-shadow) !important;
 
-background: var(--beta-surface) !important; 
-border: 1px solid var(--beta-border) !important; 
-border-radius: var(--radius-xl);
-
-box-shadow: var(--beta-shadow) !important;
-
-backdrop-filter: var(--backdrop-blur); 
--webkit-backdrop-filter: var(--backdrop-blur); 
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
 }
 
-.beta-page .beta-page-section::before { 
-content: ""; 
-position: absolute; 
-inset: 0; 
-border-radius: inherit; 
-pointer-events: none; 
-z-index: 0;
-
-background: var(--liquid-reflection); 
-opacity: 0.28; 
+.beta-page .beta-page-section::before,
+.beta-page .beta-page-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
 }
 
-.beta-page .beta-page-section::after { 
-content: ""; 
-position: absolute; 
-inset: 0; 
-border-radius: inherit; 
-pointer-events: none; 
-z-index: 0;
-
-background: 
-radial-gradient( 
-circle at 50% 0%, 
-color-mix(in srgb, var(--glow-color) 54%, transparent), 
-transparent 58% 
-), 
-radial-gradient( 
-circle at 50% 100%, 
-color-mix(in srgb, var(--shadow-color) 42%, transparent), 
-transparent 72% 
-);
-
-opacity: 0.58; 
+.beta-page .beta-page-section::before {
+  background: var(--liquid-reflection);
+  opacity: 0.2;
 }
 
-.beta-page .beta-page-section > * { 
-position: relative; 
-z-index: 1; 
+.beta-page .beta-page-section::after {
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--glow-color) 38%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      color-mix(in srgb, var(--shadow-color) 30%, transparent),
+      transparent 72%
+    );
+  opacity: 0.42;
 }
 
-/* = / 
-/ Header                                                  / 
-/ = */
-
-.beta-page .beta-page-header { 
-display: flex; 
-align-items: flex-start; 
-justify-content: space-between; 
-gap: 20px; 
+.beta-page .beta-page-section > * {
+  position: relative;
+  z-index: 1;
 }
 
-.beta-page .beta-eyebrow { 
-margin: 0 0 8px; 
-color: var(--accent-color); 
-font-weight: 800; 
-letter-spacing: 0.02em;
+/* ====================================================== */
+/* Readability Defaults                                   */
+/* ====================================================== */
 
-display: flex; 
-align-items: center; 
-gap: 8px; 
+.beta-page p,
+.beta-page li {
+  line-height: var(--beta-line-height);
 }
 
-.beta-page .beta-page-header h1 { 
-margin: 0; 
-color: var(--text-color); 
-font-size: clamp(2rem, 4vw, 3.4rem); 
-letter-spacing: -0.05em; 
+.beta-page .beta-page-subtitle,
+.beta-page .beta-section-heading p,
+.beta-page .beta-feature-item p,
+.beta-page .beta-notes-list,
+.beta-page .beta-roadmap-item p,
+.beta-page .beta-release li,
+.beta-page .beta-feedback-privacy {
+  color: var(--secondary-text);
 }
 
-.beta-page .beta-page-subtitle { 
-max-width: 680px; 
-margin: 12px 0 0; 
-color: var(--secondary-text); 
-font-size: 1.05rem; 
-line-height: 1.55; 
+.beta-page .beta-page-subtitle,
+.beta-page .beta-section-heading p,
+.beta-page .beta-notes-list,
+.beta-page .beta-feedback-privacy {
+  max-width: var(--beta-reading-width);
 }
 
-/* = / 
-/ Version Pill                                            / 
-/ = */
-
-.beta-page .beta-version-pill { 
-display: inline-flex; 
-align-items: center; 
-justify-content: center;
-
-padding: 9px 15px; 
-border-radius: 999px;
-
-color: #ffffff; 
-font-size: 0.88rem; 
-font-weight: 900; 
-white-space: nowrap;
-
-background: 
-linear-gradient( 
-135deg, 
-color-mix(in srgb, var(--accent-color) 88%, white 12%), 
-color-mix(in srgb, var(--accent-color) 88%, black 12%) 
-);
-
-box-shadow: 
-inset 0 1px 0 rgba(255,255,255,0.22), 
-0 8px 18px color-mix(in srgb, var(--accent-color) 24%, transparent); 
+.beta-page h1,
+.beta-page h2,
+.beta-page h3,
+.beta-page strong {
+  text-wrap: balance;
 }
 
-/* = / 
-/ Summary Grid                                            / 
-/ = */
-
-.beta-page .beta-summary-grid { 
-display: grid; 
-grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); 
-gap: 14px; 
-margin-top: 24px; 
+.beta-page p,
+.beta-page li {
+  text-wrap: pretty;
 }
 
-.beta-page .beta-summary-card, 
-.beta-page .beta-feature-item { 
-position: relative; 
-overflow: hidden;
+/* ====================================================== */
+/* Header                                                 */
+/* ====================================================== */
 
-background: var(--beta-card-surface) !important; 
-border: 1px solid var(--beta-card-border) !important; 
-border-radius: var(--radius-lg);
-
-box-shadow: var(--beta-card-shadow) !important;
-
-backdrop-filter: blur(18px) saturate(150%); 
--webkit-backdrop-filter: blur(18px) saturate(150%); 
+.beta-page .beta-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.beta-page .beta-summary-card { 
-padding: 18px; 
+.beta-page .beta-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--accent-color);
+  font-weight: 800;
+  letter-spacing: 0.025em;
 }
 
-.beta-page .beta-summary-label { 
-display: block; 
-color: var(--secondary-text); 
-font-size: 0.82rem; 
-font-weight: 700; 
-margin-bottom: 5px; 
+.beta-page .beta-page-header h1 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
 }
 
-.beta-page .beta-summary-card strong { 
-color: var(--text-color); 
-font-size: 1rem; 
+.beta-page .beta-page-subtitle {
+  margin: 16px 0 0;
+  font-size: clamp(1rem, 1.5vw, 1.08rem);
 }
 
-/* = / 
-/ Section Heading                                         / 
-/ = */
+/* ====================================================== */
+/* Version Pill                                           */
+/* ====================================================== */
 
-.beta-page .beta-section-heading { 
-margin-bottom: 18px; 
+.beta-page .beta-version-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+
+  min-height: 40px;
+  padding: 9px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-color) 88%, white 12%),
+    color-mix(in srgb, var(--accent-color) 88%, black 12%)
+  );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 8px 18px color-mix(in srgb, var(--accent-color) 24%, transparent);
 }
 
-.beta-page .beta-section-heading h2 { 
-margin: 0; 
-color: var(--text-color);
+/* ====================================================== */
+/* Summary Grid                                           */
+/* ====================================================== */
 
-display: flex; 
-align-items: center; 
-gap: 10px; 
+.beta-page .beta-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 16px;
+  margin-top: 28px;
 }
 
-.beta-page .beta-section-heading h2 i { 
-color: var(--accent-color); 
+.beta-page .beta-summary-card,
+.beta-page .beta-feature-item,
+.beta-page .beta-release,
+.beta-page .beta-removed-item {
+  position: relative;
+  overflow: hidden;
+  background: var(--beta-card-surface) !important;
+  border: 1px solid var(--beta-card-border) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--beta-card-shadow) !important;
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
 }
 
-.beta-page .beta-section-heading p { 
-margin: 6px 0 0; 
-color: var(--secondary-text); 
+.beta-page .beta-summary-card {
+  min-height: 104px;
+  padding: 20px;
 }
 
-/* = / 
-/ Feature List                                            / 
-/ = */
-
-.beta-page .beta-feature-list { 
-display: grid; 
-gap: 16px; 
+.beta-page .beta-summary-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--secondary-text);
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
 }
 
-.beta-page .beta-feature-item { 
-display: grid; 
-grid-template-columns: 50px 1fr; 
-gap: 15px; 
-padding: 18px; 
+.beta-page .beta-summary-card strong {
+  display: block;
+  color: var(--text-color);
+  font-size: 1.02rem;
+  line-height: 1.45;
 }
 
-.beta-page .beta-feature-icon { 
-width: 50px; 
-height: 50px; 
-border-radius: 17px;
+/* ====================================================== */
+/* Section Headings                                       */
+/* ====================================================== */
 
-display: inline-flex; 
-align-items: center; 
-justify-content: center;
-
-color: #ffffff; 
-font-size: 1.15rem;
-
-background: 
-linear-gradient( 
-135deg, 
-color-mix(in srgb, var(--accent-color) 88%, white 12%), 
-color-mix(in srgb, var(--accent-color) 88%, black 12%) 
-);
-
-box-shadow: 
-inset 0 1px 0 rgba(255,255,255,0.2), 
-0 8px 18px color-mix(in srgb, var(--accent-color) 22%, transparent); 
+.beta-page .beta-section-heading {
+  margin-bottom: 22px;
 }
 
-.beta-page .beta-feature-item h3 { 
-margin: 0 0 6px; 
-color: var(--text-color); 
-font-size: 1.08rem; 
-font-weight: 850; 
+.beta-page .beta-section-heading h2 {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin: 0;
+  color: var(--text-color);
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  line-height: 1.25;
 }
 
-.beta-page .beta-feature-item p { 
-margin: 0 0 12px; 
-color: var(--secondary-text); 
-line-height: 1.5; 
+.beta-page .beta-section-heading h2 i {
+  flex: 0 0 auto;
+  margin-top: 0.18em;
+  color: var(--accent-color);
 }
 
-/* = / 
-/ Status Tags                                             / 
-/ = */
-
-.beta-page .beta-status { 
-display: inline-flex; 
-align-items: center; 
-justify-content: center;
-
-padding: 5px 10px; 
-border-radius: 999px;
-
-font-size: 0.78rem; 
-font-weight: 850; 
+.beta-page .beta-section-heading p {
+  margin: 9px 0 0;
+  font-size: 0.98rem;
 }
 
-.beta-page .beta-status.active { 
-color: #ffffff; 
-background: linear-gradient(135deg, #34c759, #0bd36f); 
+/* ====================================================== */
+/* Search                                                 */
+/* ====================================================== */
+
+.beta-page .beta-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.beta-page .beta-status.testing { 
-color: #111111; 
-background: linear-gradient(135deg, #ffd60a, #ffcc00); 
+.beta-page .beta-search-wrapper > i {
+  position: absolute;
+  left: 17px;
+  z-index: 2;
+  color: var(--secondary-text);
+  pointer-events: none;
 }
 
-.beta-page .beta-status.planned { 
-color: #ffffff; 
-background: linear-gradient(135deg, #8e8e93, #636366); 
+.beta-page .beta-search {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 52px 0 48px;
+  color: var(--text-color);
+  font: inherit;
+  font-size: 1rem;
+  background: var(--beta-card-surface);
+  border: 1px solid var(--beta-card-border);
+  border-radius: 16px;
+  outline: none;
 }
 
-/* = / 
-/ Notes                                                   / 
-/ = */
-
-.beta-page .beta-notes-list { 
-margin: 0; 
-padding-left: 1.25rem; 
-color: var(--secondary-text); 
+.beta-page .beta-search::placeholder {
+  color: color-mix(in srgb, var(--secondary-text) 82%, transparent);
 }
 
-.beta-page .beta-notes-list li { 
-margin: 8px 0; 
-line-height: 1.5; 
-color: var(--secondary-text); 
+.beta-page .beta-search:focus-visible {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 24%, transparent);
 }
 
-/* = / 
-/ Roadmap                                                 / 
-/ = */
-
-.beta-page .beta-roadmap { 
-display: grid; 
-gap: 14px; 
+.beta-page .beta-search-clear {
+  position: absolute;
+  right: 8px;
+  width: 38px;
+  height: 38px;
+  color: var(--text-color);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
-.beta-page .beta-roadmap-item { 
-display: grid; 
-grid-template-columns: 18px 1fr; 
-gap: 12px; 
-align-items: start; 
+.beta-page .beta-search-clear:hover,
+.beta-page .beta-search-clear:focus-visible {
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
 }
 
-.beta-page .roadmap-dot { 
-width: 12px; 
-height: 12px; 
-margin-top: 7px; 
-border-radius: 50%; 
-background: var(--secondary-text); 
-box-shadow: 0 0 10px color-mix(in srgb, var(--secondary-text) 40%, transparent); 
+.beta-page .beta-search-status {
+  margin: 11px 0 0;
+  color: var(--secondary-text);
+  font-size: 0.9rem;
 }
 
-.beta-page .roadmap-dot.active { 
-background: var(--accent-color); 
-box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color) 60%, transparent); 
+/* ====================================================== */
+/* Feature List                                           */
+/* ====================================================== */
+
+.beta-page .beta-feature-list {
+  display: grid;
+  gap: 18px;
 }
 
-.beta-page .roadmap-dot.future { 
-background: #bf5af2; 
-box-shadow: 0 0 14px color-mix(in srgb, #bf5af2 45%, transparent); 
+.beta-page .beta-feature-item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 17px;
+  padding: 21px;
 }
 
-.beta-page .beta-roadmap-item strong { 
-color: var(--text-color); 
+.beta-page .beta-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 17px;
+  color: #ffffff;
+  font-size: 1.15rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-color) 88%, white 12%),
+    color-mix(in srgb, var(--accent-color) 88%, black 12%)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 18px color-mix(in srgb, var(--accent-color) 22%, transparent);
 }
 
-.beta-page .beta-roadmap-item p { 
-margin: 2px 0 0; 
-color: var(--secondary-text); 
+.beta-page .beta-feature-item h3 {
+  margin: 1px 0 8px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: 850;
+  line-height: 1.35;
 }
 
-/* = / 
-/ Actions                                                 / 
-/ = */
-
-.beta-page .beta-actions { 
-display: flex; 
-gap: 12px; 
-flex-wrap: wrap; 
-margin: 10px 0 32px; 
+.beta-page .beta-feature-item p {
+  max-width: var(--beta-reading-width);
+  margin: 0 0 14px;
 }
 
-.beta-page .beta-action-button { 
-display: inline-flex; 
-align-items: center; 
-justify-content: center; 
-gap: 9px;
+/* ====================================================== */
+/* Changelog                                              */
+/* ====================================================== */
 
-min-height: 48px; 
-padding: 0 18px; 
-border-radius: 999px;
-
-color: #ffffff; 
-font-weight: 850; 
-text-decoration: none;
-
-background: 
-linear-gradient( 
-135deg, 
-color-mix(in srgb, var(--accent-color) 88%, white 12%), 
-color-mix(in srgb, var(--accent-color) 88%, black 12%) 
-);
-
-box-shadow: 
-inset 0 1px 0 rgba(255,255,255,0.18), 
-0 8px 18px color-mix(in srgb, var(--accent-color) 20%, transparent); 
+.beta-page .beta-changelog {
+  display: grid;
+  gap: 18px;
 }
 
-.beta-page .beta-action-button.secondary { 
-color: var(--text-color);
-
-background: 
-linear-gradient( 
-180deg, 
-color-mix(in srgb, var(--glow-color) 16%, transparent), 
-transparent 
-), 
-color-mix(in srgb, var(--content-bg) 88%, transparent);
-
-border: 1px solid color-mix(in srgb, var(--border-color) 56%, transparent); 
+.beta-page .beta-release {
+  padding: 22px;
 }
 
-/* = / 
-/ Mobile                                                  / 
-/ = */
-
-@media screen and (max-width: 700px) { 
-.beta-page .beta-page-section { 
-padding: 22px; 
+.beta-page .beta-release.current {
+  border-color: color-mix(in srgb, var(--accent-color) 62%, var(--beta-card-border)) !important;
+  box-shadow:
+    0 12px 30px color-mix(in srgb, var(--accent-color) 14%, transparent),
+    var(--beta-card-shadow) !important;
 }
 
-.beta-page .beta-page-header { 
-flex-direction: column; 
+.beta-page .beta-release-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
 }
 
-.beta-page .beta-feature-item { 
-grid-template-columns: 1fr; 
+.beta-page .beta-release-header h3 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.18rem;
 }
 
-.beta-page .beta-feature-icon { 
-width: 46px; 
-height: 46px; 
-} 
+.beta-page .beta-release-meta {
+  margin: 5px 0 0;
+  color: var(--secondary-text);
+  font-size: 0.88rem;
+}
+
+.beta-page .beta-release ul {
+  margin: 0;
+  padding-left: 1.3rem;
+}
+
+.beta-page .beta-release li + li {
+  margin-top: 8px;
+}
+
+/* ====================================================== */
+/* Status Tags                                            */
+/* ====================================================== */
+
+.beta-page .beta-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.beta-page .beta-status.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #248a3d, #0a9f55);
+}
+
+.beta-page .beta-status.testing {
+  color: #201a00;
+  background: linear-gradient(135deg, #ffd60a, #f2b800);
+}
+
+.beta-page .beta-status.previous,
+.beta-page .beta-status.planned {
+  color: #ffffff;
+  background: linear-gradient(135deg, #73737a, #505055);
+}
+
+/* ====================================================== */
+/* Notes                                                  */
+/* ====================================================== */
+
+.beta-page .beta-notes-list {
+  margin: 0;
+  padding-left: 1.35rem;
+}
+
+.beta-page .beta-notes-list li {
+  padding-left: 0.2rem;
+}
+
+.beta-page .beta-notes-list li + li {
+  margin-top: 10px;
+}
+
+.beta-page .beta-notes-list li::marker,
+.beta-page .beta-release li::marker {
+  color: var(--accent-color);
+}
+
+/* ====================================================== */
+/* Removed Features                                       */
+/* ====================================================== */
+
+.beta-page .beta-removed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 14px;
+}
+
+.beta-page .beta-removed-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 58px;
+  padding: 15px 17px;
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.beta-page .beta-removed-item i {
+  width: 22px;
+  color: var(--secondary-text);
+  text-align: center;
+}
+
+/* ====================================================== */
+/* Roadmap                                                */
+/* ====================================================== */
+
+.beta-page .beta-roadmap {
+  position: relative;
+  display: grid;
+  gap: 0;
+}
+
+.beta-page .beta-roadmap-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding-bottom: 22px;
+}
+
+.beta-page .beta-roadmap-item:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 19px;
+  bottom: 0;
+  left: 6px;
+  width: 1px;
+  background: color-mix(in srgb, var(--border-color) 66%, transparent);
+}
+
+.beta-page .roadmap-dot {
+  position: relative;
+  z-index: 1;
+  width: 13px;
+  height: 13px;
+  margin-top: 6px;
+  border: 2px solid color-mix(in srgb, var(--content-bg) 74%, transparent);
+  border-radius: 50%;
+  background: var(--secondary-text);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--secondary-text) 40%, transparent);
+}
+
+.beta-page .roadmap-dot.active {
+  background: var(--accent-color);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color) 60%, transparent);
+}
+
+.beta-page .roadmap-dot.future {
+  background: #bf5af2;
+  box-shadow: 0 0 14px color-mix(in srgb, #bf5af2 45%, transparent);
+}
+
+.beta-page .beta-roadmap-item strong {
+  display: block;
+  color: var(--text-color);
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+.beta-page .beta-roadmap-item p {
+  max-width: var(--beta-reading-width);
+  margin: 5px 0 0;
+}
+
+/* ====================================================== */
+/* Feedback and Actions                                   */
+/* ====================================================== */
+
+.beta-page .beta-feedback-embed {
+  overflow: hidden;
+  border: 1px solid var(--beta-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--beta-card-surface);
+}
+
+.beta-page .beta-feedback-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  border: 0;
+}
+
+.beta-page .beta-feedback-privacy {
+  margin: 14px 0 0;
+  font-size: 0.88rem;
+}
+
+.beta-page .beta-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 12px 0 32px;
+}
+
+.beta-page .beta-actions a,
+.beta-page .beta-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 34%, transparent);
+  border-radius: 999px;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 850;
+  text-decoration: none;
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-color) 88%, white 12%),
+    color-mix(in srgb, var(--accent-color) 88%, black 12%)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 18px color-mix(in srgb, var(--accent-color) 20%, transparent);
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.beta-page .beta-actions a:hover,
+.beta-page .beta-action-button:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.beta-page .beta-actions a:focus-visible,
+.beta-page .beta-action-button:focus-visible,
+.beta-page .beta-search-clear:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent-color) 48%, transparent);
+  outline-offset: 3px;
+}
+
+.beta-page .beta-action-button.secondary {
+  color: var(--text-color);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 16%, transparent),
+      transparent
+    ),
+    color-mix(in srgb, var(--content-bg) 92%, transparent);
+  border-color: color-mix(in srgb, var(--border-color) 66%, transparent);
+}
+
+/* ====================================================== */
+/* No Results                                             */
+/* ====================================================== */
+
+.beta-page .beta-no-results {
+  text-align: center;
+}
+
+.beta-page .beta-no-results > i {
+  margin-bottom: 12px;
+  color: var(--accent-color);
+  font-size: 2rem;
+}
+
+.beta-page .beta-no-results h2 {
+  margin: 0;
+}
+
+.beta-page .beta-no-results p {
+  margin: 8px auto 18px;
+  color: var(--secondary-text);
+}
+
+/* ====================================================== */
+/* Mobile                                                 */
+/* ====================================================== */
+
+@media screen and (max-width: 700px) {
+  :root {
+    --beta-section-gap: 20px;
+  }
+
+  .beta-page .container {
+    width: min(100% - 20px, 1100px);
+  }
+
+  .beta-page .beta-page-section {
+    padding: 21px;
+    border-radius: max(20px, var(--radius-xl));
+  }
+
+  .beta-page .beta-page-header {
+    flex-direction: column;
+    gap: 17px;
+  }
+
+  .beta-page .beta-version-pill {
+    align-self: flex-start;
+  }
+
+  .beta-page .beta-summary-grid,
+  .beta-page .beta-removed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .beta-page .beta-summary-card {
+    min-height: auto;
+  }
+
+  .beta-page .beta-feature-item {
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .beta-page .beta-feature-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .beta-page .beta-release-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .beta-page .beta-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .beta-page .beta-actions a,
+  .beta-page .beta-action-button {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .beta-page .beta-feature-item {
+    grid-template-columns: 1fr;
+  }
+
+  .beta-page .beta-section-heading h2 {
+    gap: 9px;
+  }
+}
+
+/* ====================================================== */
+/* Accessibility Preferences                              */
+/* ====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .beta-page .beta-actions a,
+  .beta-page .beta-action-button {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .beta-page .beta-page-section,
+  .beta-page .beta-summary-card,
+  .beta-page .beta-feature-item,
+  .beta-page .beta-release,
+  .beta-page .beta-removed-item {
+    border-width: 2px !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .beta-page .beta-page-section::before,
+  .beta-page .beta-page-section::after {
+    opacity: 0.12;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .beta-page .beta-page-section,
+  .beta-page .beta-summary-card,
+  .beta-page .beta-feature-item,
+  .beta-page .beta-release,
+  .beta-page .beta-removed-item {
+    background-color: var(--content-bg) !important;
+  }
 }
 
 /* ================================================== */
