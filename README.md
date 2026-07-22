@@ -2,13 +2,13 @@
 
 <!-- AUTO:BADGES-START -->
 ![Version](https://img.shields.io/badge/version-v27.0--rc.1-blue)
-![Build](https://img.shields.io/badge/build-2026.07.17-purple)
+![Build](https://img.shields.io/badge/build-2026.07.22-purple)
 ![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
 ![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)
 ![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-45.0%25-f1e05a)
-![CSS](https://img.shields.io/badge/CSS-36.2%25-663399)
-![HTML](https://img.shields.io/badge/HTML-18.9%25-e34c26)
+![JavaScript](https://img.shields.io/badge/JavaScript-45.3%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-37.6%25-663399)
+![HTML](https://img.shields.io/badge/HTML-17.1%25-e34c26)
 <!-- AUTO:BADGES-END -->
 
 BusArmyDude.org is a responsive personal profile, link-in-bio, live-status, availability, academic portfolio, resume, technology information, accessibility, and content-management website.
@@ -26,26 +26,26 @@ The goal is not to build a job board, recruiting service, or applicant-tracking 
 <!-- AUTO:CURRENT-VERSION-START -->
 | Attribute | Details |
 | :--- | :--- |
-| **Version** | v27.0-rc.1 |
-| **Build** | 2026.07.17 |
+| **Version** | v27.0-rc.2 |
+| **Build** | 2026.07.22 |
 | **Release Track** | Release Candidate |
 | **Current Stable Version** | v26.5 |
-| **Revamp Status** | Release candidate development and testing in progress |
-| **Target Release** | Late July 2026 |
+| **Revamp Status** | Second release candidate with Education portfolio, navigation, documentation automation, and platform-planning improvements |
+| **Target Release** | Late July or early August 2026 |
 | **Next Stable Release** | v27.0 |
 
-> **Release Status:** v26.5 remains the current stable public version. v27.0-rc.1 is the current release candidate, and v27.0 is the next planned stable release.
+> **Release Status:** v26.5 remains the current stable public version. v27.0-rc.2 is the current release candidate, and v27.0 is the next planned stable release.
 <!-- AUTO:CURRENT-VERSION-END -->
 
 ### Current Release Metadata
 
 <!-- AUTO:RELEASE-METADATA-START -->
 ```js
-const WEBSITE_VERSION = "v27.0-rc.1";
-const WEBSITE_BUILD = "2026.07.17";
+const WEBSITE_VERSION = "v27.0-rc.2";
+const WEBSITE_BUILD = "2026.07.22";
 const RELEASE_TRACK = "Release Candidate";
-const REVAMP_STATUS = "Release candidate development and testing in progress";
-const TARGET_RELEASE = "Late July 2026";
+const REVAMP_STATUS = "Second release candidate with Education portfolio, navigation, documentation automation, and platform-planning improvements";
+const TARGET_RELEASE = "Late July or early August 2026";
 ```
 <!-- AUTO:RELEASE-METADATA-END -->
 
@@ -801,9 +801,9 @@ Public profiles and pages should not expose:
 <!-- AUTO:LANGUAGES-START -->
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 45.0% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
-| **CSS** | 36.2% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
-| **HTML** | 18.9% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
+| **JavaScript** | 45.3% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
+| **CSS** | 37.6% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
+| **HTML** | 17.1% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 <!-- AUTO:LANGUAGES-END -->
 
 Language percentages are based on repository analysis and may change as files are added, removed, or reorganized.
@@ -2536,7 +2536,7 @@ A separate brand or repository may reset or alter this version sequence.
 - **v26.6-beta.2** — Business and academic availability improvements
 - **v26.6-beta.3** — Retired-feature cleanup
 - **v26.6-beta.4** — Responsive Onyx navigation dock
-- **v27.0-rc.1** — Current release candidate
+- **v27.0-rc.2** — Current release candidate with Education, navigation, README automation, and platform-planning improvements
 - **v27.0** — Next planned stable personal-site release
 - **v27.1** — Proposed Education and post-release refinement release
 - **v27.5** — Possible platform-foundation preview
@@ -2550,9 +2550,9 @@ The roadmap may change if additional release candidates, security changes, hosti
 
 ## Version History
 
-### v27.0-rc.1
+### v27.0-rc.2
 
-Current release candidate. Promotes completed v26.6 beta work into the v27.0 release track and includes Profile spacing and styling updates, Live Activity refinements, dynamic song accents, Discord display-name, avatar, and status synchronization, creator-card updates, device-information updates, CSS cleanup, release documentation, and final compatibility testing.
+Second release candidate for v27.0. Adds the advanced Education portfolio, academic profile and degree progress, semester and course management, expanded grading modes, Education privacy and publishing controls, JSON backup support, print-friendly academic summaries, five-item Onyx navigation, Education-specific responsive navigation, README metadata automation, corrected workflow markers, updated platform documentation, and the Caleb's Social Talk roadmap. This candidate also removes the job-board direction and reframes the future product as a link-in-bio and social platform.
 
 ### v26.6-beta.4
 
