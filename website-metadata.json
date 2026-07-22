@@ -2,11 +2,11 @@
   "projectName": "BusArmyDude.org",
   "futurePlatformName": "Caleb's Social Talk",
   "projectStartDate": "2025-01-02",
-  "websiteVersion": "v27.0-rc.1",
-  "websiteBuild": "2026.07.17",
+  "websiteVersion": "v27.0-rc.2",
+  "websiteBuild": "2026.07.22",
   "releaseTrack": "Release Candidate",
   "currentStableVersion": "v26.5",
   "nextStableVersion": "v27.0",
-  "revampStatus": "Release candidate development and testing in progress",
-  "targetRelease": "Late July 2026"
+  "revampStatus": "Second release candidate with Education portfolio, navigation, documentation automation, and platform-planning improvements",
+  "targetRelease": "Late July or early August 2026"
 }
