@@ -13,11 +13,11 @@
 
 BusArmyDude.org is a responsive personal profile, link-in-bio, live-status, availability, academic portfolio, resume, technology information, accessibility, and content-management website.
 
-The project currently operates as a single-owner public website with an authenticated Admin Portal. Its proposed next major direction is a **multi-user link-in-bio and profile-building platform**: a service in the same broad product category as Linktree, but expanded with optional education, resume, project, skill-evidence, availability, live-activity, creator, and career modules.
+The project currently operates as a single-owner public website with an authenticated Admin Portal. Its proposed next major direction is a **multi-user link-in-bio and social platform** under the future brand **Caleb's Social Talk**. The platform would be in the same broad product category as link-in-bio services, but would expand into customizable profiles, posts, following, creator tools, communities, live activity, education, projects, interests, and personal updates.
 
-The goal is not to copy another product. The goal is to turn the strongest parts of BusArmyDude.org into a reusable platform where each registered user can create one shareable page, organize links and content, choose a visual identity, control privacy, review analytics, and optionally build a deeper academic or professional profile.
+The goal is not to build a job board, recruiting service, or applicant-tracking system. The goal is to turn the strongest parts of BusArmyDude.org into a reusable social identity platform where each registered user can create one shareable page, organize links and content, choose a visual identity, publish posts, follow other users, control privacy, review analytics, and optionally showcase education, projects, achievements, and interests.
 
-> **Current product status:** BusArmyDude.org remains a personal website. Multi-user profiles, employer accounts, opportunity listings, internal applications, and direct messaging are proposed future features and are not part of the current stable release.
+> **Current product status:** BusArmyDude.org remains a personal website. Multi-user profiles and Caleb's Social Talk are proposed future products and are not part of the current stable release.
 
 ---
 
@@ -56,8 +56,7 @@ v26.5 remains the current stable public version. v27.0-rc.1 is the current relea
 - [Future Multi-User Link-in-Bio Platform](#future-multi-user-link-in-bio-platform)
 - [Complete Proposed Feature Set](#complete-proposed-feature-set)
 - [Account Enforcement, Strikes, Bans, and Appeals](#account-enforcement-strikes-bans-and-appeals)
-- [Possible Built-In Social Media Platform](#possible-built-in-social-media-platform)
-- [Potential Career and Opportunity Platform](#potential-career-and-opportunity-platform)
+- [Caleb's Social Talk](#calebs-social-talk)
 - [Estimated Development Timeline](#estimated-development-timeline)
 - [Proposed Version Plan](#proposed-version-plan)
 - [Release Roadmap](#release-roadmap)
@@ -138,14 +137,14 @@ The website does not currently provide:
 
 - Public account registration for other users
 - Multi-user profile creation
-- Employer accounts
-- Educational organization accounts
-- Public profile search
-- Job or internship listings
-- Internal applications
+- Multi-user public accounts
+- Caleb's Social Talk profiles
+- Public profile and post search
+- Following and follower systems
+- Social posts, comments, likes, saves, and shares
 - Direct messaging
-- Candidate pipelines
-- Institution-verified credentials
+- Communities and groups
+- Platform-wide verification
 
 ---
 
@@ -806,21 +805,21 @@ The proposed future product is first and foremost a **multi-user link-in-bio pla
 6. Modular profile sections
 7. Useful analytics without invasive tracking
 8. Reliable account and content management
-9. Evidence-based academic and career profiles as an optional advanced layer
-10. Organization and opportunity features only after the profile platform is stable
+9. Evidence-based academic and personal profiles as an optional advanced layer
+10. Social features only after the profile platform and moderation systems are stable
 
 ### Intended audiences
 
 - Individuals who need a simple link page
 - Students building academic profiles
-- Graduates building career portfolios
-- Job seekers collecting work samples and contact links
+- Graduates building personal portfolios
+- Users collecting projects, achievements, resources, and contact links
 - Creators sharing content and social channels
 - Freelancers sharing services and booking links
 - Developers sharing projects and repositories
 - Small businesses sharing products, hours, and contact options
-- Clubs and organizations sharing resources and events
-- Employers and schools in later platform phases
+- Clubs and communities and public pages sharing resources and events
+- Schools, clubs, and communities in later platform phases
 
 ### Core experience
 
@@ -1138,14 +1137,14 @@ Analytics
 Settings
 ```
 
-Potential employer dock in a later phase:
+Potential Caleb's Social Talk dock in a later phase:
 
 ```text
-Dashboard
-Organization
-Postings
-Candidates
-Settings
+Home
+Explore
+Post
+Notifications
+Profile
 ```
 
 ### 10. Link-in-bio analytics
@@ -1309,7 +1308,7 @@ No user should be required to connect an external account to create a profile.
 
 Exact schedules, room locations, student IDs, private course links, and private academic records must not be public-profile fields.
 
-### 16. Resume and career portfolio
+### 16. Resume and personal portfolio
 
 - Professional headline
 - Summary
@@ -1466,7 +1465,6 @@ Visibility levels may include:
 - Public
 - Registered users
 - Connections only in a later phase
-- Employers only in a later phase
 - Unlisted
 - Private
 
@@ -1493,7 +1491,7 @@ Privacy controls should apply to:
 - Search by skill
 - Search by project technology
 - Search by education area
-- Search by career interest
+- Search by interests
 - Search by general location if users opt in
 - Search by availability
 - Suggested profiles
@@ -1568,15 +1566,15 @@ Potential paid features, if monetization is introduced:
 - Advanced scheduling
 - Export formats
 - Custom branding removal
-- Organization tools
+- Community and creator tools
 - Priority support
 
 Core accessibility, privacy, account deletion, and security features must not be paywalled.
 
 ### 27. Organization and team features
 
-- Organization profile
-- Organization verification
+- Community or public-page profile
+- Community and public-page verification
 - Logo and branding
 - Public description
 - Website and social links
@@ -1586,7 +1584,6 @@ Core accessibility, privacy, account deletion, and security features must not be
 - Administrator
 - Editor
 - Analyst
-- Recruiter in a later phase
 - Shared link pages
 - Approval workflow
 - Audit history
@@ -1598,7 +1595,7 @@ Core accessibility, privacy, account deletion, and security features must not be
 
 - Report profile
 - Report link
-- Report organization
+- Report community or public page
 - Report impersonation
 - Report scam
 - Report spam
@@ -1629,7 +1626,7 @@ Core accessibility, privacy, account deletion, and security features must not be
 - Cloud Functions or another trusted backend
 - Server-side username reservation
 - Server-side role changes
-- Server-side organization verification
+- Server-side community or public-page verification
 - Server-side moderation actions
 - Rate limiting
 - Audit logs
@@ -1677,8 +1674,7 @@ Platform records:
 
 ```text
 usernames/{normalizedUsername}
-organizations/{organizationId}
-opportunities/{opportunityId}
+communities/{communityId}
 reports/{reportId}
 verifications/{verificationId}
 audit_logs/{eventId}
@@ -1720,7 +1716,7 @@ Platform administrators would need a separate interface for:
 
 - User search
 - Profile review
-- Organization review
+- Community and public-page review
 - Username management
 - Verification requests
 - Reports
@@ -1752,7 +1748,7 @@ A separate brand and domain should be considered before broad public release bec
 - The platform would serve many users rather than one profile.
 - A neutral name may be easier to trust and share.
 - Legal documents would need to describe the platform separately.
-- Search, account, and organization features would need clearer product branding.
+- Search, account, and community and public-page features would need clearer product branding.
 - BusArmyDude.org could remain the founder's personal profile and showcase account.
 
 The rebrand should not happen until the profile-platform alpha demonstrates that the concept is sustainable.
@@ -1792,7 +1788,6 @@ The multi-user platform would require a transparent Trust and Safety system befo
 - Upload restriction
 - Live-stream restriction in a later phase
 - Organization restriction
-- Opportunity-posting restriction
 - Temporary suspension
 - Extended suspension
 - Permanent ban
@@ -1876,13 +1871,13 @@ Each action should record the actor, affected account, reason code, policy refer
 
 ---
 
-## Possible Built-In Social Media Platform
+## Caleb's Social Talk
 
-A proprietary social network could eventually be built into the platform, but it should come only after accounts, profiles, privacy, reporting, moderation, and abuse prevention are stable. The link-in-bio page would remain each user's public identity hub, while the social layer would add posts, following, discovery, and community interaction.
+**Caleb's Social Talk** is the proposed long-term social extension of the multi-user link-in-bio platform. Development should begin only after accounts, profiles, privacy, reporting, moderation, and abuse prevention are stable. Each user's link-in-bio page would remain the public identity hub, while Caleb's Social Talk would add posts, following, discovery, creator tools, and community interaction.
 
 ### Social product concept
 
-> A profile-first social network where posts connect back to a customizable link-in-bio, portfolio, education, projects, skills, services, and verified evidence.
+> A profile-first social network where posts connect back to a customizable link-in-bio, creator page, education, projects, interests, achievements, services, and other user-selected profile modules.
 
 ### Social accounts and identity
 
@@ -1893,7 +1888,7 @@ A proprietary social network could eventually be built into the platform, but it
 - Biography and headline
 - Link-in-bio profile connection
 - Verification states
-- Organization and creator labels
+- Creator, community, and public-page labels
 - Account creation date
 - Optional general location
 - Follower and following counts
@@ -1928,10 +1923,10 @@ A proprietary social network could eventually be built into the platform, but it
 - Academic-milestone posts
 - Achievement posts
 - Certification posts
-- Job or availability updates
+- Personal or availability updates
 - Polls in a later phase
 - Event posts
-- Organization announcements
+- Community and public-page announcements
 - Drafts
 - Scheduled posts
 - Pinned posts
@@ -1955,7 +1950,7 @@ A proprietary social network could eventually be built into the platform, but it
 - Mutual followers
 - Selected audience
 - Private only
-- Organization members
+- Community members
 - Unlisted link access
 
 ### Feed
@@ -2089,11 +2084,11 @@ Users would control in-app, email, and browser-push notification categories.
 - Search topics
 - Search projects
 - Search skills
-- Search organizations
+- Search communities and public pages
 - Hashtags or topics
 - Trending topics with anti-manipulation controls
 - Suggested creators
-- Suggested students and professionals
+- Suggested creators, students, and community members
 - Local discovery only through explicit opt-in and coarse location
 - Search-history controls
 - Recommendation-history controls
@@ -2143,7 +2138,7 @@ Groups should not launch until member safety, moderation delegation, and appeals
 - Report malicious link
 - Report harassment
 - Report copyright issue
-- Report organization
+- Report community or public page
 - Block and mute
 - Comment restriction
 - Posting restriction
@@ -2214,83 +2209,6 @@ High-volume feeds, counters, recommendations, video processing, notifications, a
 The social network would not replace the link-in-bio product. The social network would drive discovery and interaction, while the link-in-bio profile would remain the stable public destination users can share anywhere.
 
 ---
-## Potential Career and Opportunity Platform
-
-After multi-user profiles become stable, the platform could expand into opportunities and career discovery.
-
-### Potential opportunity types
-
-- Jobs
-- Internships
-- Co-ops
-- Campus positions
-- Freelance projects
-- Volunteer opportunities
-- Mentorship opportunities
-- Student organizations
-- Hackathons
-- Competitions
-
-### Initial opportunity features
-
-- Organization profile
-- Opportunity title
-- Opportunity type
-- Location or remote status
-- Required skills
-- Preferred skills
-- Education expectations
-- Experience level
-- Compensation visibility
-- Description
-- Deadline
-- External application link
-- Verification status
-- Reporting controls
-
-### Explainable matching
-
-Profile-to-opportunity matching should explain:
-
-- Which listed skills match
-- Which projects support those skills
-- Which credentials apply
-- Which stated requirements are missing
-- Whether information is self-reported or verified
-
-The platform should avoid unexplained qualification percentages.
-
-### Later high-complexity features
-
-- Internal applications
-- Application status tracking
-- Direct messaging
-- Interview scheduling
-- Candidate pipelines
-- Document exchange
-- Employer analytics
-
-These features require a trusted backend, stronger moderation, anti-spam controls, legal review, secure storage, audit logs, and clearer data-retention policies.
-
-### Moderation and trust requirements
-
-- Profile reporting
-- Opportunity reporting
-- Employer verification
-- Organization verification
-- Impersonation reporting
-- Scam reporting
-- Spam protection
-- Rate limiting
-- Link safety checks
-- Account suspension
-- Content removal
-- Appeals
-- Moderator audit history
-- Role-based access enforced by trusted systems
-
----
-
 ## Estimated Development Timeline
 
 The following estimate assumes one primary developer working part-time while beginning college. It is intentionally conservative. Security, privacy, moderation, design, school responsibilities, hosting changes, and testing could move dates later.
@@ -2427,34 +2345,6 @@ The following estimate assumes one primary developer working part-time while beg
 - Expanded trust and safety staffing and tools
 - Media processing improvements
 
-### Phase 9 — Organizations and opportunities
-
-**Estimated duration:** 6–12 additional months  
-**Earliest working window:** Late 2028 through 2029
-
-- Organization accounts
-- Team permissions
-- Organization verification
-- Job, internship, and co-op listings
-- Saved opportunities
-- Explainable profile matching
-- External applications
-- Scam reporting
-
-### Phase 10 — Internal career-platform workflows
-
-**Estimated duration:** 9–18 additional months  
-**Earliest realistic window:** 2029 or later
-
-- Internal applications
-- Candidate pipelines
-- Messaging
-- Interview scheduling
-- Document exchange
-- Extended moderation
-- Data-retention systems
-- Employer analytics
-
 ### Updated rough-duration summary
 
 - **Basic multi-user link-in-bio prototype:** 3–6 months after active work begins
@@ -2464,8 +2354,7 @@ The following estimate assumes one primary developer working part-time while beg
 - **Stable link-in-bio platform:** 20–28 months
 - **Basic social-network closed alpha:** 30–42 months
 - **Social-network public beta:** 40–54 months
-- **Organization and external opportunity tools:** 36–48 months
-- **Full career-platform workflows:** 48–66+ months
+- **Mature social platform with messaging and communities:** 48–66+ months
 
 ### Earliest plausible release windows
 
@@ -2477,8 +2366,7 @@ The following estimate assumes one primary developer working part-time while beg
 - **Stable multi-user link-in-bio platform:** Summer or Fall 2028
 - **Social alpha:** 2029
 - **Social beta:** 2029–2030
-- **Opportunity beta:** 2029–2030
-- **Advanced job-platform features:** 2030 or later
+- **Advanced social, messaging, and community features:** 2030 or later
 
 A deliberately smaller MVP containing accounts, usernames, links, themes, privacy, QR codes, and basic analytics could be released earlier than the complete platform described above.
 
@@ -2600,28 +2488,17 @@ The following version sequence is provisional.
 - Creator analytics
 - Closed beta before public access
 
-### v30.0-alpha / beta — Organizations and opportunities
-
-**Rough target:** 2029–2030 or later
-
-- Organization accounts and teams
-- Organization verification
-- Jobs, internships, and co-ops
-- Saved opportunities
-- External applications
-- Explainable matching
-
-### v31.0 or later — Advanced social and career workflows
+### v30.0 or later — Advanced Caleb's Social Talk features
 
 **Rough target:** 2030 or later
 
 - Optional direct messaging after safety readiness
-- Internal applications
-- Interview scheduling
-- Candidate pipelines
-- Document exchange
-- Advanced creator and organization tools
-- Expanded audit, moderation, and compliance systems
+- Group conversations
+- Communities and community moderation
+- Advanced creator tools
+- Expanded media support
+- Optional short-form video research
+- Expanded audit, moderation, privacy, and safety systems
 
 A separate brand or repository may reset or alter this version sequence.
 
@@ -2642,8 +2519,7 @@ A separate brand or repository may reset or alter this version sequence.
 - **v27.5** — Possible platform-foundation preview
 - **v28.x** — Proposed multi-user profile platform
 - **v29.x** — Proposed built-in social-network alpha and beta
-- **v30.x** — Proposed organization and opportunity features
-- **v31.x or later** — Possible advanced social and career-platform workflows
+- **v30.x or later** — Possible advanced Caleb's Social Talk, messaging, media, and community features
 
 The roadmap may change if additional release candidates, security changes, hosting changes, or scope reductions are needed.
 
@@ -2740,8 +2616,8 @@ The existing system has the foundation for a future multi-user profile platform,
 - Responsive Onyx navigation
 - An established Admin Portal
 
-The recommended strategy is to keep BusArmyDude.org stable as a personal website while building a separate multi-user link-in-bio foundation. The first public product should focus on usernames, links, social profiles, themes, responsive pages, privacy, QR codes, and analytics. Advanced education, resume, project, and evidence modules can follow. A built-in social network may follow only after moderation is proven. Employers, opportunities, internal applications, and messaging should come later still.
+The recommended strategy is to keep BusArmyDude.org stable as a personal website while building a separate multi-user link-in-bio foundation. The first public product should focus on usernames, links, social profiles, themes, responsive pages, privacy, QR codes, and analytics. Optional education, resume, project, achievement, and creator modules can follow. Caleb's Social Talk should begin only after account security, reporting, moderation, strikes, bans, appeals, and the Account Status system are proven.
 
-The shortest realistic future product is a modular profile builder. A trustworthy job and opportunity platform would be a multi-year project requiring stronger backend infrastructure, privacy controls, account security, moderation, role enforcement, verification, abuse prevention, and careful testing.
+The shortest realistic future product is a modular link-in-bio and personal profile builder. Caleb's Social Talk would be a later social layer focused on profiles, posts, following, creators, interests, projects, education, achievements, and communities—not employment recruiting. A trustworthy social platform would still be a multi-year project requiring stronger backend infrastructure, privacy controls, account security, moderation, role enforcement, verification, abuse prevention, media handling, and careful testing.
 
 Thanks for visiting and following the project’s development.
