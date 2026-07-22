@@ -1,15 +1,15 @@
 # BusArmyDude.org
 
-<!-- BADGES:START -->
-[![Version](https://img.shields.io/badge/version-v27.0--rc.1-blue)](#current-version)
-[![Build](https://img.shields.io/badge/build-2026.07.17-purple)](#current-version)
-[![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)](#release-roadmap)
-[![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)](#version-history)
-[![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)](#release-roadmap)
-[![JavaScript](https://img.shields.io/badge/JavaScript-45.0%25-f1e05a)](#coding-languages-and-technologies)
-[![CSS](https://img.shields.io/badge/CSS-36.2%25-663399)](#coding-languages-and-technologies)
-[![HTML](https://img.shields.io/badge/HTML-18.9%25-e34c26)](#coding-languages-and-technologies)
-<!-- BADGES:END -->
+<!-- AUTO:BADGES-START -->
+![Version](https://img.shields.io/badge/version-v27.0--rc.1-blue)
+![Build](https://img.shields.io/badge/build-2026.07.17-purple)
+![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
+![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)
+![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
+![JavaScript](https://img.shields.io/badge/JavaScript-45.3%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-37.6%25-663399)
+![HTML](https://img.shields.io/badge/HTML-17.1%25-e34c26)
+<!-- AUTO:BADGES-END -->
 
 BusArmyDude.org is a responsive personal profile, link-in-bio, live-status, availability, academic portfolio, resume, technology information, accessibility, and content-management website.
 
@@ -23,16 +23,31 @@ The goal is not to build a job board, recruiting service, or applicant-tracking 
 
 ## Current Version
 
-- **Current development version:** v27.0-rc.1
-- **Current build:** 2026.07.17
-- **Release track:** Release Candidate
-- **Current stable version:** v26.5
-- **Next planned stable version:** v27.0
-- **Current development focus:** release-candidate testing, Education portfolio development, responsive refinements, accessibility, and Onyx interface consistency
-- **Target for v27.0:** Late July 2026, subject to release-candidate testing
-- **Planned broader revamp window:** September 2026
+<!-- AUTO:CURRENT-VERSION-START -->
+| Attribute | Details |
+| :--- | :--- |
+| **Version** | v27.0-rc.1 |
+| **Build** | 2026.07.17 |
+| **Release Track** | Release Candidate |
+| **Current Stable Version** | v26.5 |
+| **Revamp Status** | Release candidate development and testing in progress |
+| **Target Release** | Late July 2026 |
+| **Next Stable Release** | v27.0 |
 
-v26.5 remains the current stable public version. v27.0-rc.1 is the current release candidate. v27.0 is the next planned stable release.
+> **Release Status:** v26.5 remains the current stable public version. v27.0-rc.1 is the current release candidate, and v27.0 is the next planned stable release.
+<!-- AUTO:CURRENT-VERSION-END -->
+
+### Current Release Metadata
+
+<!-- AUTO:RELEASE-METADATA-START -->
+```js
+const WEBSITE_VERSION = "v27.0-rc.1";
+const WEBSITE_BUILD = "2026.07.17";
+const RELEASE_TRACK = "Release Candidate";
+const REVAMP_STATUS = "Release candidate development and testing in progress";
+const TARGET_RELEASE = "Late July 2026";
+```
+<!-- AUTO:RELEASE-METADATA-END -->
 
 ---
 
@@ -91,7 +106,11 @@ The website is designed for phones, foldables, tablets, laptops, desktops, large
 
 ## Project Development
 
+<!-- AUTO:PROJECT-AGE-START -->
 Development began on **January 2, 2025**.
+
+The project has been under development for **1 year, 6 months, and 20 days**.
+<!-- AUTO:PROJECT-AGE-END -->
 
 The project has grown from a link-in-bio website into a broader digital identity and portfolio system with:
 
@@ -779,9 +798,13 @@ Public profiles and pages should not expose:
 
 ### Current language breakdown
 
-- **JavaScript:** approximately 45.0%
-- **CSS:** approximately 36.2%
-- **HTML:** approximately 18.9%
+<!-- AUTO:LANGUAGES-START -->
+| Language | Percentage | Purpose |
+| :--- | :--- | :--- |
+| **JavaScript** | 45.3% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
+| **CSS** | 37.6% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
+| **HTML** | 17.1% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
+<!-- AUTO:LANGUAGES-END -->
 
 Language percentages are based on repository analysis and may change as files are added, removed, or reorganized.
 
