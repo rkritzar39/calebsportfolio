@@ -109,7 +109,7 @@ The website is designed for phones, foldables, tablets, laptops, desktops, large
 <!-- AUTO:PROJECT-AGE-START -->
 Development began on **January 2, 2025**.
 
-The project has been under development for **1 year, 6 months, and 21 days**.
+The project has been under development for **1 year, 6 months, and 22 days**.
 <!-- AUTO:PROJECT-AGE-END -->
 
 The project has grown from a link-in-bio website into a broader digital identity and portfolio system with:
