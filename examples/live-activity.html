@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live Activity Example</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body { padding: 32px; background: var(--bg-color); }
+    .container { max-width: 880px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="color:var(--text-color)">Live Activity — Example</h2>
+
+    <!-- Live Activity component -->
+    <div class="live-activity" data-live-activity-color-mode="dynamic" style="--la-progress-val:36%">
+      <div class="la-row">
+        <div class="la-art">
+          <img id="la-art-img" src="https://picsum.photos/400" alt="Artwork" />
+        </div>
+
+        <div class="la-info">
+          <h4 class="la-title">Track Title — Demo</h4>
+          <div class="la-sub">Artist Name • Album</div>
+
+          <div class="la-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="36">
+            <div class="track-shell">
+              <div class="progress"></div>
+              <div class="knob"></div>
+            </div>
+          </div>
+
+          <div class="la-time">
+            <span class="la-time-elapsed">0:36</span>
+            <span class="la-time-remaining">-2:14</span>
+          </div>
+        </div>
+
+        <div class="la-controls">
+          <button class="la-btn" id="play-toggle" aria-label="Play/Pause">▶︎</button>
+          <button class="la-btn" id="like-btn" aria-label="Like">♡</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:18px"></div>
+    <div style="color:var(--secondary-text)">Use the controls below to simulate progress and change accent.</div>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+      <input id="progress-range" type="range" min="0" max="100" value="36" />
+      <input id="accent-picker" type="color" value="#007aff" title="Accent color" />
+      <button id="auto-btn" class="la-btn">Auto</button>
+    </div>
+  </div>
+
+  <script src="/examples/live-activity.js"></script>
+</body>
+</html>
