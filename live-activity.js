@@ -1477,23 +1477,30 @@ try {
 ========================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
+  let finalSource = "default";
+  let finalText = "No Current Active Activities";
+
   if (isManualActive()) {
-    showStatusLineWithFade(manualStatus.text || "Status (manual)", manualStatus.icon || "manual");
-    return;
-  }
-  if (temp && Date.now() < temp.expiresAt) {
-    showStatusLineWithFade(temp.text, temp.source || "default");
-    return;
+    finalText = manualStatus.text || "Status (manual)";
+    finalSource = manualStatus.icon || "manual";
+  } else if (temp && Date.now() < temp.expiresAt) {
+    finalText = temp.text;
+    finalSource = temp.source || "default";
+  } else if (twitchLive) {
+    finalText = "Now Live on Twitch";
+    finalSource = "twitch";
+  } else {
+    finalText = main?.text || "No Current Active Activities";
+    finalSource = main?.source || "discord";
   }
 
-  if (twitchLive) {
-    showStatusLineWithFade("Now Live on Twitch", "twitch");
-    return;
+  showStatusLineWithFade(finalText, finalSource);
+  
+  // Cleanly apply platform class to HTML body or root container
+  const activityContainer = document.getElementById("live-activity");
+  if (activityContainer) {
+    activityContainer.setAttribute("data-platform", finalSource);
   }
-
-  const text = main?.text || "No Current Active Activities";
-  const source = main?.source || "discord";
-  showStatusLineWithFade(text, source);
 }
 
 async function mainLoop() {
@@ -1549,8 +1556,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
-      if (!isManualActive()) showStatusLineWithFade(text, source);
-      else showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
+      if (!isManualActive()) {
+        showStatusLineWithFade(text, source);
+        $$("live-activity")?.setAttribute("data-platform", source);
+      } else {
+        showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
+        $$("live-activity")?.setAttribute("data-platform", manualStatus?.icon || "manual");
+      }
     } catch (e) {
       console.warn("Failed to restore last status:", e);
     }
