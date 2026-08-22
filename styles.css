@@ -3617,19 +3617,23 @@ margin-top: 2px;
 }
 
 /* ======================== */
-/* Disabilities Section – Onyx Bubble Glass */
+/* Disabilities Section     */
+/* Onyx Bubble Glass        */
 /* ======================== */
+
 .disabilities-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
+	backgr*und: var(--content-bg);
+	backgroun*-image: var(--bubble-gradient);
+	b*rder: 1px solid color-mix(in srgb,*var(--border-color) 82%, transpare*t);
+	border-radius: var(--radius-x*);
 	padding: 30px;
-	margin-bottom: 30px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
-	backdrop-filter: var(--backdrop-blur);
+	margin-bottom:*30px;
+	box-shadow: var(--bubble-hi*hlight), var(--bubble-shadow);
+	ba*kdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+	transition:
+		background var(--transition-medium),
+		box-shadow var(--transition-medium);
 }
 
 .disabilities-section h2 {
@@ -3647,50 +3651,45 @@ margin-top: 2px;
 }
 
 .disabilities-section ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
 	display: grid;
 	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
-/* ========================================
-   Button Links – Onyx Glass Matched
-======================================== */
+/* ======================== */
+/* Onyx Glass Button Links  */
+/* ======================== */
+
 .disabilities-section a {
+	posi*ion: relative;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
+	al*gn-items: center;
+	justify-content* center;
 	width: 100%;
-	padding: 12px 18px;
-	padding-right: 44px;
-	box-sizing: border-box;
-	position: relative;
-	overflow: hidden;
-	text-align: center;
-	text-decoration: none;
+	min-height* 48px;
+	padding: 12px 52px;
+	box-s*zing: border-box;
+	overflow: hidde*;
+
+	color: var(--text-color);
+	tex*-align: center;
+	text-decoration: *one;
 	font-weight: 600;
-	letter-spacing: 0.2px;
-	border-radius: 9999px;
+	letter-sp*cing: 0.2px;
 
 	background:
-		linear-gradient(
+		linea*-gradient(
 			180deg,
-			color-mix(in srgb, white 8%, transparent),
-			color-mix(in srgb, white 2%, transparent)
+			color-mix*in srgb, white 8%, transparent),
+	*	color-mix(in srgb, white 2%, tran*parent)
 		),
+		var(--bubble-gradie*t),
 		var(--content-bg);
 
-	background-image:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 8%, transparent),
-			color-mix(in srgb, white 2%, transparent)
-		),
-		var(--bubble-gradient);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+	border:*1px solid color-mix(in srgb, var(-*border-color) 78%, transparent);
+	border-radius: 9999px;
 
 	box-shadow:
 		0 8px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
@@ -3700,8 +3699,6 @@ margin-top: 2px;
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 
-	color: var(--text-color);
-
 	transition:
 		background 0.2s ease,
 		border-color 0.2s ease,
@@ -3710,60 +3707,69 @@ margin-top: 2px;
 		color 0.2s ease;
 }
 
-/* Soft glass sheen */
-.disabilities-section a::before {
-	content: "";
+/* ======================== */
+/* Soft Glass Sheen         */
+/* ======================== */
+
+.disabilities-section a::before*{
+	content* "";
 	position: absolute;
-	inset: 0;
+	inset: *;
 	border-radius: inherit;
-	background: linear-gradient(
-		180deg,
-		color-mix(in srgb, white 16%, transparent) 0%,
-		color-mix(in srgb, white 6%, transparent) 35%,
-		transparent 100%
-	);
+
+	backg*ound:
+		linear-gradient(
+			180deg*
+			color*mix(in srgb, white 16%, transparen*) 0%,
+			color-mix(in srgb, white *%, transparent) 35%,
+			transparen* 100%
+		);
+
 	opacity: 0.55;
 	pointer-events: none;
 }
 
-/* iOS-style chevron */
-.disabilities-section a::after {
-	content: "";
-	position: absolute;
-	right: 18px;
-	top: 50%;
-	transform: translateY(-50%) rotate(45deg);
+/* ======================== */
+/* Centered Button Text     */
+/* ======================== */
 
-	width: 8px;
-	height: 8px;
-
-	border-top: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
-	border-right: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
-
-	opacity: 0.75;
-	pointer-events: none;
-	transition: border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
-}
-
-.disabilities-section a span.button-text {
+.disabilities-section a .button*text {
 	position: relative;
-	z-index: 1;
-	flex-grow: 1;
-	text-align: center;
+	z-ind*x: 1;
+	display: block;
+	width: 100*;
 	color: var(--text-color);
+	text*align: center;
 	transition: color 0.2s ease;
 }
 
-.disabilities-section a i {
-	position: relative;
+/* ======================== */
+/* Font Awesome Right Arrow */
+/* ======================== */
+
+.disabilities-section a i.fa-arrow-right {
+	position: absolute;
+	top: 50%;
+	right: 18px;
 	z-index: 1;
-	margin-left: 10px;
-	flex-shrink: 0;
+
+	margin: 0;
 	color: var(--icon-color, var(--text-color));
-	transition: color 0.2s ease;
+	font-size: 0.9em;
+	line-height: 1;
+
+	pointer-events: none;
+	transform: translateY(-50%);
+
+	transition:
+		color 0.2s ease,
+		transform 0.2s ease;
 }
 
-/* Hover – same accent glass treatment */
+/* ======================== */
+/* Hover State              */
+/* ======================== */
+
 .disabilities-section a:hover {
 	background:
 		linear-gradient(
@@ -3771,44 +3777,104 @@ margin-top: 2px;
 			color-mix(in srgb, white 12%, transparent),
 			color-mix(in srgb, white 4%, transparent)
 		),
-		color-mix(in srgb, var(--accent-color, #4EA8FF) 18%, var(--content-bg));
+		color-mix(
+			in srgb,
+			var(--accent-color, #4ea8ff) 18%,
+			var(--content-bg)
+		);
 
-	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 60%, var(--border-color));
+	border-color:
+		color-mix(
+			in srgb,
+			var(--accent-color, #4ea8ff) 60%,
+			var(--border-color)
+		);
 
 	box-shadow:
-		0 10px 28px color-mix(in srgb, var(--accent-color, #4EA8FF) 25%, transparent),
+		0 10px 28px
+			color-mix(
+				in srgb,
+				var(--accent-color, #4ea8ff) 25%,
+				transparent
+			),
 		inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
 		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
 
 	transform: translateY(-2px);
 }
 
-.disabilities-section a:hover span.button-text {
-	color: color-mix(in srgb, var(--accent-color, #4EA8FF) 85%, white 15%);
+.disabilities-section a:hover .button-text {
+	color:
+		color-mix(
+			in srgb,
+			var(--accent-color, #4ea8ff) 85%,
+			white 15%
+		);
 }
 
-.disabilities-section a:hover i {
-	color: var(--accent-color, #4EA8FF);
+.disabilities-section a:hover i.fa-arrow-right {
+	color: var(--accent-color, #4ea8ff);
+	transform: translateY(-50%) translateX(2px);
 }
 
-.disabilities-section a:hover::after {
-	border-top-color: var(--accent-color, #4EA8FF);
-	border-right-color: var(--accent-color, #4EA8FF);
-	opacity: 1;
-	transform: translateY(-50%) rotate(45deg) translateX(2px);
-}
+/* ======================== */
+/* Keyboard Focus State     */
+/* ======================== */
 
 .disabilities-section a:focus-visible {
 	outline: none;
-	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 52%, var(--border-color));
+
+	border-color:
+		color-mix(
+			in srgb,
+			var(--accent-color, #4ea8ff) 52%,
+			var(--border-color)
+		);
+
 	box-shadow:
-		0 0 0 3px color-mix(in srgb, var(--accent-color, #4EA8FF) 20%, transparent),
-		0 10px 28px color-mix(in srgb, var(--shadow-color) 48%, transparent),
+		0 0 0 3px
+			color-mix(
+				in srgb,
+				var(--accent-color, #4ea8ff) 20%,
+				transparent
+			),
+		0 10px 28px
+			color-mix(
+				in srgb,
+				var(--shadow-color) 48%,
+				transparent
+			),
 		inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
 }
 
+/* ======================== */
+/* Active State             */
+/* ======================== */
+
 .disabilities-section a:active {
 	transform: scale(0.985);
+}
+
+/* ======================== */
+/* Reduced Motion           */
+/* ======================== */
+
+@media (prefers-reduced-motion: reduce) {
+	.disabilities-section,
+	.disabilities-section a,
+	.disabilities-section a .button-text,
+	.disabilities-section a i.fa-arrow-right {
+		transition: none;
+	}
+
+	.disabilities-section a:hover,
+	.disabilities-section a:active {
+		transform: none;
+	}
+
+	.disabilities-section a:hover i.fa-arrow-right {
+		transform: translateY(-50%);
+	}
 }
 
 /* ============================================================
