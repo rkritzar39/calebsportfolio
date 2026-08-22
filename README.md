@@ -6,7 +6,7 @@
 ![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
 ![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)
 ![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-44.6%25-f1e05a)
+![JavaScript](https://img.shields.io/badge/JavaScript-44.5%25-f1e05a)
 ![CSS](https://img.shields.io/badge/CSS-36.6%25-663399)
 ![HTML](https://img.shields.io/badge/HTML-18.9%25-e34c26)
 <!-- AUTO:BADGES-END -->
@@ -801,7 +801,7 @@ Public profiles and pages should not expose:
 <!-- AUTO:LANGUAGES-START -->
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 44.6% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
+| **JavaScript** | 44.5% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
 | **CSS** | 36.6% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
 | **HTML** | 18.9% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 <!-- AUTO:LANGUAGES-END -->
