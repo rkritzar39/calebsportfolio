@@ -1,11 +1,13 @@
-/* live-activity.js — Apple SwiftUI Liquid Glass Edition
-   - Multi-point Chromatic Mesh Color Extraction
-   - Spotify via Lanyard (real timestamps -> real progress)
-   - PreMiD via Lanyard activities[] (show ALL activities)
-   - Manual Firestore overrides
-   - Twitch via decapi uptime
-   - Reddit one-time banner
-   - Automatic 16:9 / Squircle Platform Adaptations
+/* live-activity.js — Updated Version
+   Spotify via Lanyard (real timestamps -> real progress)
+   PreMiD via Lanyard activities[] (show ALL activities)
+   Manual Firestore overrides everything
+   Twitch via decapi uptime
+   Reddit one-time banner per new post
+   Settings apply instantly (same tab)
+   Match song accent OFF => CSS uses global --accent-color
+   Match song accent ON  => artwork-matched --album-accent extraction
+   Time format ALWAYS hh:mm:ss
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -260,6 +262,7 @@ function setAlbumCover(imageUrl) {
 
   coverEl.src = url;
 
+  /* Handle artwork already loaded from the browser cache */
   if (coverEl.complete && coverEl.naturalWidth > 0) {
     coverEl.onload();
   }
@@ -285,7 +288,7 @@ function applySongThemeClass() {
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent = settings.accentColor || "#007aff";
+  const userAccent = settings.accentColor || "#1DB954";
 
   activity.classList.toggle("song-theme-off", !matchAccent);
   document.body.classList.toggle("dynamic-color-mode", matchAccent);
@@ -299,9 +302,6 @@ function applySongThemeClass() {
   if (!matchAccent) {
     dynamicColorRequestId += 1;
     activity.style.removeProperty("--album-accent");
-    activity.style.removeProperty("--dynamic-mesh-1");
-    activity.style.removeProperty("--dynamic-mesh-2");
-    activity.style.removeProperty("--dynamic-mesh-3");
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
@@ -414,7 +414,7 @@ const PREMID_RULES = [
   // GOOGLE / MS
   { re: /google\s*docs|docs\.google/i, key: "googledocs", pretty: "Google Docs" },
   { re: /google\s*sheets|sheets\.google/i, key: "googlesheets", pretty: "Google Sheets" },
-  { re: /google\s*slides|slides\.google/i, key: "googlesslides", pretty: "Google Slides" },
+  { re: /google\s*slides|slides\.google/i, key: "googleslides", pretty: "Google Slides" },
   { re: /google\s*meet|meet\.google/i, key: "googlemeet", pretty: "Google Meet" },
   { re: /google\s*maps|maps\.google/i, key: "googlemaps", pretty: "Google Maps" },
   { re: /\bgmail\b/i, key: "gmail", pretty: "Gmail" },
@@ -625,36 +625,44 @@ function setupProgressFromActivityTimestamps(act) {
   return true;
 }
 
-/* ======================================================= */
-/* APPLE MUSIC / SWIFTUI LIQUID CHROMATIC COLOR SAMPLER    */
-/* ======================================================= */
+/* =========================
+   DYNAMIC COLORS
+========================= */
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
 function rgbToHsl(r, g, b) {
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h = 0, s = 0, l = (max + min) / 2;
+  r /= 255;
+  g /= 255;
+  b /= 255;
 
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
-      case g: h = ((b - r) / d + 2); break;
-      case b: h = ((r - g) / d + 4); break;
-    }
-    h /= 6;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+
+  if (max === min) {
+    return { h: 0, s: 0, l };
   }
-  return { h: h * 360, s, l };
+
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+  let h = 0;
+  switch (max) {
+    case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+    case g: h = ((b - r) / d + 2); break;
+    case b: h = ((r - g) / d + 4); break;
+  }
+  h /= 6;
+
+  return { h, s, l };
 }
 
 function hslToRgb(h, s, l) {
-  h = (h % 360 + 360) % 360;
-  h /= 360;
   let r, g, b;
+
   if (s === 0) {
     r = g = b = l;
   } else {
@@ -666,17 +674,55 @@ function hslToRgb(h, s, l) {
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
     };
+
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
+
     r = hue2rgb(p, q, h + 1 / 3);
     g = hue2rgb(p, q, h);
     b = hue2rgb(p, q, h - 1 / 3);
   }
+
   return {
     r: Math.round(r * 255),
     g: Math.round(g * 255),
     b: Math.round(b * 255)
   };
+}
+
+function makeAccentSetFromRgb(r, g, b) {
+  const hsl = rgbToHsl(r, g, b);
+
+  const primaryHsl = {
+    h: hsl.h,
+    s: clamp(hsl.s * 1.08, 0.45, 0.92),
+    l: clamp(hsl.l, 0.42, 0.58)
+  };
+
+  const softHsl = {
+    h: hsl.h,
+    s: clamp(primaryHsl.s * 0.92, 0.38, 0.82),
+    l: clamp(primaryHsl.l + 0.10, 0.52, 0.72)
+  };
+
+  const glowHsl = {
+    h: hsl.h,
+    s: clamp(primaryHsl.s, 0.45, 0.9),
+    l: clamp(primaryHsl.l + 0.16, 0.58, 0.78)
+  };
+
+  const shadowHsl = {
+    h: hsl.h,
+    s: clamp(primaryHsl.s * 0.8, 0.28, 0.68),
+    l: clamp(primaryHsl.l - 0.22, 0.16, 0.34)
+  };
+
+  const primary = hslToRgb(primaryHsl.h, primaryHsl.s, primaryHsl.l);
+  const soft = hslToRgb(softHsl.h, softHsl.s, softHsl.l);
+  const glow = hslToRgb(glowHsl.h, glowHsl.s, glowHsl.l);
+  const shadow = hslToRgb(shadowHsl.h, shadowHsl.s, shadowHsl.l);
+
+  return { primary, soft, glow, shadow };
 }
 
 function updateDynamicColors(imageUrl) {
@@ -685,7 +731,7 @@ function updateDynamicColors(imageUrl) {
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#007aff";
+  const userAccent  = settings.accentColor || "#1DB954";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
@@ -693,9 +739,6 @@ function updateDynamicColors(imageUrl) {
 
   const resetColors = () => {
     activity.style.removeProperty("--album-accent");
-    activity.style.removeProperty("--dynamic-mesh-1");
-    activity.style.removeProperty("--dynamic-mesh-2");
-    activity.style.removeProperty("--dynamic-mesh-3");
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
@@ -714,84 +757,139 @@ function updateDynamicColors(imageUrl) {
 
   img.onload = () => {
     if (requestId !== dynamicColorRequestId) return;
-    if (!isMatchSongAccentEnabled()) { resetColors(); return; }
+
+    if (!isMatchSongAccentEnabled()) {
+      resetColors();
+      return;
+    }
 
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      const size = 64;
+      const size = 72;
       canvas.width = size;
       canvas.height = size;
       ctx.drawImage(img, 0, 0, size, size);
 
       const { data } = ctx.getImageData(0, 0, size, size);
-      const clusters = new Map();
+
+      const buckets = new Map();
 
       for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
-        if (a < 140) continue;
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
 
-        const hsl = rgbToHsl(r, g, b);
-        
-        // Quantize by hue angle and lightness
-        const qH = Math.round(hsl.h / 18) * 18;
-        const qL = Math.round(hsl.l * 5) / 5;
-        const key = `${qH}_${qL}`;
+        if (a < 180) continue;
 
-        // Apple Vibrant Lift: Reward vibrant chroma and rich midtones
-        const vibrancyWeight = Math.pow(hsl.s, 1.6) * (1 - Math.abs(hsl.l - 0.55) * 1.2);
-        const score = Math.max(0.1, vibrancyWeight);
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+        const brightness = (r + g + b) / 3;
+        const saturation = delta;
 
-        const cur = clusters.get(key) || { r: 0, g: 0, b: 0, count: 0, totalScore: 0, s: 0, l: 0, h: 0 };
-        cur.r += r; cur.g += g; cur.b += b;
-        cur.s += hsl.s; cur.l += hsl.l; cur.h += hsl.h;
-        cur.count++;
-        cur.totalScore += score;
-        clusters.set(key, cur);
+        if (brightness < 22 || brightness > 238) continue;
+        if (saturation < 24) continue;
+
+        const qr = Math.round(r / 24) * 24;
+        const qg = Math.round(g / 24) * 24;
+        const qb = Math.round(b / 24) * 24;
+        const key = `${qr},${qg},${qb}`;
+
+        const weight =
+          saturation * 1.45 +
+          (255 - Math.abs(148 - brightness)) * 0.55;
+
+        const prev = buckets.get(key) || {
+          r: 0,
+          g: 0,
+          b: 0,
+          count: 0,
+          weight: 0
+        };
+
+        prev.r += r;
+        prev.g += g;
+        prev.b += b;
+        prev.count += 1;
+        prev.weight += weight;
+
+        buckets.set(key, prev);
       }
 
-      const sortedClusters = Array.from(clusters.values()).sort((a, b) => b.totalScore - a.totalScore);
-      if (!sortedClusters.length) { resetColors(); return; }
+      if (!buckets.size) {
+        resetColors();
+        return;
+      }
 
-      const primaryCluster = sortedClusters[0];
-      const avgH = primaryCluster.h / primaryCluster.count;
-      const avgS = primaryCluster.s / primaryCluster.count;
-      const avgL = primaryCluster.l / primaryCluster.count;
+      let best = null;
+      let bestScore = -Infinity;
 
-      // Generate iOS 27 Liquid Chromatic Palette
-      const tunedS = clamp(avgS * 1.35 + 0.25, 0.45, 0.98);
-      const tunedL = clamp(avgL, 0.42, 0.62);
+      for (const bucket of buckets.values()) {
+        const r = Math.round(bucket.r / bucket.count);
+        const g = Math.round(bucket.g / bucket.count);
+        const b = Math.round(bucket.b / bucket.count);
 
-      const primary = hslToRgb(avgH, tunedS, tunedL);
-      const mesh1   = hslToRgb(avgH - 24, clamp(tunedS * 0.9, 0.4, 0.9), clamp(tunedL * 1.15, 0.48, 0.68));
-      const mesh2   = hslToRgb(avgH + 32, clamp(tunedS * 1.1, 0.5, 0.98), clamp(tunedL * 0.85, 0.35, 0.52));
-      const glow    = hslToRgb(avgH, 0.95, 0.62);
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+        const brightness = (r + g + b) / 3;
+        const saturation = delta;
+
+        const prominence = bucket.count;
+        const score =
+          bucket.weight +
+          prominence * 10 +
+          saturation * 1.2 +
+          (255 - Math.abs(150 - brightness)) * 0.35;
+
+        if (score > bestScore) {
+          bestScore = score;
+          best = { r, g, b };
+        }
+      }
+
+      if (!best) {
+        resetColors();
+        return;
+      }
+
+      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(best.r, best.g, best.b);
 
       const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
-      const mesh1Css   = `rgb(${mesh1.r}, ${mesh1.g}, ${mesh1.b})`;
-      const mesh2Css   = `rgb(${mesh2.r}, ${mesh2.g}, ${mesh2.b})`;
-      const glowCss    = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
+      const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
+      const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
       activity.style.setProperty("--album-accent", primaryCss);
       activity.style.setProperty("--dynamic-accent", primaryCss);
-      activity.style.setProperty("--dynamic-accent-soft", mesh1Css);
+      activity.style.setProperty("--dynamic-accent-soft", softCss);
       activity.style.setProperty("--dynamic-accent-glow", glowCss);
-      activity.style.setProperty("--dynamic-mesh-1", mesh1Css);
-      activity.style.setProperty("--dynamic-mesh-2", mesh2Css);
 
-      // Multi-layer Apple Music Liquid Mesh Gradient
       activity.style.setProperty(
         "--dynamic-bg",
         `
-        radial-gradient(130% 90% at 20% 0%, rgba(${mesh1.r}, ${mesh1.g}, ${mesh1.b}, 0.34) 0%, transparent 64%),
-        radial-gradient(110% 80% at 85% 15%, rgba(${mesh2.r}, ${mesh2.g}, ${mesh2.b}, 0.28) 0%, transparent 68%),
-        radial-gradient(100% 100% at 50% 100%, rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.24) 0%, transparent 72%)
+        radial-gradient(
+          82% 50% at 50% 22%,
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.34),
+          transparent 56%
+        ),
+        radial-gradient(
+          72% 40% at 50% 46%,
+          rgba(${glow.r}, ${glow.g}, ${glow.b}, 0.18),
+          transparent 60%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.15),
+          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.07)
+        )
         `
       );
     } catch (error) {
-      console.warn("Liquid color extraction failed:", error);
+      console.warn("Dynamic color extraction failed:", error);
       resetColors();
     }
   };
@@ -914,23 +1012,30 @@ function isYouTubeMusicLike(act) {
   const s = state.toLowerCase();
   const l = largeText.toLowerCase();
 
+  // Strong music keywords
   const strongMusicSignals = [
     "lyrics", "lyric video", "official lyrics",
     "official audio", "audio",
     "music video", "official music video",
-    "vevo", "provided to youtube", "topic",
-    "album", "full album", "track", "single", "remastered"
+    "vevo",
+    "provided to youtube",
+    "topic",
+    "album", "full album",
+    "track", "single",
+    "remastered"
   ];
 
   const hay = `${t} ${s} ${l}`;
   if (strongMusicSignals.some(k => hay.includes(k))) return true;
 
+  // "Song - Artist" format check
   const hasDashFormat =
     t.includes(" - ") &&
     t.split(" - ").every(part => part.trim().length >= 2);
 
   if (hasDashFormat) return true;
 
+  // Heuristic check
   const detailsLooksLikeTrack =
     t.length >= 6 && (t.includes(" - ") || t.includes(" by ") || t.includes(" • "));
   const stateLooksLikeArtist =
@@ -954,20 +1059,24 @@ function resolveDiscordAssetUrl(activity, assetName = "large_image") {
 
   if (!rawAsset) return "";
 
+  /* Direct or data-backed artwork */
   if (/^(https?:\/\/|data:image\/)/i.test(rawAsset)) {
     return rawAsset;
   }
 
+  /* Discord media proxy asset used by many PreMiD activities */
   if (rawAsset.startsWith("mp:")) {
     const mediaPath = rawAsset.slice(3).replace(/^\/+/, "");
     return mediaPath ? `https://media.discordapp.net/${mediaPath}` : "";
   }
 
+  /* Spotify-backed Discord artwork */
   if (rawAsset.startsWith("spotify:")) {
     const imageId = rawAsset.slice("spotify:".length).trim();
     return imageId ? `https://i.scdn.co/image/${imageId}` : "";
   }
 
+  /* Twitch-backed Discord artwork */
   if (rawAsset.startsWith("twitch:")) {
     const channel = rawAsset.slice("twitch:".length).trim();
     return channel
@@ -975,6 +1084,7 @@ function resolveDiscordAssetUrl(activity, assetName = "large_image") {
       : "";
   }
 
+  /* Standard Discord rich-presence application asset */
   if (applicationId) {
     return `https://cdn.discordapp.com/app-assets/${applicationId}/${encodeURIComponent(rawAsset)}.png?size=512`;
   }
@@ -1090,7 +1200,7 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-  if (act.type === 2) return true;
+  if (act.type === 2) return true; // 'Listening' type
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
@@ -1107,7 +1217,7 @@ function isMusicActivity(act) {
 
 function isIgnorableActivity(a) {
   if (!a) return true;
-  if (a.type === 4) return true;
+  if (a.type === 4) return true; // custom status
   const name = (a.name || "").toLowerCase();
   if (!name) return true;
   if (name === "discord") return true;
@@ -1239,7 +1349,7 @@ async function getDiscord() {
       if (act) return renderUniversalActivity(act);
     }
 
-    // 3) Fallback
+    // 3) Nothing else
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
@@ -1367,29 +1477,23 @@ try {
 ========================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
-  let finalSource = "default";
-  let finalText = "No Current Active Activities";
-
   if (isManualActive()) {
-    finalText = manualStatus.text || "Status (manual)";
-    finalSource = manualStatus.icon || "manual";
-  } else if (temp && Date.now() < temp.expiresAt) {
-    finalText = temp.text;
-    finalSource = temp.source || "default";
-  } else if (twitchLive) {
-    finalText = "Now Live on Twitch";
-    finalSource = "twitch";
-  } else {
-    finalText = main?.text || "No Current Active Activities";
-    finalSource = main?.source || "discord";
+    showStatusLineWithFade(manualStatus.text || "Status (manual)", manualStatus.icon || "manual");
+    return;
+  }
+  if (temp && Date.now() < temp.expiresAt) {
+    showStatusLineWithFade(temp.text, temp.source || "default");
+    return;
   }
 
-  showStatusLineWithFade(finalText, finalSource);
-  
-  const activityContainer = document.getElementById("live-activity");
-  if (activityContainer) {
-    activityContainer.setAttribute("data-platform", finalSource);
+  if (twitchLive) {
+    showStatusLineWithFade("Now Live on Twitch", "twitch");
+    return;
   }
+
+  const text = main?.text || "No Current Active Activities";
+  const source = main?.source || "discord";
+  showStatusLineWithFade(text, source);
 }
 
 async function mainLoop() {
@@ -1445,13 +1549,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
-      if (!isManualActive()) {
-        showStatusLineWithFade(text, source);
-        $$("live-activity")?.setAttribute("data-platform", source);
-      } else {
-        showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
-        $$("live-activity")?.setAttribute("data-platform", manualStatus?.icon || "manual");
-      }
+      if (!isManualActive()) showStatusLineWithFade(text, source);
+      else showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
     } catch (e) {
       console.warn("Failed to restore last status:", e);
     }
