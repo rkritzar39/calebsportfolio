@@ -1672,6 +1672,277 @@ body.light-e #live-activity-updated {
   }
 }
 
+/* Utility keyframes & prefers-reduced-motion support */
+@keyframes la-float {
+  0% { transform: translateY(0px) rotateX(0) rotateY(0); }
+  50% { transform: translateY(-6px) rotateX(0.6deg) rotateY(-0.8deg); }
+  100% { transform: translateY(0px) rotateX(0) rotateY(0); }
+}
+@keyframes la-shimmer {
+  0% { background-position: -180% 0; }
+  100% { background-position: 180% 0; }
+}
+@keyframes la-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.01); opacity: 0.98; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes la-progress {
+  from { width: 0%; }
+  to { width: var(--la-progress-val, 60%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-activity { transition: none !important; animation: none !important; }
+}
+
+/* Root-level richer defaults for live-activity */
+.live-activity {
+  --la-glass-alpha: 0.64;                 /* main frosted alpha */
+  --la-inner-glow: 0.12;                  /* inner glow intensity */
+  --la-reflection-alpha: 0.18;             /* reflection highlight */
+  --la-sheen-size: 160%;                  /* shimmer width */
+  --la-progress-val: 64%;                 /* default progress (can be set inline) */
+
+  /* make the live-activity feel lifted and tactile */
+  transform-origin: center;
+  will-change: transform, box-shadow, background;
+  perspective: 800px;
+  animation: la-pulse var(--transition-slow) ease-in-out infinite;
+}
+
+/* Layered glass shell:
+   - subtle noise overlay, volumetric backglow, and multi-stop reflection */
+.live-activity {
+  background:
+    radial-gradient(1200px 300px at 10% 10%, color-mix(in srgb, var(--la-mode-accent) 6%, transparent) 0%, transparent 20%),
+    linear-gradient(135deg, color-mix(in srgb, var(--content-bg) 86%, #000 14%) 0%, color-mix(in srgb, var(--content-bg) 86%, #000 12%) 100%),
+    var(--dynamic-bg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,var(--la-inner-glow)),
+    0 28px 68px color-mix(in srgb, var(--shadow-color) 44%, transparent),
+    0 0 44px color-mix(in srgb, var(--la-mode-accent) 16%, transparent);
+  overflow: visible;
+}
+
+/* top sheen & moving gloss (shimmer) */
+.live-activity::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,var(--la-reflection-alpha)) 0%,
+    rgba(255,255,255,0) 20%,
+    rgba(255,255,255,0) 80%,
+    rgba(255,255,255,var(--la-reflection-alpha)) 100%);
+  background-size: var(--la-sheen-size) 100%;
+  mix-blend-mode: overlay;
+  opacity: 0.65;
+  animation: la-shimmer 6.2s linear infinite;
+  transform: translateZ(0);
+}
+
+/* content layout inside the live card (art + meta + controls) */
+.live-activity .la-row {
+  display: flex;
+  gap: clamp(14px, 3.2vw, 20px);
+  align-items: center;
+  width: 100%;
+  max-width: var(--la-progress-w);
+  margin: 0 auto;
+  z-index: 2;
+  position: relative;
+}
+
+/* album art — circular card with soft glass mask */
+.live-activity .la-art {
+  --size: min(var(--la-art-size), 128px);
+  width: var(--size);
+  height: var(--size);
+  flex: 0 0 var(--size);
+  border-radius: 18px;
+  overflow: hidden;
+  display: inline-grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--content-bg) 76%, var(--bg-color) 24%);
+  border: 1px solid color-mix(in srgb, var(--border-color) 74%, transparent);
+  box-shadow:
+    0 18px 36px rgba(0,0,0,0.42),
+    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 12%, transparent);
+  transform: translateZ(0);
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium), border-color var(--transition-medium);
+  mask-image: linear-gradient(#000, #000); /* preserves crisp edges */
+}
+
+/* album image inside art */
+.live-activity .la-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 14px;
+  filter: saturate(120%) contrast(102%);
+  transform-origin: center;
+  transition: transform var(--transition-medium);
+}
+
+/* holographic reflection overlay on art */
+.live-activity .la-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,0.28), transparent 25%),
+    linear-gradient(180deg, rgba(255,255,255,0.06), transparent 45%);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  z-index: 2;
+}
+
+/* album hover micro-lift */
+.live-activity .la-art:hover { transform: translateY(-6px); }
+.live-activity .la-art:hover img { transform: scale(1.03) rotate(-0.6deg); }
+
+/* meta block */
+.live-activity .la-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* title and subtitle styling */
+.live-activity .la-title {
+  font-weight: 800;
+  font-size: clamp(1rem, 2.6vw, 1.15rem);
+  color: var(--text-color);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.live-activity .la-sub {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* progress track — glassy track with gradient fill */
+.live-activity .la-track {
+  width: var(--la-progress-w);
+  height: calc(var(--la-track-h) + 6px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: clamp(10px, 2.4vw, 14px);
+  align-self: stretch;
+}
+.live-activity .la-track .track-shell {
+  position: relative;
+  height: var(--la-track-h);
+  flex: 1 1 auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--content-bg) 76%, var(--bg-color) 24%);
+  border: 1px solid color-mix(in srgb, var(--border-color) 64%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glow-color) 12%, transparent);
+  overflow: hidden;
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+}
+
+/* animated progress fill (use inline style or CSS var to set --la-progress-val) */
+.live-activity .la-track .progress {
+  position: absolute;
+  inset: 0 0 0 0;
+  left: 0;
+  width: var(--la-progress-val, 64%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--la-mode-accent) 78%, white 22%), color-mix(in srgb, var(--la-mode-accent) 28%, transparent 100%));
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--la-mode-accent) 28%, transparent), inset 0 1px 0 rgba(255,255,255,0.12);
+  transform-origin: left center;
+  transition: width var(--transition-medium);
+  will-change: width, box-shadow;
+}
+
+/* progress knob for accessibility and visual cue */
+.live-activity .la-track .knob {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--la-progress-val, 64%) - 6%);
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: color-mix(in srgb, white 60%, var(--la-mode-accent));
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--la-mode-accent) 28%, transparent), inset 0 1px 0 rgba(255,255,255,0.5);
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  transition: left var(--transition-medium);
+}
+
+/* small time labels */
+.live-activity .la-time {
+  width: var(--la-time-w);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--secondary-text);
+  font-size: 0.82rem;
+  letter-spacing: -0.01em;
+}
+
+/* controls row (play/pause, like, more) */
+.live-activity .la-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: auto;
+}
+.live-activity .la-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--content-bg) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 64%, transparent);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.04);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-medium);
+}
+.live-activity .la-btn:active { transform: translateY(1px) scale(0.996); }
+.live-activity .la-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--la-mode-accent) 14%, transparent);
+}
+
+/* subtle dynamic accent ring */
+.live-activity[data-live-activity-color-mode="dynamic"] .la-art {
+  box-shadow:
+    0 18px 36px rgba(0,0,0,0.44),
+    0 0 28px color-mix(in srgb, var(--la-mode-accent) 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 12%, transparent);
+}
+
+/* dark/light tuned adjustments */
+body.light-e .live-activity {
+  background:
+    radial-gradient(800px 220px at 10% 6%, color-mix(in srgb, var(--la-mode-accent) 8%, transparent), transparent 20%),
+    linear-gradient(135deg, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0.02) 40%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--border-color) 92%, white 8%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 24px 56px color-mix(in srgb, var(--shadow-color) 18%, transparent);
+}
+
 /* ======================================================= */
 /* 🔍 NEXT-GEN ONYX SEARCH BAR — FULL SECTION               */
 /* ======================================================= */
