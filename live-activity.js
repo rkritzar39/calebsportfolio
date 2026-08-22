@@ -1,13 +1,11 @@
-/* live-activity.js — Updated Version
-   Spotify via Lanyard (real timestamps -> real progress)
-   PreMiD via Lanyard activities[] (show ALL activities)
-   Manual Firestore overrides everything
-   Twitch via decapi uptime
-   Reddit one-time banner per new post
-   Settings apply instantly (same tab)
-   Match song accent OFF => CSS uses global --accent-color
-   Match song accent ON  => smart dominant color clustering
-   Time format ALWAYS hh:mm:ss
+/* live-activity.js — Apple SwiftUI Liquid Glass Edition
+   - Multi-point Chromatic Mesh Color Extraction
+   - Spotify via Lanyard (real timestamps -> real progress)
+   - PreMiD via Lanyard activities[] (show ALL activities)
+   - Manual Firestore overrides
+   - Twitch via decapi uptime
+   - Reddit one-time banner
+   - Automatic 16:9 / Squircle Platform Adaptations
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -287,7 +285,7 @@ function applySongThemeClass() {
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent = settings.accentColor || "#1DB954";
+  const userAccent = settings.accentColor || "#007aff";
 
   activity.classList.toggle("song-theme-off", !matchAccent);
   document.body.classList.toggle("dynamic-color-mode", matchAccent);
@@ -301,6 +299,9 @@ function applySongThemeClass() {
   if (!matchAccent) {
     dynamicColorRequestId += 1;
     activity.style.removeProperty("--album-accent");
+    activity.style.removeProperty("--dynamic-mesh-1");
+    activity.style.removeProperty("--dynamic-mesh-2");
+    activity.style.removeProperty("--dynamic-mesh-3");
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
@@ -413,7 +414,7 @@ const PREMID_RULES = [
   // GOOGLE / MS
   { re: /google\s*docs|docs\.google/i, key: "googledocs", pretty: "Google Docs" },
   { re: /google\s*sheets|sheets\.google/i, key: "googlesheets", pretty: "Google Sheets" },
-  { re: /google\s*slides|slides\.google/i, key: "googleslides", pretty: "Google Slides" },
+  { re: /google\s*slides|slides\.google/i, key: "googlesslides", pretty: "Google Slides" },
   { re: /google\s*meet|meet\.google/i, key: "googlemeet", pretty: "Google Meet" },
   { re: /google\s*maps|maps\.google/i, key: "googlemaps", pretty: "Google Maps" },
   { re: /\bgmail\b/i, key: "gmail", pretty: "Gmail" },
@@ -624,39 +625,35 @@ function setupProgressFromActivityTimestamps(act) {
   return true;
 }
 
-/* =========================
-   DYNAMIC COLORS - REWRITTEN ALGORITHM
-========================= */
+/* ======================================================= */
+/* APPLE MUSIC / SWIFTUI LIQUID CHROMATIC COLOR SAMPLER    */
+/* ======================================================= */
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
 function rgbToHsl(r, g, b) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const l = (max + min) / 2;
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
 
-  if (max === min) return { h: 0, s: 0, l };
-
-  const d = max - min;
-  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-  let h = 0;
-  switch (max) {
-    case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
-    case g: h = ((b - r) / d + 2); break;
-    case b: h = ((r - g) / d + 4); break;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+      case g: h = ((b - r) / d + 2); break;
+      case b: h = ((r - g) / d + 4); break;
+    }
+    h /= 6;
   }
-  h /= 6;
-
-  return { h, s, l };
+  return { h: h * 360, s, l };
 }
 
 function hslToRgb(h, s, l) {
+  h = (h % 360 + 360) % 360;
+  h /= 360;
   let r, g, b;
   if (s === 0) {
     r = g = b = l;
@@ -682,50 +679,13 @@ function hslToRgb(h, s, l) {
   };
 }
 
-function makeAccentSetFromRgb(r, g, b) {
-  const hsl = rgbToHsl(r, g, b);
-
-  // We gently boost saturation to ensure the UI looks vibrant, 
-  // but we no longer force lightness into a tiny box which ruined bright images.
-  const primaryHsl = {
-    h: hsl.h,
-    s: clamp(hsl.s + 0.15, 0.25, 0.95), // Ensure it's not totally washed out
-    l: clamp(hsl.l, 0.2, 0.75) // Prevents pure black or pure white
-  };
-
-  const softHsl = {
-    h: primaryHsl.h,
-    s: clamp(primaryHsl.s * 0.8, 0.2, 0.8),
-    l: clamp(primaryHsl.l + 0.15, 0.4, 0.85) // Lighter, softer variant for backgrounds
-  };
-
-  const glowHsl = {
-    h: primaryHsl.h,
-    s: clamp(primaryHsl.s + 0.2, 0.5, 1.0), // High saturation for glow effects
-    l: clamp(primaryHsl.l, 0.35, 0.65) // Mid-lightness so the glow actually emits color
-  };
-
-  const shadowHsl = {
-    h: primaryHsl.h,
-    s: clamp(primaryHsl.s, 0.3, 0.8),
-    l: clamp(primaryHsl.l - 0.25, 0.08, 0.25) // Deep, rich shadow variant
-  };
-
-  const primary = hslToRgb(primaryHsl.h, primaryHsl.s, primaryHsl.l);
-  const soft = hslToRgb(softHsl.h, softHsl.s, softHsl.l);
-  const glow = hslToRgb(glowHsl.h, glowHsl.s, glowHsl.l);
-  const shadow = hslToRgb(shadowHsl.h, shadowHsl.s, shadowHsl.l);
-
-  return { primary, soft, glow, shadow };
-}
-
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#1DB954";
+  const userAccent  = settings.accentColor || "#007aff";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
@@ -733,6 +693,9 @@ function updateDynamicColors(imageUrl) {
 
   const resetColors = () => {
     activity.style.removeProperty("--album-accent");
+    activity.style.removeProperty("--dynamic-mesh-1");
+    activity.style.removeProperty("--dynamic-mesh-2");
+    activity.style.removeProperty("--dynamic-mesh-3");
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
@@ -758,96 +721,77 @@ function updateDynamicColors(imageUrl) {
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      // Use a smaller canvas for faster processing and natural blurring/averaging
       const size = 64;
       canvas.width = size;
       canvas.height = size;
       ctx.drawImage(img, 0, 0, size, size);
 
       const { data } = ctx.getImageData(0, 0, size, size);
-      const buckets = new Map();
-
-      let maxScore = -1;
-      let bestColor = null;
+      const clusters = new Map();
 
       for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
+        const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+        if (a < 140) continue;
 
-        if (a < 128) continue; // Ignore heavily transparent pixels
-
-        // Quantize colors (group them into buckets of size 12) to find the dominant cluster
-        const qR = Math.round(r / 12) * 12;
-        const qG = Math.round(g / 12) * 12;
-        const qB = Math.round(b / 12) * 12;
-        const key = `${qR},${qG},${qB}`;
-
-        // Calculate a simple vibrancy score based on saturation
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        const saturation = max - min;
+        const hsl = rgbToHsl(r, g, b);
         
-        // Base weight of 1, plus a slight bonus for more vibrant colors so they pop.
-        const weight = 1 + (saturation / 255); 
+        // Quantize by hue angle and lightness
+        const qH = Math.round(hsl.h / 18) * 18;
+        const qL = Math.round(hsl.l * 5) / 5;
+        const key = `${qH}_${qL}`;
 
-        const prev = buckets.get(key) || { r: 0, g: 0, b: 0, count: 0, score: 0 };
-        prev.r += r;
-        prev.g += g;
-        prev.b += b;
-        prev.count++;
-        prev.score += weight;
+        // Apple Vibrant Lift: Reward vibrant chroma and rich midtones
+        const vibrancyWeight = Math.pow(hsl.s, 1.6) * (1 - Math.abs(hsl.l - 0.55) * 1.2);
+        const score = Math.max(0.1, vibrancyWeight);
 
-        buckets.set(key, prev);
+        const cur = clusters.get(key) || { r: 0, g: 0, b: 0, count: 0, totalScore: 0, s: 0, l: 0, h: 0 };
+        cur.r += r; cur.g += g; cur.b += b;
+        cur.s += hsl.s; cur.l += hsl.l; cur.h += hsl.h;
+        cur.count++;
+        cur.totalScore += score;
+        clusters.set(key, cur);
       }
 
-      for (const bucket of buckets.values()) {
-        if (bucket.score > maxScore) {
-          maxScore = bucket.score;
-          // Calculate the exact average of this cluster for the smoothest result
-          bestColor = {
-            r: Math.round(bucket.r / bucket.count),
-            g: Math.round(bucket.g / bucket.count),
-            b: Math.round(bucket.b / bucket.count)
-          };
-        }
-      }
+      const sortedClusters = Array.from(clusters.values()).sort((a, b) => b.totalScore - a.totalScore);
+      if (!sortedClusters.length) { resetColors(); return; }
 
-      if (!bestColor) {
-        resetColors();
-        return;
-      }
+      const primaryCluster = sortedClusters[0];
+      const avgH = primaryCluster.h / primaryCluster.count;
+      const avgS = primaryCluster.s / primaryCluster.count;
+      const avgL = primaryCluster.l / primaryCluster.count;
 
-      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(bestColor.r, bestColor.g, bestColor.b);
+      // Generate iOS 27 Liquid Chromatic Palette
+      const tunedS = clamp(avgS * 1.35 + 0.25, 0.45, 0.98);
+      const tunedL = clamp(avgL, 0.42, 0.62);
+
+      const primary = hslToRgb(avgH, tunedS, tunedL);
+      const mesh1   = hslToRgb(avgH - 24, clamp(tunedS * 0.9, 0.4, 0.9), clamp(tunedL * 1.15, 0.48, 0.68));
+      const mesh2   = hslToRgb(avgH + 32, clamp(tunedS * 1.1, 0.5, 0.98), clamp(tunedL * 0.85, 0.35, 0.52));
+      const glow    = hslToRgb(avgH, 0.95, 0.62);
 
       const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
-      const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
-      const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
+      const mesh1Css   = `rgb(${mesh1.r}, ${mesh1.g}, ${mesh1.b})`;
+      const mesh2Css   = `rgb(${mesh2.r}, ${mesh2.g}, ${mesh2.b})`;
+      const glowCss    = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
       activity.style.setProperty("--album-accent", primaryCss);
       activity.style.setProperty("--dynamic-accent", primaryCss);
-      activity.style.setProperty("--dynamic-accent-soft", softCss);
+      activity.style.setProperty("--dynamic-accent-soft", mesh1Css);
       activity.style.setProperty("--dynamic-accent-glow", glowCss);
+      activity.style.setProperty("--dynamic-mesh-1", mesh1Css);
+      activity.style.setProperty("--dynamic-mesh-2", mesh2Css);
 
-      // Create a beautiful, soft ambient background using the extracted cluster
+      // Multi-layer Apple Music Liquid Mesh Gradient
       activity.style.setProperty(
         "--dynamic-bg",
         `
-        radial-gradient(
-          100% 100% at 50% 0%,
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.25),
-          transparent 80%
-        ),
-        radial-gradient(
-          80% 80% at 50% 100%,
-          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.20),
-          transparent 75%
-        )
+        radial-gradient(130% 90% at 20% 0%, rgba(${mesh1.r}, ${mesh1.g}, ${mesh1.b}, 0.34) 0%, transparent 64%),
+        radial-gradient(110% 80% at 85% 15%, rgba(${mesh2.r}, ${mesh2.g}, ${mesh2.b}, 0.28) 0%, transparent 68%),
+        radial-gradient(100% 100% at 50% 100%, rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.24) 0%, transparent 72%)
         `
       );
     } catch (error) {
-      console.warn("Dynamic color extraction failed:", error);
+      console.warn("Liquid color extraction failed:", error);
       resetColors();
     }
   };
@@ -970,30 +914,23 @@ function isYouTubeMusicLike(act) {
   const s = state.toLowerCase();
   const l = largeText.toLowerCase();
 
-  // Strong music keywords
   const strongMusicSignals = [
     "lyrics", "lyric video", "official lyrics",
     "official audio", "audio",
     "music video", "official music video",
-    "vevo",
-    "provided to youtube",
-    "topic",
-    "album", "full album",
-    "track", "single",
-    "remastered"
+    "vevo", "provided to youtube", "topic",
+    "album", "full album", "track", "single", "remastered"
   ];
 
   const hay = `${t} ${s} ${l}`;
   if (strongMusicSignals.some(k => hay.includes(k))) return true;
 
-  // "Song - Artist" format check
   const hasDashFormat =
     t.includes(" - ") &&
     t.split(" - ").every(part => part.trim().length >= 2);
 
   if (hasDashFormat) return true;
 
-  // Heuristic check
   const detailsLooksLikeTrack =
     t.length >= 6 && (t.includes(" - ") || t.includes(" by ") || t.includes(" • "));
   const stateLooksLikeArtist =
@@ -1017,24 +954,20 @@ function resolveDiscordAssetUrl(activity, assetName = "large_image") {
 
   if (!rawAsset) return "";
 
-  /* Direct or data-backed artwork */
   if (/^(https?:\/\/|data:image\/)/i.test(rawAsset)) {
     return rawAsset;
   }
 
-  /* Discord media proxy asset used by many PreMiD activities */
   if (rawAsset.startsWith("mp:")) {
     const mediaPath = rawAsset.slice(3).replace(/^\/+/, "");
     return mediaPath ? `https://media.discordapp.net/${mediaPath}` : "";
   }
 
-  /* Spotify-backed Discord artwork */
   if (rawAsset.startsWith("spotify:")) {
     const imageId = rawAsset.slice("spotify:".length).trim();
     return imageId ? `https://i.scdn.co/image/${imageId}` : "";
   }
 
-  /* Twitch-backed Discord artwork */
   if (rawAsset.startsWith("twitch:")) {
     const channel = rawAsset.slice("twitch:".length).trim();
     return channel
@@ -1042,7 +975,6 @@ function resolveDiscordAssetUrl(activity, assetName = "large_image") {
       : "";
   }
 
-  /* Standard Discord rich-presence application asset */
   if (applicationId) {
     return `https://cdn.discordapp.com/app-assets/${applicationId}/${encodeURIComponent(rawAsset)}.png?size=512`;
   }
@@ -1158,7 +1090,7 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-  if (act.type === 2) return true; // 'Listening' type
+  if (act.type === 2) return true;
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
@@ -1175,7 +1107,7 @@ function isMusicActivity(act) {
 
 function isIgnorableActivity(a) {
   if (!a) return true;
-  if (a.type === 4) return true; // custom status
+  if (a.type === 4) return true;
   const name = (a.name || "").toLowerCase();
   if (!name) return true;
   if (name === "discord") return true;
@@ -1307,7 +1239,7 @@ async function getDiscord() {
       if (act) return renderUniversalActivity(act);
     }
 
-    // 3) Nothing else
+    // 3) Fallback
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
@@ -1454,7 +1386,6 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 
   showStatusLineWithFade(finalText, finalSource);
   
-  // Cleanly apply platform class to HTML body or root container
   const activityContainer = document.getElementById("live-activity");
   if (activityContainer) {
     activityContainer.setAttribute("data-platform", finalSource);
