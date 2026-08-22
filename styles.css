@@ -3622,11 +3622,11 @@ margin-top: 2px;
 /* ======================== */
 
 .disabilities-section {
-	po*ition: relative;
+	position: relative;
 	width: 100%;
-	ma*gin-bottom: 30px;
+	margin-bottom: 30px;
 	padding: 30px;
-*box-sizing: border-box;
+	box-sizing: border-box;
 	overflow: hidden;
 
 	color: var(--text-color);
@@ -3732,88 +3732,89 @@ margin-top: 2px;
 /* ======================== */
 
 .disabilities-section
-#disabili*ies-list-placeholder
-.disability-l*nk {
+#disabilities-list-placeholder
+.disability-link {
 	position: relative;
 
-	displa*: grid;
-	grid-template-columns: 36*x minmax(0, 1fr) 36px;
-	align-item*: center;
+	display: grid;
+	grid-template-columns: 36px minmax(0, 1fr) 36px;
+	align-items: center;
 
 	width: 100%;
-	min-heig*t: 52px;
+	min-height: 52px;
 	margin: 0;
-	padding: 11p* 14px;
+	padding: 11px 14px;
 	box-sizing: border-box;
-	o*erflow: hidden;
+	overflow: hidden;
 
-	color: var(--tex*-color);
+	color: var(--text-color);
 	text-decoration: none;
-	*ext-align: center;
-	font-size: 1re*;
+	text-align: center;
+	font-size: 1rem;
 	font-weight: 600;
-	line-height:*1.35;
+	line-height: 1.35;
 	letter-spacing: 0.2px;
 
-	ba*kground:
+	background:
 		linear-gradient(
-			180*eg,
-			color-mix(in srgb, white 10*, transparent),
-			color-mix(in sr*b, white 2%, transparent)
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			color-mix(in srgb, white 2%, transparent)
 		),
-		v*r(--bubble-gradient),
-		var(--cont*nt-bg);
+		var(--bubble-gradient),
+		var(--content-bg);
 
 	border: 1px solid
-		colo*-mix(
+		color-mix(
 			in srgb,
-			var(--border-*olor) 78%,
+			var(--border-color) 78%,
 			transparent
 		);
 
-	b*rder-radius: 9999px;
+	border-radius: 9999px;
 
-	box-shadow:*		0 8px 24px
-			color-mix(
-				in *rgb,
-				var(--shadow-color) 42%,
-*			transparent
-			),
-		inset 0 1px*0
+	box-shadow:
+		0 8px 24px
 			color-mix(
 				in srgb,
-				w*ite 14%,
+				var(--shadow-color) 42%,
 				transparent
 			),
-		i*set 0 -1px 0
-			color-m*x(
+		inset 0 1px 0
+			color-mix(
+				in srgb,
+				white 14%,
+				transparent
+			),
+		inset 0 -1px 0
+			color-mix(
 				in srgb,
 				black 8%,
-				*ransparent
+				transparent
 			);
 
-	backdrop-filter* var(--backdrop-blur);
-	-webkit-ba*kdrop-filter: var(--backdrop-blur)*
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 
 	opacity: 1;
 
 	transition:
-		bac*ground 0.2s ease,
-*	border-color 0.2s ease,
-		box-sha*ow 0.2s ease,
+		background 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
 		color 0.2s ease,
-	*transform 0.12s*ease;
-*
+		transform 0.12s ease;
+}
 
 /* Override Global Link States */
 
 .disabilities-section
-#disabili*ies-list-placeholder
-.disability-l*nk:link,
+#disabilities-list-placeholder
+.disability-link:link,
 .disabilities-section
-#di*abilities-list-placeholder
-.disabi*ity-link:visited {
-	color: var(--t*xt-color);
+#disabilities-list-placeholder
+.disability-link:visited {
+	color: var(--text-color);
 	text-decoration: none;
 	opacity: 1;
 }
