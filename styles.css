@@ -1,13 +1,13 @@
 :root { 
-/*  / 
-/ Base Sizing              / 
-/  */ 
+/*  /  
+/ Base Sizing              /  
+/  */  
 --font-size-base: 16px; 
 --line-height-base: 1.65;
 
-/*  / 
-/ Dark Liquid Glass Palette / 
-/  */ 
+/*  /  
+/ Dark Liquid Glass Palette /  
+/  */  
 --dark-bg: #0b0b0d; 
 --dark-content-bg: rgba(22, 22, 26, 0.52); 
 --dark-text: #f7f8fb; 
@@ -20,9 +20,9 @@
 --dark-glow: rgba(255, 255, 255, 0.105); 
 --dark-icon: #e8e8ed;
 
-/*  / 
-/ Light Liquid Glass Palette / 
-/  */ 
+/*  /  
+/ Light Liquid Glass Palette /  
+/  */  
 --light-bg-gradient: 
 radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.95), transparent 28%), 
 radial-gradient(circle at 86% 14%, rgba(182, 225, 255, 0.65), transparent 30%), 
@@ -39,9 +39,9 @@ linear-gradient(120deg, #d9f0ff 0%, #f7fbff 56%, #eef6ff 100%);
 --light-glow: rgba(255, 255, 255, 0.82); 
 --light-icon: #2c2c2e;
 
-/*  / 
-/ Default Theme - Dark     / 
-/  */ 
+/*  /  
+/ Default Theme - Dark     /  
+/  */  
 --bg-color: var(--dark-bg); 
 --content-bg: var(--dark-content-bg); 
 --text-color: var(--dark-text); 
@@ -57,9 +57,9 @@ linear-gradient(120deg, #d9f0ff 0%, #f7fbff 56%, #eef6ff 100%);
 --icon-color: var(--dark-icon); 
 --social-icon-text-color: var(--dark-text);
 
-/*  / 
-/ iOS 27 Liquid Glass Optics / 
-/  */ 
+/*  /  
+/ iOS 27 Liquid Glass Optics /  
+/  */  
 --backdrop-blur: blur(30px) saturate(140%);
 
 --bubble-gradient: 
@@ -122,9 +122,9 @@ color-mix(in srgb, var(--shadow-color) 45%, transparent),
 transparent 72% 
 );
 
-/*  / 
-/ Radii & Transitions      / 
-/  */ 
+/*  /  
+/ Radii & Transitions      /  
+/  */  
 --radius-xl: 30px; 
 --radius-lg: 22px; 
 --radius-md: 15px; 
@@ -135,8 +135,8 @@ transparent 72%
 --transition-slow: 0.5s ease; 
 }
 
-/*  / 
-/ Light Mode Overrides     / 
+/*  /  
+/ Light Mode Overrides     /  
 /  */
 
 body.light-e { 
@@ -204,8 +204,8 @@ color-mix(in srgb, var(--content-bg) 86%, white 14%);
 color-mix(in srgb, var(--border-color) 92%, white 8%); 
 }
 
-/*  / 
-/ Dark Mode Wrapper        / 
+/*  /  
+/ Dark Mode Wrapper        /  
 /  */
 
 html.dark-mode body, 
@@ -274,8 +274,8 @@ color-mix(in srgb, var(--content-bg) 88%, black 12%);
 color-mix(in srgb, var(--border-color) 90%, transparent); 
 }
 
-/*  / 
-/ Base Styles              / 
+/*  /  
+/ Base Styles              /  
 /  */
 
 html { 
@@ -326,9 +326,9 @@ a {
 color: var(--link-color); 
 }
 
-/*  / 
-/ Apple Glass Effect Block / 
-/ iOS 27 Liquid Glass      / 
+/*  /  
+/ Apple Glass Effect Block /  
+/ iOS 27 Liquid Glass      /  
 /  */
 
 .glass { 
@@ -386,8 +386,8 @@ position: relative;
 z-index: 1; 
 }
 
-/*  / 
-/ = ONYX / LIQUID GLASS MICRO-SECTIONS = / 
+/*  /  
+/ = ONYX / LIQUID GLASS MICRO-SECTIONS = /  
 /  */
 
 .section[data-section-id="time"], 
@@ -565,8 +565,8 @@ inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
 0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent); 
 }
 
-/*  / 
-/ iOS 27 Liquid Sections   / 
+/*  /  
+/ iOS 27 Liquid Sections   /  
 /  */
 
 .section { 
@@ -657,8 +657,8 @@ color: var(--text-color);
 color: var(--secondary-text); 
 }
 
-/*  / 
-/ Light Mode Tuning        / 
+/*  /  
+/ Light Mode Tuning        /  
 /  */
 
 body.light-e .glass, 
@@ -719,8 +719,8 @@ body.light-e .section li {
 color: var(--secondary-text); 
 }
 
-/*  / 
-/ Dark Mode Tuning         / 
+/*  /  
+/ Dark Mode Tuning         /  
 /  */
 
 html.dark-mode body .glass, 
@@ -779,8 +779,8 @@ transparent 72%
 opacity: 0.72; 
 }
 
-/*  / 
-/ iOS-Style Focus Ring                     / 
+/*  /  
+/ iOS-Style Focus Ring                     /  
 /  */
 
 :focus { 
@@ -795,8 +795,8 @@ box-shadow:
 0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent); 
 }
 
-/*  / 
-/ Mouse Trail              / 
+/*  /  
+/ Mouse Trail              /  
 /  */
 
 .mouse-trail-container .trail-dot { 
@@ -1991,6 +1991,86 @@ body.dark-mode .live-activity {
   .music-progress-container.indeterminate .music-progress-bar {
     animation: none !important;
   }
+}
+
+/* ======================================================= */
+/* PLATFORM-SPECIFIC LAYOUT OVERRIDES                      */
+/* ======================================================= */
+
+/* ------------------------- */
+/* YOUTUBE, NETFLIX, TWITCH  */
+/* (16:9 Video Aspect Ratio) */
+/* ------------------------- */
+.live-activity[data-platform="youtube"] .live-album-art,
+.live-activity[data-platform="youtubemusic"] .live-album-art,
+.live-activity[data-platform="netflix"] .live-album-art,
+.live-activity[data-platform="twitch"] .live-album-art {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 440px; 
+  border-radius: 12px; 
+}
+
+/* Left-align text for video platforms */
+.live-activity[data-platform="youtube"] .live-info,
+.live-activity[data-platform="youtubemusic"] .live-info,
+.live-activity[data-platform="netflix"] .live-info,
+.live-activity[data-platform="twitch"] .live-info {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.live-activity[data-platform="youtube"] .live-song-title-wrapper,
+.live-activity[data-platform="youtubemusic"] .live-song-title-wrapper,
+.live-activity[data-platform="netflix"] .live-song-title-wrapper,
+.live-activity[data-platform="twitch"] .live-song-title-wrapper {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.live-activity[data-platform="youtube"] .live-artist,
+.live-activity[data-platform="youtubemusic"] .live-artist,
+.live-activity[data-platform="netflix"] .live-artist,
+.live-activity[data-platform="twitch"] .live-artist {
+  margin: 6px 0 0 0;
+}
+
+/* Force YouTube progress bar to brand red */
+.live-activity[data-platform="youtube"] .music-progress-bar,
+.live-activity[data-platform="youtubemusic"] .music-progress-bar {
+  background: #ff0000 !important;
+  box-shadow: 0 0 14px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* ------------------------- */
+/* SPOTIFY                   */
+/* (Left-aligned, sharp art) */
+/* ------------------------- */
+.live-activity[data-platform="spotify"] .live-album-art {
+  border-radius: 8px; 
+}
+
+.live-activity[data-platform="spotify"] .live-info {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.live-activity[data-platform="spotify"] .live-song-title-wrapper {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.live-activity[data-platform="spotify"] .live-artist {
+  margin: 6px 0 0 0;
+}
+
+/* ------------------------- */
+/* APPLE MUSIC               */
+/* (Centered, soft squircle) */
+/* ------------------------- */
+.live-activity[data-platform="apple_music"] .live-album-art {
+  border-radius: 22px; 
+  box-shadow: 0 15px 35px color-mix(in srgb, var(--shadow-color) 80%, transparent);
 }
 
 #status-widget {
