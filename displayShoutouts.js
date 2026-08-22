@@ -1150,59 +1150,97 @@ async function loadAndDisplaySocialLinks() {
 }
 
 async function loadAndDisplayDisabilities() {
-    const placeholderElement = document.getElementById('disabilities-list-placeholder');
-    if (!placeholderElement) { console.warn("Disabilities placeholder missing (#disabilities-list-placeholder)."); return; }
+    const placeholderElement = document.getElementById(
+        'disabilities-list-placeholder'
+    );
+
+    if (!placeholderElement) {
+        console.warn(
+            'Disabilities placeholder missing (#disabilities-list-placeholder).'
+        );
+        return;
+    }
+
     placeholderElement.innerHTML = '<li>Loading...</li>';
-    if (!firebaseAppInitialized || !db) { console.error("Disabilities load error: Firebase not ready."); placeholderElement.innerHTML = '<li>Error (DB Init Error).</li>'; return; }
-    if (!disabilitiesCollectionRef) { console.error("Disabilities load error: Collection ref missing."); placeholderElement.innerHTML = '<li>Error (Config Error).</li>'; return; }
+
+    if (!firebaseAppInitialized || !db) {
+        console.error('Disabilities load error: Firebase not ready.');
+        placeholderElement.innerHTML = '<li>Error (DB Init Error).</li>';
+        return;
+    }
+
+    if (!disabilitiesCollectionRef) {
+        console.error('Disabilities load error: Collection ref missing.');
+        placeholderElement.innerHTML = '<li>Error (Config Error).</li>';
+        return;
+    }
+
     try {
-        const disabilityQuery = query(disabilitiesCollectionRef, orderBy("order", "asc"));
+        const disabilityQuery = query(
+            disabilitiesCollectionRef,
+            orderBy('order', 'asc')
+        );
+
         const querySnapshot = await getDocs(disabilityQuery);
-        placeholderElement.innerHTML = '';
+
+        placeholderElement.replaceChildren();
+
         if (querySnapshot.empty) {
-            placeholderElement.innerHTML = '<li>No specific information available at this time.</li>';
-        } else {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                if (data.name && data.url) {
-                    const listItem = document.createElement('li');
-                    const linkElement = document.createElement('a');
-                    linkElement.href = data.url;
-                    linkElement.target = '_blank';
-                    linkElement.rel = 'noopener noreferrer';
-                    
-                    // Create a span for the text and an icon element
-                    const textSpan = document.createElement('span');
-                    textSpan.classList.add('button-text'); // Add a class for styling
-                    textSpan.textContent = data.name;
-
-                    const iconElement = document.createElement('i');
-                    iconElement.classList.add('fas', 'fa-arrow-right'); // Changed icon to a generic arrow for better fit, adjust as needed
-
-                    // Append text first, then icon (flexbox will handle the order based on justify-content)
-                    linkElement.appendChild(textSpan);
-                    linkElement.appendChild(iconElement);
-                    
-                    listItem.appendChild(linkElement);
-                    placeholderElement.appendChild(listItem);
-                } else {
-                    console.warn("Skipping disability item due to missing name or URL:", doc.id);
-                }
-            });
+            placeholderElement.innerHTML =
+                '<li>No specific information available at this time.</li>';
+            return;
         }
-        console.log(`Displayed ${querySnapshot.size} disability links.`);
+
+        querySnapshot.forEach((documentSnapshot) => {
+            const data = documentSnapshot.data();
+
+            if (!data.name || !data.url) {
+                console.warn(
+                    'Skipping disability item due to missing name or URL:',
+                    documentSnapshot.id
+                );
+                return;
+            }
+
+            const listItem = document.createElement('li');
+            const linkElement = document.createElement('a');
+            const textSpan = document.createElement('span');
+            const iconElement = document.createElement('i');
+
+            linkElement.href = data.url;
+            linkElement.target = '_blank';
+            linkElement.rel = 'noopener noreferrer';
+
+            textSpan.classList.add('button-text');
+            textSpan.textContent = data.name;
+
+            iconElement.classList.add('fas', 'fa-arrow-right');
+            iconElement.setAttribute('aria-hidden', 'true');
+
+            linkElement.append(textSpan, iconElement);
+            listItem.appendChild(linkElement);
+            placeholderElement.appendChild(listItem);
+        });
+
+        console.log(
+            `Displayed ${querySnapshot.size} disability links.`
+        );
     } catch (error) {
-        console.error("Error loading disabilities:", error);
-        let errorMsg = "Could not load list.";
+        console.error('Error loading disabilities:', error);
+
+        let errorMessage = 'Could not load list.';
+
         if (error.code === 'failed-precondition') {
-            errorMsg = "Error: DB config needed (order).";
-            console.error("Missing Firestore index for disabilities collection, ordered by 'order'.");
+            errorMessage = 'Error: DB config needed (order).';
+
+            console.error(
+                "Missing Firestore index for the disabilities collection ordered by 'order'."
+            );
         }
-        placeholderElement.innerHTML = `<li>${errorMsg}</li>`;
+
+        placeholderElement.innerHTML = `<li>${errorMessage}</li>`;
     }
 }
-
-
 
 /* ------------------------------------------------------------
    SMART TECH ITEM SYSTEM
