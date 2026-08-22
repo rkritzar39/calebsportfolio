@@ -6,7 +6,7 @@
    Reddit one-time banner per new post
    Settings apply instantly (same tab)
    Match song accent OFF => CSS uses global --accent-color
-   Match song accent ON  => artwork-matched --album-accent extraction
+   Match song accent ON  => smart dominant color clustering
    Time format ALWAYS hh:mm:ss
 */
 
@@ -262,7 +262,6 @@ function setAlbumCover(imageUrl) {
 
   coverEl.src = url;
 
-  /* Handle artwork already loaded from the browser cache */
   if (coverEl.complete && coverEl.naturalWidth > 0) {
     coverEl.onload();
   }
@@ -626,7 +625,7 @@ function setupProgressFromActivityTimestamps(act) {
 }
 
 /* =========================
-   DYNAMIC COLORS
+   DYNAMIC COLORS - REWRITTEN ALGORITHM
 ========================= */
 
 function clamp(value, min, max) {
@@ -637,14 +636,11 @@ function rgbToHsl(r, g, b) {
   r /= 255;
   g /= 255;
   b /= 255;
-
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const l = (max + min) / 2;
 
-  if (max === min) {
-    return { h: 0, s: 0, l };
-  }
+  if (max === min) return { h: 0, s: 0, l };
 
   const d = max - min;
   const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -662,7 +658,6 @@ function rgbToHsl(r, g, b) {
 
 function hslToRgb(h, s, l) {
   let r, g, b;
-
   if (s === 0) {
     r = g = b = l;
   } else {
@@ -674,15 +669,12 @@ function hslToRgb(h, s, l) {
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
     };
-
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
-
     r = hue2rgb(p, q, h + 1 / 3);
     g = hue2rgb(p, q, h);
     b = hue2rgb(p, q, h - 1 / 3);
   }
-
   return {
     r: Math.round(r * 255),
     g: Math.round(g * 255),
@@ -693,28 +685,30 @@ function hslToRgb(h, s, l) {
 function makeAccentSetFromRgb(r, g, b) {
   const hsl = rgbToHsl(r, g, b);
 
+  // We gently boost saturation to ensure the UI looks vibrant, 
+  // but we no longer force lightness into a tiny box which ruined bright images.
   const primaryHsl = {
     h: hsl.h,
-    s: clamp(hsl.s * 1.08, 0.45, 0.92),
-    l: clamp(hsl.l, 0.42, 0.58)
+    s: clamp(hsl.s + 0.15, 0.25, 0.95), // Ensure it's not totally washed out
+    l: clamp(hsl.l, 0.2, 0.75) // Prevents pure black or pure white
   };
 
   const softHsl = {
-    h: hsl.h,
-    s: clamp(primaryHsl.s * 0.92, 0.38, 0.82),
-    l: clamp(primaryHsl.l + 0.10, 0.52, 0.72)
+    h: primaryHsl.h,
+    s: clamp(primaryHsl.s * 0.8, 0.2, 0.8),
+    l: clamp(primaryHsl.l + 0.15, 0.4, 0.85) // Lighter, softer variant for backgrounds
   };
 
   const glowHsl = {
-    h: hsl.h,
-    s: clamp(primaryHsl.s, 0.45, 0.9),
-    l: clamp(primaryHsl.l + 0.16, 0.58, 0.78)
+    h: primaryHsl.h,
+    s: clamp(primaryHsl.s + 0.2, 0.5, 1.0), // High saturation for glow effects
+    l: clamp(primaryHsl.l, 0.35, 0.65) // Mid-lightness so the glow actually emits color
   };
 
   const shadowHsl = {
-    h: hsl.h,
-    s: clamp(primaryHsl.s * 0.8, 0.28, 0.68),
-    l: clamp(primaryHsl.l - 0.22, 0.16, 0.34)
+    h: primaryHsl.h,
+    s: clamp(primaryHsl.s, 0.3, 0.8),
+    l: clamp(primaryHsl.l - 0.25, 0.08, 0.25) // Deep, rich shadow variant
   };
 
   const primary = hslToRgb(primaryHsl.h, primaryHsl.s, primaryHsl.l);
@@ -757,25 +751,24 @@ function updateDynamicColors(imageUrl) {
 
   img.onload = () => {
     if (requestId !== dynamicColorRequestId) return;
-
-    if (!isMatchSongAccentEnabled()) {
-      resetColors();
-      return;
-    }
+    if (!isMatchSongAccentEnabled()) { resetColors(); return; }
 
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      const size = 72;
+      // Use a smaller canvas for faster processing and natural blurring/averaging
+      const size = 64;
       canvas.width = size;
       canvas.height = size;
       ctx.drawImage(img, 0, 0, size, size);
 
       const { data } = ctx.getImageData(0, 0, size, size);
-
       const buckets = new Map();
+
+      let maxScore = -1;
+      let bestColor = null;
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -783,81 +776,50 @@ function updateDynamicColors(imageUrl) {
         const b = data[i + 2];
         const a = data[i + 3];
 
-        if (a < 180) continue;
+        if (a < 128) continue; // Ignore heavily transparent pixels
 
+        // Quantize colors (group them into buckets of size 12) to find the dominant cluster
+        const qR = Math.round(r / 12) * 12;
+        const qG = Math.round(g / 12) * 12;
+        const qB = Math.round(b / 12) * 12;
+        const key = `${qR},${qG},${qB}`;
+
+        // Calculate a simple vibrancy score based on saturation
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
-        const delta = max - min;
-        const brightness = (r + g + b) / 3;
-        const saturation = delta;
+        const saturation = max - min;
+        
+        // Base weight of 1, plus a slight bonus for more vibrant colors so they pop.
+        const weight = 1 + (saturation / 255); 
 
-        if (brightness < 22 || brightness > 238) continue;
-        if (saturation < 24) continue;
-
-        const qr = Math.round(r / 24) * 24;
-        const qg = Math.round(g / 24) * 24;
-        const qb = Math.round(b / 24) * 24;
-        const key = `${qr},${qg},${qb}`;
-
-        const weight =
-          saturation * 1.45 +
-          (255 - Math.abs(148 - brightness)) * 0.55;
-
-        const prev = buckets.get(key) || {
-          r: 0,
-          g: 0,
-          b: 0,
-          count: 0,
-          weight: 0
-        };
-
+        const prev = buckets.get(key) || { r: 0, g: 0, b: 0, count: 0, score: 0 };
         prev.r += r;
         prev.g += g;
         prev.b += b;
-        prev.count += 1;
-        prev.weight += weight;
+        prev.count++;
+        prev.score += weight;
 
         buckets.set(key, prev);
       }
 
-      if (!buckets.size) {
-        resetColors();
-        return;
-      }
-
-      let best = null;
-      let bestScore = -Infinity;
-
       for (const bucket of buckets.values()) {
-        const r = Math.round(bucket.r / bucket.count);
-        const g = Math.round(bucket.g / bucket.count);
-        const b = Math.round(bucket.b / bucket.count);
-
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        const delta = max - min;
-        const brightness = (r + g + b) / 3;
-        const saturation = delta;
-
-        const prominence = bucket.count;
-        const score =
-          bucket.weight +
-          prominence * 10 +
-          saturation * 1.2 +
-          (255 - Math.abs(150 - brightness)) * 0.35;
-
-        if (score > bestScore) {
-          bestScore = score;
-          best = { r, g, b };
+        if (bucket.score > maxScore) {
+          maxScore = bucket.score;
+          // Calculate the exact average of this cluster for the smoothest result
+          bestColor = {
+            r: Math.round(bucket.r / bucket.count),
+            g: Math.round(bucket.g / bucket.count),
+            b: Math.round(bucket.b / bucket.count)
+          };
         }
       }
 
-      if (!best) {
+      if (!bestColor) {
         resetColors();
         return;
       }
 
-      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(best.r, best.g, best.b);
+      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(bestColor.r, bestColor.g, bestColor.b);
 
       const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
       const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
@@ -868,23 +830,19 @@ function updateDynamicColors(imageUrl) {
       activity.style.setProperty("--dynamic-accent-soft", softCss);
       activity.style.setProperty("--dynamic-accent-glow", glowCss);
 
+      // Create a beautiful, soft ambient background using the extracted cluster
       activity.style.setProperty(
         "--dynamic-bg",
         `
         radial-gradient(
-          82% 50% at 50% 22%,
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.34),
-          transparent 56%
+          100% 100% at 50% 0%,
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.25),
+          transparent 80%
         ),
         radial-gradient(
-          72% 40% at 50% 46%,
-          rgba(${glow.r}, ${glow.g}, ${glow.b}, 0.18),
-          transparent 60%
-        ),
-        linear-gradient(
-          180deg,
-          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.15),
-          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.07)
+          80% 80% at 50% 100%,
+          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.20),
+          transparent 75%
         )
         `
       );
