@@ -1161,17 +1161,27 @@ async function loadAndDisplayDisabilities() {
         return;
     }
 
-    placeholderElement.innerHTML = '<li>Loading...</li>';
+    placeholderElement.innerHTML = '<li class="disability-status">Loading...</li>';
 
     if (!firebaseAppInitialized || !db) {
         console.error('Disabilities load error: Firebase not ready.');
-        placeholderElement.innerHTML = '<li>Error (DB Init Error).</li>';
+
+        placeholderElement.innerHTML =
+            '<li class="disability-status disability-error">' +
+            'Error loading disability information.' +
+            '</li>';
+
         return;
     }
 
     if (!disabilitiesCollectionRef) {
         console.error('Disabilities load error: Collection ref missing.');
-        placeholderElement.innerHTML = '<li>Error (Config Error).</li>';
+
+        placeholderElement.innerHTML =
+            '<li class="disability-status disability-error">' +
+            'Disability information is unavailable.' +
+            '</li>';
+
         return;
     }
 
@@ -1187,58 +1197,107 @@ async function loadAndDisplayDisabilities() {
 
         if (querySnapshot.empty) {
             placeholderElement.innerHTML =
-                '<li>No specific information available at this time.</li>';
+                '<li class="disability-status">' +
+                'No specific information is available at this time.' +
+                '</li>';
+
             return;
         }
+
+        let displayedCount = 0;
 
         querySnapshot.forEach((documentSnapshot) => {
             const data = documentSnapshot.data();
 
             if (!data.name || !data.url) {
                 console.warn(
-                    'Skipping disability item due to missing name or URL:',
+                    'Skipping disability item because the name or URL is missing:',
                     documentSnapshot.id
                 );
+
+                return;
+            }
+
+            let validatedURL;
+
+            try {
+                validatedURL = new URL(data.url, window.location.origin);
+            } catch {
+                console.warn(
+                    'Skipping disability item because the URL is invalid:',
+                    documentSnapshot.id
+                );
+
+                return;
+            }
+
+            if (!['http:', 'https:'].includes(validatedURL.protocol)) {
+                console.warn(
+                    'Skipping disability item because the URL protocol is unsupported:',
+                    documentSnapshot.id
+                );
+
                 return;
             }
 
             const listItem = document.createElement('li');
             const linkElement = document.createElement('a');
-            const textSpan = document.createElement('span');
-            const iconElement = document.createElement('i');
+            const textElement = document.createElement('span');
+            const arrowElement = document.createElement('span');
 
-            linkElement.href = data.url;
+            listItem.classList.add('disability-item');
+
+            linkElement.classList.add('disability-link');
+            linkElement.href = validatedURL.href;
             linkElement.target = '_blank';
             linkElement.rel = 'noopener noreferrer';
 
-            textSpan.classList.add('button-text');
-            textSpan.textContent = data.name;
+            textElement.classList.add('disability-link-text');
+            textElement.textContent = data.name;
 
-            iconElement.classList.add('fas', 'fa-arrow-right');
-            iconElement.setAttribute('aria-hidden', 'true');
+            arrowElement.classList.add('disability-link-arrow');
+            arrowElement.textContent = '→';
+            arrowElement.setAttribute('aria-hidden', 'true');
 
-            linkElement.append(textSpan, iconElement);
+            linkElement.append(textElement, arrowElement);
             listItem.appendChild(linkElement);
             placeholderElement.appendChild(listItem);
+
+            displayedCount += 1;
         });
 
-        console.log(
-            `Displayed ${querySnapshot.size} disability links.`
-        );
+        if (displayedCount === 0) {
+            placeholderElement.innerHTML =
+                '<li class="disability-status">' +
+                'No valid disability links are available.' +
+                '</li>';
+        }
+
+        console.log(`Displayed ${displayedCount} disability links.`);
     } catch (error) {
         console.error('Error loading disabilities:', error);
 
-        let errorMessage = 'Could not load list.';
+        let errorMessage = 'Could not load the disability list.';
 
         if (error.code === 'failed-precondition') {
-            errorMessage = 'Error: DB config needed (order).';
+            errorMessage = 'The disability list requires a Firestore index.';
 
             console.error(
                 "Missing Firestore index for the disabilities collection ordered by 'order'."
             );
         }
 
-        placeholderElement.innerHTML = `<li>${errorMessage}</li>`;
+        placeholderElement.innerHTML = '';
+
+        const errorItem = document.createElement('li');
+
+        errorItem.classList.add(
+            'disability-status',
+            'disability-error'
+        );
+
+        errorItem.textContent = errorMessage;
+        placeholderElement.appendChild(errorItem);
     }
 }
 
