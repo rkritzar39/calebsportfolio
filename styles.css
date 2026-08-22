@@ -2011,30 +2011,6 @@ body.dark-mode .live-activity {
   border-radius: 12px; 
 }
 
-/* Left-align text for video platforms */
-.live-activity[data-platform="youtube"] .live-info,
-.live-activity[data-platform="youtubemusic"] .live-info,
-.live-activity[data-platform="netflix"] .live-info,
-.live-activity[data-platform="twitch"] .live-info {
-  align-items: flex-start;
-  text-align: left;
-}
-
-.live-activity[data-platform="youtube"] .live-song-title-wrapper,
-.live-activity[data-platform="youtubemusic"] .live-song-title-wrapper,
-.live-activity[data-platform="netflix"] .live-song-title-wrapper,
-.live-activity[data-platform="twitch"] .live-song-title-wrapper {
-  justify-content: flex-start;
-  width: 100%;
-}
-
-.live-activity[data-platform="youtube"] .live-artist,
-.live-activity[data-platform="youtubemusic"] .live-artist,
-.live-activity[data-platform="netflix"] .live-artist,
-.live-activity[data-platform="twitch"] .live-artist {
-  margin: 6px 0 0 0;
-}
-
 /* Force YouTube progress bar to brand red */
 .live-activity[data-platform="youtube"] .music-progress-bar,
 .live-activity[data-platform="youtubemusic"] .music-progress-bar {
@@ -2044,29 +2020,15 @@ body.dark-mode .live-activity {
 
 /* ------------------------- */
 /* SPOTIFY                   */
-/* (Left-aligned, sharp art) */
+/* (Sharp art radii)         */
 /* ------------------------- */
 .live-activity[data-platform="spotify"] .live-album-art {
   border-radius: 8px; 
 }
 
-.live-activity[data-platform="spotify"] .live-info {
-  align-items: flex-start;
-  text-align: left;
-}
-
-.live-activity[data-platform="spotify"] .live-song-title-wrapper {
-  justify-content: flex-start;
-  width: 100%;
-}
-
-.live-activity[data-platform="spotify"] .live-artist {
-  margin: 6px 0 0 0;
-}
-
 /* ------------------------- */
 /* APPLE MUSIC               */
-/* (Centered, soft squircle) */
+/* (Soft squircle, drop)     */
 /* ------------------------- */
 .live-activity[data-platform="apple_music"] .live-album-art {
   border-radius: 22px; 
