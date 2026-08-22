@@ -3622,144 +3622,291 @@ margin-top: 2px;
 /* ======================== */
 
 .disabilities-section {
-	backgr*und: var(--content-bg);
-	backgroun*-image: var(--bubble-gradient);
-	b*rder: 1px solid color-mix(in srgb,*var(--border-color) 82%, transpare*t);
-	border-radius: var(--radius-x*);
-	padding: 30px;
-	margin-bottom:*30px;
-	box-shadow: var(--bubble-hi*hlight), var(--bubble-shadow);
-	ba*kdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	transition:
-		background var(--transition-medium),
-		box-shadow var(--transition-medium);
-}
-
-.disabilities-section h2 {
-	margin-bottom: 15px;
-	color: var(--text-color);
-	font-size: 1.6em;
-	font-weight: 600;
-}
-
-.disabilities-section p {
-	margin-bottom: 20px;
-	color: var(--secondary-text);
-	font-size: 1em;
-	line-height: 1.5;
-}
-
-.disabilities-section ul {
-	display: grid;
-	gap: 12px;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-/* ======================== */
-/* Onyx Glass Button Links  */
-/* ======================== */
-
-.disabilities-section a {
-	posi*ion: relative;
-	display: flex;
-	al*gn-items: center;
-	justify-content* center;
+	po*ition: relative;
 	width: 100%;
-	min-height* 48px;
-	padding: 12px 52px;
-	box-s*zing: border-box;
-	overflow: hidde*;
+	ma*gin-bottom: 30px;
+	padding: 30px;
+*box-sizing: border-box;
+	overflow: hidden;
 
 	color: var(--text-color);
-	tex*-align: center;
-	text-decoration: *one;
-	font-weight: 600;
-	letter-sp*cing: 0.2px;
-
 	background:
-		linea*-gradient(
-			180deg,
-			color-mix*in srgb, white 8%, transparent),
-	*	color-mix(in srgb, white 2%, tran*parent)
-		),
-		var(--bubble-gradie*t),
+		var(--bubble-gradient),
 		var(--content-bg);
 
-	border:*1px solid color-mix(in srgb, var(-*border-color) 78%, transparent);
-	border-radius: 9999px;
+	border: 1px solid
+		color-mix(
+			in srgb,
+			var(--border-color) 82%,
+			transparent
+		);
+
+	border-radius: var(--radius-xl);
 
 	box-shadow:
-		0 8px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 8%, transparent);
+		var(--bubble-highlight),
+		var(--bubble-shadow);
 
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 
 	transition:
-		background 0.2s ease,
-		border-color 0.2s ease,
-		box-shadow 0.2s ease,
-		transform 0.12s ease,
-		color 0.2s ease;
+		background var(--transition-medium),
+		box-shadow var(--transition-medium);
 }
 
 /* ======================== */
-/* Soft Glass Sheen         */
+/* Section Heading          */
 /* ======================== */
 
-.disabilities-section a::before*{
-	content* "";
-	position: absolute;
-	inset: *;
-	border-radius: inherit;
+.disabilities-section h2 {
+	margin: 0 0 15px;
+	padding: 0;
 
-	backg*ound:
-		linear-gradient(
-			180deg*
-			color*mix(in srgb, white 16%, transparen*) 0%,
-			color-mix(in srgb, white *%, transparent) 35%,
-			transparen* 100%
+	color: var(--text-color);
+	font-size: 1.6rem;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+/* ======================== */
+/* Section Description      */
+/* ======================== */
+
+.disabilities-section > p {
+	margin: 0 0 20px;
+	padding: 0;
+
+	color:
+		color-mix(
+			in srgb,
+			var(--secondary-text) 88%,
+			var(--text-color) 12%
 		);
 
-	opacity: 0.55;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+/* ======================== */
+/* Disability List Reset    */
+/* ======================== */
+
+.disabilities-section #disabilities-list-placeholder {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 12px;
+
+	width: 100%;
+	margin: 0;
+	padding: 0;
+
+	list-style: none;
+}
+
+/* Reset Global List Styles */
+
+.disabilities-section #disabilities-list-placeholder > li {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	list-style: none;
+}
+
+/* Remove Global List Markers */
+
+.disabilities-section #disabilities-list-placeholder > li::before,
+.disabilities-section #disabilities-list-placeholder > li::after {
+	content: none;
+	display: none;
+}
+
+/* ======================== */
+/* Disability Link          */
+/* ======================== */
+
+.disabilities-section
+#disabili*ies-list-placeholder
+.disability-l*nk {
+	position: relative;
+
+	displa*: grid;
+	grid-template-columns: 36*x minmax(0, 1fr) 36px;
+	align-item*: center;
+
+	width: 100%;
+	min-heig*t: 52px;
+	margin: 0;
+	padding: 11p* 14px;
+	box-sizing: border-box;
+	o*erflow: hidden;
+
+	color: var(--tex*-color);
+	text-decoration: none;
+	*ext-align: center;
+	font-size: 1re*;
+	font-weight: 600;
+	line-height:*1.35;
+	letter-spacing: 0.2px;
+
+	ba*kground:
+		linear-gradient(
+			180*eg,
+			color-mix(in srgb, white 10*, transparent),
+			color-mix(in sr*b, white 2%, transparent)
+		),
+		v*r(--bubble-gradient),
+		var(--cont*nt-bg);
+
+	border: 1px solid
+		colo*-mix(
+			in srgb,
+			var(--border-*olor) 78%,
+			transparent
+		);
+
+	b*rder-radius: 9999px;
+
+	box-shadow:*		0 8px 24px
+			color-mix(
+				in *rgb,
+				var(--shadow-color) 42%,
+*			transparent
+			),
+		inset 0 1px*0
+			color-mix(
+				in srgb,
+				w*ite 14%,
+				transparent
+			),
+		i*set 0 -1px 0
+			color-m*x(
+				in srgb,
+				black 8%,
+				*ransparent
+			);
+
+	backdrop-filter* var(--backdrop-blur);
+	-webkit-ba*kdrop-filter: var(--backdrop-blur)*
+
+	opacity: 1;
+
+	transition:
+		bac*ground 0.2s ease,
+*	border-color 0.2s ease,
+		box-sha*ow 0.2s ease,
+		color 0.2s ease,
+	*transform 0.12s*ease;
+*
+
+/* Override Global Link States */
+
+.disabilities-section
+#disabili*ies-list-placeholder
+.disability-l*nk:link,
+.disabilities-section
+#di*abilities-list-placeholder
+.disabi*ity-link:visited {
+	color: var(--t*xt-color);
+	text-decoration: none;
+	opacity: 1;
+}
+
+/* ======================== */
+/* Glass Highlight          */
+/* ======================== */
+
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link::before {
+	content: "";
+
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+
+	border-radius: inherit;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 16%, transparent) 0%,
+			color-mix(in srgb, white 6%, transparent) 35%,
+			transparent 100%
+		);
+
+	opacity: 0.5;
 	pointer-events: none;
 }
 
-/* ======================== */
-/* Centered Button Text     */
-/* ======================== */
+/* Disable Old CSS Chevron */
 
-.disabilities-section a .button*text {
-	position: relative;
-	z-ind*x: 1;
-	display: block;
-	width: 100*;
-	color: var(--text-color);
-	text*align: center;
-	transition: color 0.2s ease;
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link::after {
+	content: none;
+	display: none;
 }
 
 /* ======================== */
-/* Font Awesome Right Arrow */
+/* Centered Link Text       */
 /* ======================== */
 
-.disabilities-section a i.fa-arrow-right {
-	position: absolute;
-	top: 50%;
-	right: 18px;
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link-text {
+	position: relative;
 	z-index: 1;
+	grid-column: 2;
 
-	margin: 0;
+	min-width: 0;
+
+	color: inherit;
+	text-align: center;
+	text-decoration: none;
+
+	overflow-wrap: anywhere;
+}
+
+/* ======================== */
+/* Right Arrow              */
+/* ======================== */
+
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link-arrow {
+	position: relative;
+	z-index: 1;
+	grid-column: 3;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 36px;
+	height: 36px;
+
 	color: var(--icon-color, var(--text-color));
-	font-size: 0.9em;
+	font-size: 1.35rem;
+	font-family:
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI Symbol",
+		"Segoe UI",
+		sans-serif;
+	font-weight: 600;
 	line-height: 1;
 
+	text-decoration: none;
 	pointer-events: none;
-	transform: translateY(-50%);
+
+	transform: translateX(0);
 
 	transition:
 		color 0.2s ease,
@@ -3770,11 +3917,22 @@ margin-top: 2px;
 /* Hover State              */
 /* ======================== */
 
-.disabilities-section a:hover {
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link:hover {
+	color:
+		color-mix(
+			in srgb,
+			var(--accent-color, #4ea8ff) 85%,
+			white 15%
+		);
+
+	text-decoration: none;
+
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 12%, transparent),
+			color-mix(in srgb, white 14%, transparent),
 			color-mix(in srgb, white 4%, transparent)
 		),
 		color-mix(
@@ -3797,62 +3955,124 @@ margin-top: 2px;
 				var(--accent-color, #4ea8ff) 25%,
 				transparent
 			),
-		inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
+		inset 0 1px 0
+			color-mix(
+				in srgb,
+				white 16%,
+				transparent
+			),
+		inset 0 -1px 0
+			color-mix(
+				in srgb,
+				black 10%,
+				transparent
+			);
 
 	transform: translateY(-2px);
 }
 
-.disabilities-section a:hover .button-text {
-	color:
-		color-mix(
-			in srgb,
-			var(--accent-color, #4ea8ff) 85%,
-			white 15%
-		);
-}
-
-.disabilities-section a:hover i.fa-arrow-right {
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link:hover
+.disability-link-arrow {
 	color: var(--accent-color, #4ea8ff);
-	transform: translateY(-50%) translateX(2px);
+	transform: translateX(3px);
 }
 
 /* ======================== */
 /* Keyboard Focus State     */
 /* ======================== */
 
-.disabilities-section a:focus-visible {
-	outline: none;
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link:focus-visible {
+	outline: 3px solid
+		color-mix(
+			in srgb,
+			var(--accent-color, #4ea8ff) 45%,
+			transparent
+		);
+
+	outline-offset: 3px;
 
 	border-color:
 		color-mix(
 			in srgb,
-			var(--accent-color, #4ea8ff) 52%,
+			var(--accent-color, #4ea8ff) 65%,
 			var(--border-color)
 		);
-
-	box-shadow:
-		0 0 0 3px
-			color-mix(
-				in srgb,
-				var(--accent-color, #4ea8ff) 20%,
-				transparent
-			),
-		0 10px 28px
-			color-mix(
-				in srgb,
-				var(--shadow-color) 48%,
-				transparent
-			),
-		inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
 }
 
 /* ======================== */
 /* Active State             */
 /* ======================== */
 
-.disabilities-section a:active {
+.disabilities-section
+#disabilities-list-placeholder
+.disability-link:active {
 	transform: scale(0.985);
+}
+
+/* ======================== */
+/* Status Messages          */
+/* ======================== */
+
+.disabilities-section
+#disabilities-list-placeholder
+.disability-status {
+	padding: 16px 18px;
+
+	color: var(--secondary-text);
+	text-align: center;
+
+	background:
+		color-mix(
+			in srgb,
+			var(--content-bg) 85%,
+			transparent
+		);
+
+	border: 1px solid
+		color-mix(
+			in srgb,
+			var(--border-color) 70%,
+			transparent
+		);
+
+	border-radius: var(--radius-lg, 18px);
+}
+
+.disabilities-section
+#disabilities-list-placeholder
+.disability-error {
+	color: var(--error-color, #ff6961);
+}
+
+/* ======================== */
+/* Mobile Layout            */
+/* ======================== */
+
+@media (max-width: 600px) {
+	.disabilities-section {
+		padding: 20px;
+	}
+
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link {
+		grid-template-columns: 30px minmax(0, 1fr) 30px;
+		min-height: 48px;
+		padding: 10px 12px;
+		font-size: 0.95rem;
+	}
+
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link-arrow {
+		width: 30px;
+		height: 30px;
+		font-size: 1.2rem;
+	}
 }
 
 /* ======================== */
@@ -3861,19 +4081,29 @@ margin-top: 2px;
 
 @media (prefers-reduced-motion: reduce) {
 	.disabilities-section,
-	.disabilities-section a,
-	.disabilities-section a .button-text,
-	.disabilities-section a i.fa-arrow-right {
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link,
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link-arrow {
 		transition: none;
 	}
 
-	.disabilities-section a:hover,
-	.disabilities-section a:active {
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link:hover,
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link:active {
 		transform: none;
 	}
 
-	.disabilities-section a:hover i.fa-arrow-right {
-		transform: translateY(-50%);
+	.disabilities-section
+	#disabilities-list-placeholder
+	.disability-link:hover
+	.disability-link-arrow {
+		transform: none;
 	}
 }
 
