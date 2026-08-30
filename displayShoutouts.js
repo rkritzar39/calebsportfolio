@@ -19,7 +19,7 @@ import {
   getDocs,
   doc,
   getDoc,
-  onSnapshot,        // ðŸ‘ˆ add this
+  onSnapshot,        // 👈 add this
   Timestamp,
   orderBy,
   query,
@@ -53,7 +53,7 @@ function watchLiveStatus() {
     liveStatusRef,
     (snap) => {
       if (!snap.exists()) {
-        el.textContent = "ðŸ›Œ Offline";
+        el.textContent = "🛌 Offline";
         container.classList.remove("active");
         container.classList.add("hidden");
         return;
@@ -64,18 +64,18 @@ function watchLiveStatus() {
       const isActive = data.isActive === true || message.length > 0;
 
       if (isActive) {
-        el.textContent = message || "ðŸŸ¢ Active";
+        el.textContent = message || "🟢 Active";
         container.classList.remove("hidden");
         container.classList.add("active");
       } else {
-        el.textContent = "ðŸ›Œ Offline";
+        el.textContent = "🛌 Offline";
         container.classList.remove("active");
         container.classList.add("hidden");
       }
     },
     (error) => {
       console.error("Live status listener error:", error);
-      el.textContent = "ðŸ›Œ Offline";
+      el.textContent = "🛌 Offline";
       container.classList.remove("active");
       container.classList.add("hidden");
     }
@@ -129,7 +129,7 @@ try {
 }
 
 /* ==========================================================
-   ðŸ”” FIREBASE CLOUD MESSAGING â€” PUSH NOTIFICATION SETUP
+   🔔 FIREBASE CLOUD MESSAGING — PUSH NOTIFICATION SETUP
    ========================================================== */
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
@@ -148,18 +148,18 @@ async function initializePushNotifications() {
     }
 
     const messaging = getMessaging();
-    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // ðŸ”‘ Replace with your real VAPID key
+    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // 🔑 Replace with your real VAPID key
 
     // Register your service worker (must be at root)
     const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-    console.log("âœ… Service Worker registered for push notifications:", registration);
+    console.log("✅ Service Worker registered for push notifications:", registration);
 
     // Get an FCM token for this device
     const token = await getToken(messaging, {
       vapidKey,
       serviceWorkerRegistration: registration
     });
-    console.log("ðŸ”‘ FCM Token:", token);
+    console.log("🔑 FCM Token:", token);
 
     // Optionally save token to Firestore to identify this user later
     // const tokenRef = doc(db, "user_tokens", token);
@@ -167,13 +167,13 @@ async function initializePushNotifications() {
 
     // Listen for foreground notifications (while site is open)
     onMessage(messaging, (payload) => {
-      console.log("ðŸ“© Push message received in foreground:", payload);
+      console.log("📩 Push message received in foreground:", payload);
       const { title, body, icon } = payload.notification || {};
       showSmartToast(title || "Notification", body || "You have a new update!");
     });
 
   } catch (err) {
-    console.error("âŒ Push notification setup failed:", err);
+    console.error("❌ Push notification setup failed:", err);
   }
 }
 
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================
-   ðŸ”” SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
+   🔔 SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
    ========================================================== */
 
 // --- Cache system to prevent duplicates ---
@@ -313,7 +313,7 @@ function setupSmartRealtimeNotifications() {
     rememberDoc("mainProfile");
   });
 
-  console.log("âœ… Smart Firestore notifications initialized (all collections).");
+  console.log("✅ Smart Firestore notifications initialized (all collections).");
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -326,13 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
 const assumedBusinessTimezone = 'America/New_York'; // Your business's primary IANA timezone
 
 /* =========================================================
-   ACADEMIC AVAILABILITY â€“ STORAGE
+   ACADEMIC AVAILABILITY – STORAGE
 ========================================================= */
 
 let academicAvailability = null;
 
 /* =========================================================
-   ACADEMIC AVAILABILITY â€“ FIRESTORE LISTENER
+   ACADEMIC AVAILABILITY – FIRESTORE LISTENER
 ========================================================= */
 
 function watchAcademicAvailability() {
@@ -346,7 +346,7 @@ function watchAcademicAvailability() {
 }
 
 /* =========================================================
-   ACADEMIC CHECK â€“ IN CLASS RIGHT NOW?
+   ACADEMIC CHECK – IN CLASS RIGHT NOW?
 ========================================================= */
 
 function isInClassNow(now) {
@@ -357,7 +357,7 @@ function isInClassNow(now) {
   const timeNow = now.toFormat("HH:mm");
 
   return classes.some(cls =>
-    cls.days?.toLowerCase().includes(weekday) &&
+    getRecurringClassDays(cls).includes(normalizeAcademicDayValue(weekday)) &&
     cls.startTime <= timeNow &&
     cls.endTime >= timeNow
   );
@@ -727,7 +727,7 @@ function renderYouTubeCard(account) {
 
                 <p class="youtube-stats">
                     ${escapeHTML(subscribers)} subscribers
-                    ${videos && videos !== "0" ? ` Â· ${escapeHTML(videos)} videos` : ""}
+                    ${videos && videos !== "0" ? ` · ${escapeHTML(videos)} videos` : ""}
                 </p>
             </div>
         </div>
@@ -1256,7 +1256,7 @@ async function loadAndDisplayDisabilities() {
             textElement.textContent = data.name;
 
             arrowElement.classList.add('disability-link-arrow');
-            arrowElement.textContent = 'â†’';
+            arrowElement.textContent = '→';
             arrowElement.setAttribute('aria-hidden', 'true');
 
             linkElement.append(textElement, arrowElement);
@@ -3036,7 +3036,7 @@ function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) 
         recommendedYear = earliestAllowedYear;
     }
 
-    let window = `${recommendedYear}â€“${recommendedYear + 1}`;
+    let window = `${recommendedYear}–${recommendedYear + 1}`;
     let timing = `Plan around ${recommendedYear}.`;
 
     if (priority.level === "critical") {
@@ -3075,18 +3075,18 @@ function generateUpgradeExplanation(item, priority, recommendedUpgrade, upgrade,
     const reasonText = reasons.length > 0 ? reasons.join(", ") : "No major issues detected";
 
     if (priority.level === "critical") {
-        return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasonText}.`;
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasonText}.`;
     }
 
     if (priority.level === "recommended") {
-        return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasonText}.`;
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasonText}.`;
     }
 
     if (priority.level === "optional") {
-        return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasonText}.`;
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasonText}.`;
     }
 
-    return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} is still useful enough to keep. There is not enough reason to replace it right now. Main reasons: ${reasonText}.`;
+    return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still useful enough to keep. There is not enough reason to replace it right now. Main reasons: ${reasonText}.`;
 }
 
 // ======================
@@ -3490,7 +3490,7 @@ function calculateCostEfficiency(item) {
     return {
         costPerDay,
         costPerYear,
-        label: `$${costPerYear.toFixed(0)}/year â€¢ $${costPerDay.toFixed(2)}/day`
+        label: `$${costPerYear.toFixed(0)}/year • $${costPerDay.toFixed(2)}/day`
     };
 }
 
@@ -5744,6 +5744,70 @@ function formatDuration(totalMinutes) {
   return `${hours} hour${hours === 1 ? '' : 's'} ${minutes} minute${minutes === 1 ? '' : 's'}`;
 }
 
+function getAcademicItemTimezone(item, academicAvailability = cachedAcademicData) {
+  return String(item?.timezone || academicAvailability?.profile?.timezone || window.assumedBusinessTimezone || 'America/New_York').trim();
+}
+
+function getAcademicNow(item, fallbackNow) {
+  if (!fallbackNow || typeof fallbackNow.setZone !== 'function') return fallbackNow;
+  const zonedNow = fallbackNow.setZone(getAcademicItemTimezone(item));
+  return zonedNow.isValid ? zonedNow : fallbackNow;
+}
+
+function getClassDurationMinutes(item) {
+  const start = timeStringToMinutes(item?.startTime);
+  const end = timeStringToMinutes(item?.endTime);
+  if (start == null || end == null) return null;
+  return end >= start ? end - start : 1440 - start + end;
+}
+
+function formatClassDuration(item) {
+  const duration = getClassDurationMinutes(item);
+  return duration == null ? '' : formatDuration(duration);
+}
+
+function formatAcademicClassTime(timeString, item, visitorTimezone) {
+  if (!timeString) return '?';
+  const LuxonLibrary = getLuxon();
+  if (!LuxonLibrary) return formatDisplayTimeBusinessInfo(timeString, visitorTimezone);
+  const [hour, minute] = String(timeString).split(':').map(Number);
+  if (Number.isNaN(hour) || Number.isNaN(minute)) return timeString;
+  const source = LuxonLibrary.DateTime.now().setZone(getAcademicItemTimezone(item)).set({ hour, minute, second: 0, millisecond: 0 });
+  if (!source.isValid) return formatDisplayTimeBusinessInfo(timeString, visitorTimezone);
+  const display = source.setZone(visitorTimezone);
+  return use24HourBusinessTime ? display.toFormat('HH:mm') : display.toFormat('h:mm a');
+}
+
+function normalizeAcademicClassType(value) {
+  const type = String(value || 'lecture').trim().toLowerCase().replace(/[\s_]+/g, '-');
+  return ['lecture', 'lab', 'discussion', 'seminar', 'studio', 'online', 'hybrid', 'other'].includes(type) ? type : 'other';
+}
+
+function formatAcademicClassType(value) {
+  const type = normalizeAcademicClassType(value);
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+function installAcademicClassTypeStyles() {
+  if (document.getElementById('academic-class-type-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'academic-class-type-styles';
+  style.textContent = `
+    .academic-class-item { --class-type-color: var(--accent-color, #4ea8ff); border-left: 4px solid var(--class-type-color); }
+    .academic-class-item.class-type-lecture { --class-type-color: #4ea8ff; }
+    .academic-class-item.class-type-lab { --class-type-color: #30d158; }
+    .academic-class-item.class-type-discussion { --class-type-color: #bf5af2; }
+    .academic-class-item.class-type-seminar { --class-type-color: #ff9f0a; }
+    .academic-class-item.class-type-studio { --class-type-color: #ff375f; }
+    .academic-class-item.class-type-online { --class-type-color: #64d2ff; }
+    .academic-class-item.class-type-hybrid { --class-type-color: #ffd60a; }
+    .academic-class-item.class-type-other { --class-type-color: #8e8e93; }
+    .academic-class-type-badge { display: inline-flex; width: fit-content; padding: 3px 9px; border: 1px solid color-mix(in srgb, var(--class-type-color) 55%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--class-type-color) 14%, transparent); color: var(--class-type-color); font-size: .76rem; font-weight: 700; }
+    .academic-class-meta { color: var(--secondary-text); font-size: .82rem; }
+  `;
+  document.head.appendChild(style);
+}
+
 function getScheduledLabel({
   nowInBusinessTimezone,
   startDateTime,
@@ -6103,16 +6167,20 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
       return isInDateWindow(nowInBusinessTimezone, cls.startDate, cls.endDate);
     });
 
-  const activeClass =
-    checkBlocks(classes, 'days', currentDayOfWeek) ||
-    checkBlocks(classes, 'day', currentDayOfWeek);
-
-  if (activeClass) {
-    return {
-      active: true,
-      reason: activeClass.block.title || activeClass.block.course || 'In Class',
-      backAt: activeClass.backAt
-    };
+  for (const item of classes) {
+    const classNow = getAcademicNow(item, nowInBusinessTimezone);
+    const classDay = normalizeAcademicDayValue(classNow.toFormat('ccc'));
+    if (!getRecurringClassDays(item).includes(classDay)) continue;
+    const start = timeStringToMinutes(item.startTime);
+    const end = timeStringToMinutes(item.endTime);
+    if (start == null || end == null) continue;
+    const current = classNow.hour * 60 + classNow.minute;
+    const active = end > start ? current >= start && current < end : current >= start || current < end;
+    if (active) {
+      let backAt = classNow.startOf('day').plus({ minutes: end });
+      if (end <= start && current >= start) backAt = backAt.plus({ days: 1 });
+      return { active: true, reason: item.title || item.course || 'In Class', backAt: backAt.setZone(nowInBusinessTimezone.zoneName) };
+    }
   }
 
   return { active: false };
@@ -6222,7 +6290,7 @@ function hasAcademicScheduleData(academicAvailability) {
 }
 
 function formatAcademicDays(daysValue) {
-  if (!daysValue) return 'â€”';
+  if (!daysValue) return '—';
 
   if (Array.isArray(daysValue)) {
     return daysValue
@@ -6239,7 +6307,7 @@ function formatAcademicDays(daysValue) {
       .join(', ');
   }
 
-  return 'â€”';
+  return '—';
 }
 
 function normalizeAcademicDayValue(dayValue) {
@@ -6297,14 +6365,53 @@ function getNextRecurringClassLabel(item, nowInBusinessTimezone, fallbackTodayLa
       const nextDayName = nextDate.toFormat('cccc');
 
       if (offset === 1) {
-        return `${fallbackTodayLabel} â€¢ Next class tomorrow`;
+        return `${fallbackTodayLabel} • Next class tomorrow`;
       }
 
-      return `${fallbackTodayLabel} â€¢ Next class ${nextDayName}`;
+      return `${fallbackTodayLabel} • Next class ${nextDayName}`;
     }
   }
 
   return fallbackTodayLabel;
+}
+
+function getNextRecurringClassDate(item, nowInBusinessTimezone) {
+  if (!item || !nowInBusinessTimezone) return null;
+
+  const classDays = getRecurringClassDays(item);
+  if (!classDays.length) return null;
+
+  const classNow = getAcademicNow(item, nowInBusinessTimezone);
+  const classTimezone = getAcademicItemTimezone(item);
+  const LuxonLibrary = getLuxon();
+  const classStartDate = item.startDate && LuxonLibrary ? LuxonLibrary.DateTime.fromISO(item.startDate, { zone: classTimezone }) : null;
+  const classEndDate = item.endDate && LuxonLibrary ? LuxonLibrary.DateTime.fromISO(item.endDate, { zone: classTimezone }) : null;
+  nowInBusinessTimezone = classNow;
+  const searchStart = classStartDate && nowInBusinessTimezone < classStartDate.startOf('day')
+    ? classStartDate.startOf('day')
+    : nowInBusinessTimezone.startOf('day');
+
+  for (let offset = 0; offset <= 14; offset += 1) {
+    const candidate = searchStart.plus({ days: offset });
+    const candidateDay = normalizeAcademicDayValue(candidate.toFormat('ccc'));
+
+    if (classEndDate && candidate > classEndDate.endOf('day')) break;
+    if (classDays.includes(candidateDay)) return candidate;
+  }
+
+  return null;
+}
+
+function formatRecurringClassDateLabel(targetDate, nowInBusinessTimezone) {
+  if (!targetDate || !nowInBusinessTimezone) return 'Not Scheduled';
+
+  const differenceInDays = Math.round(
+    targetDate.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
+  );
+
+  if (differenceInDays === 0) return 'Scheduled for Today';
+  if (differenceInDays === 1) return 'Scheduled for Tomorrow';
+  return `Next class ${targetDate.toFormat('cccc')}`;
 }
 
 function getRecurringClassSmartLabel(item, nowInBusinessTimezone) {
@@ -6313,53 +6420,42 @@ function getRecurringClassSmartLabel(item, nowInBusinessTimezone) {
   const classStartDate = item.startDate ? parseBusinessIsoDate(item.startDate) : null;
   const classEndDate = item.endDate ? parseBusinessIsoDate(item.endDate) : null;
 
-  if (classStartDate && nowInBusinessTimezone < classStartDate.startOf('day')) {
-    const daysUntil = Math.round(
-      classStartDate.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
-    );
-
-    if (daysUntil === 0) return 'Scheduled for Today';
-    if (daysUntil === 1) return 'Scheduled for Tomorrow';
-    return `Scheduled in ${daysUntil} days`;
-  }
-
   if (classEndDate && nowInBusinessTimezone > classEndDate.endOf('day')) {
     return 'Concluded';
   }
 
-  const currentDay = normalizeAcademicDayValue(nowInBusinessTimezone.toFormat('ccc'));
   const normalizedClassDays = getRecurringClassDays(item);
+  const currentDay = normalizeAcademicDayValue(nowInBusinessTimezone.toFormat('ccc'));
+  const termHasStarted = !classStartDate || nowInBusinessTimezone >= classStartDate.startOf('day');
+  const isScheduledToday = termHasStarted && normalizedClassDays.includes(currentDay);
 
-  if (
-    normalizedClassDays.length > 0 &&
-    !normalizedClassDays.includes(currentDay)
-  ) {
-    return getNextRecurringClassLabel(item, nowInBusinessTimezone, 'Not Scheduled Today');
+  if (!isScheduledToday) {
+    const nextClassDate = getNextRecurringClassDate(item, nowInBusinessTimezone);
+    return formatRecurringClassDateLabel(nextClassDate, nowInBusinessTimezone);
   }
 
-  if (!item.startTime || !item.endTime) {
-    return 'Scheduled for Today';
-  }
+  if (!item.startTime || !item.endTime) return 'Scheduled for Today';
 
   const startMinutes = timeStringToMinutes(item.startTime);
   const endMinutes = timeStringToMinutes(item.endTime);
-
-  if (startMinutes == null || endMinutes == null) {
-    return 'Scheduled for Today';
-  }
+  if (startMinutes == null || endMinutes == null) return 'Scheduled for Today';
 
   const currentMinutes = nowInBusinessTimezone.hour * 60 + nowInBusinessTimezone.minute;
-
   if (currentMinutes < startMinutes) {
-    const minutesUntilStart = startMinutes - currentMinutes;
-    return `Starts in ${formatDuration(minutesUntilStart)}`;
+    return `Starts in ${formatDuration(startMinutes - currentMinutes)}`;
   }
-
   if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
     return 'In Progress';
   }
 
-  return getNextRecurringClassLabel(item, nowInBusinessTimezone, 'Concluded Today');
+  const nextClassDate = getNextRecurringClassDate(
+    item,
+    nowInBusinessTimezone.plus({ days: 1 }).startOf('day')
+  );
+  const nextLabel = formatRecurringClassDateLabel(nextClassDate, nowInBusinessTimezone);
+  return nextLabel === 'Scheduled for Tomorrow'
+    ? 'Concluded Today • Next class tomorrow'
+    : `Concluded Today • ${nextLabel}`;
 }
 
 function getAcademicItemStatusLabel({
@@ -6416,6 +6512,7 @@ function renderAcademicSchedulePanel({
   visitorTimezone,
   finalType
 }) {
+  installAcademicClassTypeStyles();
   const academicDetails = document.getElementById('academicDetails');
   const academicHoursDisplay = document.getElementById('academic-hours-display');
 
@@ -6480,15 +6577,20 @@ function renderAcademicSchedulePanel({
   classes.forEach((item) => {
     const label = item.title || item.course || 'Class';
     const timeRange = (item.startTime && item.endTime)
-        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : 'â€”';
+        ? `${formatAcademicClassTime(item.startTime, item, visitorTimezone)} - ${formatAcademicClassTime(item.endTime, item, visitorTimezone)}`
+        : '—';
     const days = formatAcademicDays(item.days || item.day);
     const statusLabel = getRecurringClassSmartLabel(item, nowInBusinessTimezone);
+    const classType = normalizeAcademicClassType(item.type);
+    const duration = formatClassDuration(item);
+    const sourceTimezone = getAcademicItemTimezone(item, academicAvailability);
 
     classesHtml += `
-      <li>
+      <li class="academic-class-item class-type-${escapeHtml(classType)}">
         <strong>${escapeHtml(label)}</strong>
+        <span class="academic-class-type-badge">${escapeHtml(formatAcademicClassType(classType))}</span>
         <span class="hours">${escapeHtml(timeRange)} (${escapeHtml(days)})</span>
+        <span class="academic-class-meta">${duration ? `Duration: ${escapeHtml(duration)} • ` : ''}${escapeHtml(sourceTimezone.replace(/_/g, ' '))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>`;
   });
@@ -6501,7 +6603,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.course || 'Exam';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : 'â€”';
+        : '—';
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -6524,7 +6626,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.course || 'Final';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : 'â€”';
+        : '—';
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -6547,7 +6649,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.label || 'Event';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : 'â€”';
+        : '—';
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -6573,7 +6675,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.company || item.role || 'Internship/Co-Op';
     const dates = (item.startDate && item.endDate)
         ? `${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}`
-        : (item.startDate ? escapeHtml(formatDate(item.startDate)) : 'â€”');
+        : (item.startDate ? escapeHtml(formatDate(item.startDate)) : '—');
         
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
@@ -6774,7 +6876,7 @@ function setLocalTimeLine(visitorTimezone) {
 
     element.textContent = `Local time: ${formatted}`;
   } catch (error) {
-    element.textContent = 'Local time: â€”';
+    element.textContent = 'Local time: —';
   }
 }
 
@@ -6794,7 +6896,7 @@ function formatStoreLocalTime() {
 
     element.textContent = formatted;
   } catch (error) {
-    element.textContent = 'â€”';
+    element.textContent = '—';
   }
 }
 
@@ -6942,12 +7044,12 @@ function installCopyToday() {
       Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
     const textToCopy = [
-      'Calebâ€™s Merch Store',
+      'Caleb’s Merch Store',
       `Timezone: ${timezone}`,
       statusText ? `Status: ${statusText}` : '',
       reasonText ? `Schedule: ${reasonText}` : '',
-      todayHours ? `Todayâ€™s hours: ${todayHours}` : '',
-      nextOpening && nextOpening !== 'â€”' ? `Next opening: ${nextOpening}` : ''
+      todayHours ? `Today’s hours: ${todayHours}` : '',
+      nextOpening && nextOpening !== '—' ? `Next opening: ${nextOpening}` : ''
     ].filter(Boolean).join('\n');
 
     try {
@@ -7002,8 +7104,8 @@ function renderTodayTimeline({
   if (earliestOpen == null || latestClose == null || latestClose <= earliestOpen) {
     fillElement.style.width = '0%';
     nowElement.style.left = '0%';
-    startElement.textContent = 'â€”';
-    endElement.textContent = 'â€”';
+    startElement.textContent = '—';
+    endElement.textContent = '—';
     return;
   }
 
@@ -7087,7 +7189,7 @@ function buildPremiumStatusHint({
   }
 
   if (finalType === 'holiday') {
-    return 'Holiday hours are affecting todayâ€™s schedule.';
+    return 'Holiday hours are affecting today’s schedule.';
   }
 
   if (finalType === 'temporary') {
@@ -7148,7 +7250,7 @@ function setStatusChip(statusText, statusType = 'regular', isManualOverride = fa
   }
 
   if (isManualOverride) {
-    chip.textContent = `${label} â€¢ Manual`;
+    chip.textContent = `${label} • Manual`;
     chip.style.color = manualColor;
     chip.style.borderColor = `color-mix(in srgb, ${manualColor} 40%, transparent)`;
     return;
@@ -7366,8 +7468,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   setMetaRow('bizUserTz', visitorTimezone);
   setLocalTimeLine(visitorTimezone);
   formatStoreLocalTime();
-  setMetaRow('bizNextOpen', 'â€”');
-  setMetaRow('bizTodayHours', 'â€”');
+  setMetaRow('bizNextOpen', '—');
+  setMetaRow('bizTodayHours', '—');
 
   if (!window.assumedBusinessTimezone) {
     statusMainTextElement.textContent = 'Configuration Error';
@@ -7533,7 +7635,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
         setMetaRow(
           'bizTodayHours',
-          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} â€“ ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} – ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
         );
 
         return;
@@ -7541,7 +7643,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       const joinedRanges = todaySourceSchedule.ranges
         .map((range) =>
-          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}â€“${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}–${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
         )
         .join(', ');
 
@@ -7561,7 +7663,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       setMetaRow(
         'bizTodayHours',
-        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} â€“ ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} – ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
       );
 
       return;
@@ -7569,7 +7671,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
     const joinedRanges = schedule.ranges
       .map((range) =>
-        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}â€“${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}–${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
       )
       .join(', ');
 
@@ -7578,7 +7680,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
   (function setSubStatusAndNextOpen() {
     statusSubTextElement.textContent = '';
-    setMetaRow('bizNextOpen', 'â€”');
+    setMetaRow('bizNextOpen', '—');
 
     const formatDayLabelFromDateTime = (dateTime) => {
       if (!LuxonLibrary || !nowInBusinessTimezone || !dateTime) return 'Today';
@@ -7606,7 +7708,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           );
           const nextOpenLabel = formatDayLabelFromDateTime(activeAcademic.backAt);
 
-          setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${reopeningTimeText}`);
+          setMetaRow('bizNextOpen', `${nextOpenLabel} • ${reopeningTimeText}`);
 
           if (minutesAway <= TEMPORARY_WARNING_MINUTES) {
             isAcademicEndingSoon = true;
@@ -7623,13 +7725,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       }
       
       statusSubTextElement.textContent = '';
-      setMetaRow('bizNextOpen', 'â€”');
+      setMetaRow('bizNextOpen', '—');
       return;
     }
 
     if (finalType === 'temporary' && isManualOverride) {
       statusSubTextElement.textContent = 'Manual temporary override is active';
-      setMetaRow('bizNextOpen', 'â€”');
+      setMetaRow('bizNextOpen', '—');
       return;
     }
 
@@ -7638,7 +7740,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       if (!LuxonLibrary || !nowInBusinessTimezone || !activeRange?.close) {
         statusSubTextElement.textContent = 'Temporarily unavailable';
-        setMetaRow('bizNextOpen', 'â€”');
+        setMetaRow('bizNextOpen', '—');
         return;
       }
 
@@ -7646,7 +7748,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       if (temporaryCloseMinutes == null) {
         statusSubTextElement.textContent = 'Temporarily unavailable';
-        setMetaRow('bizNextOpen', 'â€”');
+        setMetaRow('bizNextOpen', '—');
         return;
       }
 
@@ -7664,7 +7766,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
         const nextOpenLabel = formatDayLabelFromDateTime(reopeningDateTime);
 
-        setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${reopeningTimeText}`);
+        setMetaRow('bizNextOpen', `${nextOpenLabel} • ${reopeningTimeText}`);
 
         if (minutesAway <= TEMPORARY_WARNING_MINUTES) {
           isTemporaryEndingSoon = true;
@@ -7697,7 +7799,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           visitorTimezone
         );
 
-        setMetaRow('bizNextOpen', `${nextOpeningAfterTemporary.dayLabel} â€¢ ${prettyTime}`);
+        setMetaRow('bizNextOpen', `${nextOpeningAfterTemporary.dayLabel} • ${prettyTime}`);
 
         if (nextOpeningAfterTemporary.offset === 0) {
           statusSubTextElement.textContent = `Reopens today at ${prettyTime}`;
@@ -7708,7 +7810,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       } else {
         statusSubTextElement.textContent = '';
-        setMetaRow('bizNextOpen', 'â€”');
+        setMetaRow('bizNextOpen', '—');
       }
 
       return;
@@ -7717,7 +7819,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     if (finalType === 'holiday') {
       if (!LuxonLibrary || !nowInBusinessTimezone) {
         statusSubTextElement.textContent = '';
-        setMetaRow('bizNextOpen', 'â€”');
+        setMetaRow('bizNextOpen', '—');
         return;
       }
 
@@ -7761,13 +7863,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
             const prettyNextTime = formatDisplayTimeBusinessInfo(nextHolidayOpeningToday, visitorTimezone);
             const nextOpenLabel = formatDayLabelFromDateTime(nextHolidayOpenDateTime);
 
-            setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${prettyNextTime}`);
+            setMetaRow('bizNextOpen', `${nextOpenLabel} • ${prettyNextTime}`);
           } else {
-            setMetaRow('bizNextOpen', 'â€”');
+            setMetaRow('bizNextOpen', '—');
           }
         } else {
           statusSubTextElement.textContent = '';
-          setMetaRow('bizNextOpen', 'â€”');
+          setMetaRow('bizNextOpen', '—');
         }
 
         return;
@@ -7795,7 +7897,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openingDateTime);
           const nextOpenLabel = formatDayLabelFromDateTime(openingDateTime);
 
-          setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${prettyTime}`);
+          setMetaRow('bizNextOpen', `${nextOpenLabel} • ${prettyTime}`);
 
           if (minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
             isOpeningSoon = true;
@@ -7831,7 +7933,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           visitorTimezone
         );
 
-        setMetaRow('bizNextOpen', `${nextOpeningAfterHoliday.dayLabel} â€¢ ${prettyTime}`);
+        setMetaRow('bizNextOpen', `${nextOpeningAfterHoliday.dayLabel} • ${prettyTime}`);
 
         if (nextOpeningAfterHoliday.offset === 1) {
           statusSubTextElement.textContent = `Reopens tomorrow at ${prettyTime}`;
@@ -7840,7 +7942,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       } else {
         statusSubTextElement.textContent = '';
-        setMetaRow('bizNextOpen', 'â€”');
+        setMetaRow('bizNextOpen', '—');
       }
 
       return;
@@ -7922,13 +8024,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       }
 
-      setMetaRow('bizNextOpen', 'â€”');
+      setMetaRow('bizNextOpen', '—');
       return;
     }
 
     if (!LuxonLibrary || !nowInBusinessTimezone) {
       statusSubTextElement.textContent = '';
-      setMetaRow('bizNextOpen', 'â€”');
+      setMetaRow('bizNextOpen', '—');
       return;
     }
 
@@ -7951,11 +8053,11 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       const prettyTime = formatDisplayTimeBusinessInfo(nextOpenTime, visitorTimezone);
 
       if (offset === 0) {
-        setMetaRow('bizNextOpen', `Today â€¢ ${prettyTime}`);
+        setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
       } else if (offset === 1) {
-        setMetaRow('bizNextOpen', `Tomorrow â€¢ ${prettyTime}`);
+        setMetaRow('bizNextOpen', `Tomorrow • ${prettyTime}`);
       } else {
-        setMetaRow('bizNextOpen', `${capitalizeFirstLetter(scheduleObject.labelDay)} â€¢ ${prettyTime}`);
+        setMetaRow('bizNextOpen', `${capitalizeFirstLetter(scheduleObject.labelDay)} • ${prettyTime}`);
       }
 
       const openMinutes = timeStringToMinutes(nextOpenTime);
@@ -7990,7 +8092,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     }
 
     statusSubTextElement.textContent = '';
-    setMetaRow('bizNextOpen', 'â€”');
+    setMetaRow('bizNextOpen', '—');
   })();
 
   const subStatusText = statusSubTextElement.textContent || '';
@@ -8204,7 +8306,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       html += `<li>
         <strong>${escapeHtml(temporarySchedule.label || 'Temporary Schedule')}</strong>
-        <span class="hours">${escapeHtml(rangeText || 'â€”')}</span>
+        <span class="hours">${escapeHtml(rangeText || '—')}</span>
         <span class="dates">${escapeHtml(formatDate(temporarySchedule.startDate))} to ${escapeHtml(formatDate(temporarySchedule.endDate))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>`;
@@ -8270,7 +8372,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       html += `<li>
         <strong>${escapeHtml(holiday.label || 'Holiday')}</strong>
-        <span class="hours">${escapeHtml(rangeText || 'â€”')}</span>
+        <span class="hours">${escapeHtml(rangeText || '—')}</span>
         <span class="dates">${escapeHtml(formatDate(holiday.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>`;
@@ -8325,8 +8427,8 @@ function renderErrorState(message = 'Error Loading') {
   }
 
   setStatusHint('Business information is temporarily unavailable.');
-  setMetaRow('bizNextOpen', 'â€”');
-  setMetaRow('bizTodayHours', 'â€”');
+  setMetaRow('bizNextOpen', '—');
+  setMetaRow('bizTodayHours', '—');
   setStatusChip('Temporary Closure', 'temporary', true);
   setTrafficLight({
     statusText: 'Temporary Closure',
@@ -8360,8 +8462,8 @@ function renderFromCache() {
    FIRESTORE LOADING
 ------------------------- */
 async function oneTimeFetchFallback() {
-  setMetaRow('bizNextOpen', 'â€”');
-  setMetaRow('bizTodayHours', 'â€”');
+  setMetaRow('bizNextOpen', '—');
+  setMetaRow('bizTodayHours', '—');
 
   try {
     if (academicDocumentReferenceLocal && typeof getDoc === 'function') {
@@ -8441,8 +8543,8 @@ function startBusinessInfoRefresh() {
   setMetaRow('bizUserTz', cachedVisitorTimezone);
   setLocalTimeLine(cachedVisitorTimezone);
   formatStoreLocalTime();
-  setMetaRow('bizNextOpen', 'â€”');
-  setMetaRow('bizTodayHours', 'â€”');
+  setMetaRow('bizNextOpen', '—');
+  setMetaRow('bizTodayHours', '—');
   updateBizTimeFormatToggleUI();
 
   startLiveLocalClock();
@@ -8596,7 +8698,7 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     const section = document.querySelector('.countdown-section');
     if (!section) return console.warn("Countdown section not found.");
 
-    // ðŸ”’ Prevent multiple countdown instances
+    // 🔒 Prevent multiple countdown instances
     if (section.dataset.countdownInitialized === "true") return;
     section.dataset.countdownInitialized = "true";
 
@@ -8666,11 +8768,11 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     /* ------------------------------------------------------------ */
     function generateMessages(t) {
         return [
-            `Anticipation builds as ${t} approachesâ€¦`,
-            `Every moment brings us closer to ${t}â€¦`,
-            `${t} is almost hereâ€¦`,
-            `Final preparations underway for ${t}â€¦`,
-            `All paths lead toward ${t}â€¦`
+            `Anticipation builds as ${t} approaches…`,
+            `Every moment brings us closer to ${t}…`,
+            `${t} is almost here…`,
+            `Final preparations underway for ${t}…`,
+            `All paths lead toward ${t}…`
         ].sort(() => Math.random() - 0.5);
     }
 
@@ -8708,7 +8810,7 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
             clearInterval(loop);
             clearInterval(statusInterval);
 
-            // ðŸ”• Kill status messages completely
+            // 🔕 Kill status messages completely
             if (statusEl) {
                 statusEl.textContent = "";
                 statusEl.style.display = "none";
