@@ -2026,29 +2026,30 @@ function checkOSStatus(osVersion, explicitChannel = "") {
 }
 
 // ======================
-// DEVICE AGE
+// DEVICE AGE / OWNERSHIP AGE
 // ======================
-function calculateDeviceAge(dateBought) {
-    if (!dateBought) return null;
+function calculateDateAge(dateValue) {
+    if (!dateValue) return null;
 
-    let bought;
-
-    if (dateBought && typeof dateBought.toDate === "function") {
-        bought = dateBought.toDate();
-    } else {
-        bought = new Date(dateBought);
-    }
-
-    if (isNaN(bought.getTime())) return null;
+    const date = parseTechDate(dateValue);
+    if (!date) return null;
 
     const now = new Date();
-    const diffMs = now - bought;
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const years = parseFloat((days / 365).toFixed(1));
+    const days = Math.max(
+        0,
+        Math.floor((now - date) / (1000 * 60 * 60 * 24))
+    );
 
-    return { days, years };
+    return {
+        days,
+        years: Number((days / 365.25).toFixed(2))
+    };
 }
 
+// Backward-compatible alias. New code should call calculateDateAge directly.
+function calculateDeviceAge(dateValue) {
+    return calculateDateAge(dateValue);
+}
 // ======================
 // DEVICE TYPE DETECTION
 // ======================
@@ -2329,6 +2330,11 @@ function checkDeviceSupport(item) {
 function estimateSupportLifespan(item) {
     const currentYear = new Date().getFullYear();
     const deviceType = detectDeviceType(item);
+    const explicitSupportEndYear = item.supportEndYear
+        ? Number(item.supportEndYear)
+        : null;
+    const hasExplicitSupportEndYear =
+        Number.isFinite(explicitSupportEndYear) && explicitSupportEndYear > 0;
 
     if (deviceType === "accessory") {
         return {
@@ -2337,16 +2343,24 @@ function estimateSupportLifespan(item) {
             majorSupportRemaining: null,
             securitySupportRemaining: null,
             supportRating: "Compatibility-Based",
-            supportColor: "green"
+            supportColor: "green",
+            supportEstimate: false,
+            supportConfidence: "Compatibility-based"
         };
     }
 
-    const modelYear = Number(item.modelYear || currentYear);
-    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
-    const defaults = supportLifespanDefaults[deviceType] || supportLifespanDefaults.phone;
-
-    const estimatedMajorSupportEndYear = supportEndYear || modelYear + defaults.majorYears;
-    const estimatedSecuritySupportEndYear = estimatedMajorSupportEndYear + defaults.securityYearsAfterMajor;
+    const parsedModelYear = Number(item.modelYear);
+    const modelYear = Number.isFinite(parsedModelYear) && parsedModelYear > 0
+        ? parsedModelYear
+        : currentYear;
+    const defaults =
+        supportLifespanDefaults[deviceType] || supportLifespanDefaults.phone;
+    const estimatedMajorSupportEndYear = hasExplicitSupportEndYear
+        ? explicitSupportEndYear
+        : modelYear + defaults.majorYears;
+    const estimatedSecuritySupportEndYear = hasExplicitSupportEndYear
+        ? explicitSupportEndYear + defaults.securityYearsAfterMajor
+        : estimatedMajorSupportEndYear + defaults.securityYearsAfterMajor;
     const majorSupportRemaining = estimatedMajorSupportEndYear - currentYear;
     const securitySupportRemaining = estimatedSecuritySupportEndYear - currentYear;
 
@@ -2356,14 +2370,10 @@ function estimateSupportLifespan(item) {
     if (majorSupportRemaining <= 1 && majorSupportRemaining > 0) {
         supportRating = "Major Support Ending Soon";
         supportColor = "yellow";
-    }
-
-    if (majorSupportRemaining <= 0 && securitySupportRemaining > 0) {
+    } else if (majorSupportRemaining <= 0 && securitySupportRemaining > 0) {
         supportRating = "Security Updates Only";
         supportColor = "yellow";
-    }
-
-    if (securitySupportRemaining <= 0) {
+    } else if (securitySupportRemaining <= 0) {
         supportRating = "Unsupported";
         supportColor = "red";
     }
@@ -2374,15 +2384,19 @@ function estimateSupportLifespan(item) {
         majorSupportRemaining,
         securitySupportRemaining,
         supportRating,
-        supportColor
+        supportColor,
+        supportEstimate: !hasExplicitSupportEndYear,
+        supportConfidence: hasExplicitSupportEndYear
+            ? "Configured"
+            : "Estimated"
     };
 }
-
 // ======================
 // BATTERY TREND
 // ======================
 function estimateBatteryTrend(item) {
-    const age = calculateDeviceAge(item.dateBought);
+    const deviceAge = calculateDateAge(item.dateReleased);
+    const ownershipAge = calculateDateAge(item.dateBought);
     if (!age) return null;
 
     const currentHealth = Number(item.batteryHealth ?? 100);
@@ -2415,150 +2429,160 @@ function getBatteryCycles(item) {
 // ======================
 function calculateAIFeatureSupport(item) {
     const deviceType = detectDeviceType(item);
-    const model = String(item.model || "").toLowerCase();
+    const modelLower = String(item.model || "").toLowerCase();
     const ramGB = Number(item.ramGB || 0);
     const storageGB = Number(item.storageGB || 0);
     const chip = getChipInfo(item);
 
-    let level = "None";
+    let aiCompatibility = "Not Supported";
+    let aiCapability = "None";
+    let aiHeadroom = "Limited";
     let score = 0;
     let color = "red";
-    let reasons = [];
-    let weaknesses = [];
+    const reasons = [];
+    const weaknesses = [];
 
-    const hasEnoughStorageForAI = storageGB >= 128;
-
-    if (deviceType === "phone") {
-        const isIPhone15Pro = model.includes("iphone 15 pro");
-        const isIPhone16OrNewer =
-            model.includes("iphone 16") ||
-            model.includes("iphone 17") ||
-            model.includes("iphone 18") ||
-            model.includes("iphone 19") ||
-            model.includes("iphone 20") ||
-            model.includes("iphone 21");
-
-        const isAndroidAIPhone =
-            model.includes("galaxy") ||
-            model.includes("pixel") ||
-            model.includes("ultra") ||
-            model.includes("fold") ||
-            chip.isSnapdragonAIClass ||
-            chip.isTensorAIClass ||
-            chip.isExynosAIClass ||
-            chip.isDimensityAIClass;
-
-        if (isIPhone15Pro || isIPhone16OrNewer || chip.isA17ProOrNewer || isAndroidAIPhone) {
-            level = "Standard";
-            score = 70;
-            color = "yellow";
-            reasons.push("Meets the current AI-capable phone hardware class.");
-        }
-
-        if (ramGB >= 12) {
-            level = "Advanced";
-            score = 88;
-            color = "green";
-            reasons.push("12GB+ memory gives stronger AI feature headroom.");
-        }
-
-        if ((chip.isA19ProOrNewer || chip.isSnapdragonAIClass || chip.isTensorAIClass) && ramGB >= 12) {
-            level = "Maximum";
-            score = 95;
-            color = "green";
-            reasons.push("Flagship AI-class chip with 12GB+ memory provides maximum AI headroom.");
-        }
-
-        if (level === "Standard" && ramGB > 0 && ramGB < 12) {
-            weaknesses.push("Memory supports current AI features but may limit future advanced on-device AI tiers.");
-        }
-    }
-
-    if (deviceType === "tablet") {
-        if (chip.isAppleSilicon || chip.isA17ProOrNewer || chip.isSnapdragonAIClass || chip.isTensorAIClass) {
-            level = "Standard";
-            score = 72;
-            color = "yellow";
-            reasons.push("Meets AI-capable tablet hardware class.");
-        }
-
-        if ((chip.isM4OrNewer || chip.isSnapdragonAIClass) && ramGB >= 12) {
-            level = "Advanced";
-            score = 90;
-            color = "green";
-            reasons.push("Newer chip with 12GB+ memory gives stronger AI headroom.");
-        }
-    }
-
-    if (deviceType === "computer") {
-        if (chip.isAppleSilicon || chip.isSnapdragonAIClass) {
-            level = "Standard";
-            score = 75;
-            color = "yellow";
-            reasons.push("Modern AI-capable computer hardware detected.");
-        }
-
-        if ((chip.isM3OrNewer || chip.isSnapdragonAIClass) && ramGB >= 12) {
-            level = "Advanced";
-            score = 90;
-            color = "green";
-            reasons.push("Newer chip with 12GB+ memory has stronger future AI headroom.");
-        }
-
-        if (chip.isProMaxClass && ramGB >= 24) {
-            level = "Maximum";
-            score = 96;
-            color = "green";
-            reasons.push("Pro/Max/Ultra/Elite-class chip with high memory headroom.");
-        }
+    if (deviceType === "accessory") {
+        return {
+            aiSupportLevel: "Not Applicable",
+            aiSupportScore: 0,
+            aiSupportColor: "gray",
+            aiCompatibility: "Not Applicable",
+            aiCapability: "Not Applicable",
+            aiHeadroom: "Not Applicable",
+            aiSupportReasons: ["Accessories do not need direct AI feature support."],
+            aiSupportWeaknesses: []
+        };
     }
 
     if (deviceType === "watch") {
-        if (item.pairedAIPhone === true) {
-            level = "Relay";
-            score = 55;
-            color = "yellow";
-            reasons.push("AI features depend on a nearby compatible phone.");
-        } else {
-            level = "Limited";
-            score = 30;
-            color = "orange";
-            weaknesses.push("Watch AI support depends on paired phone compatibility.");
+        const relaySupported = item.pairedAIPhone === true;
+        return {
+            aiSupportLevel: relaySupported ? "Relay Supported" : "Limited",
+            aiSupportScore: relaySupported ? 55 : 30,
+            aiSupportColor: relaySupported ? "yellow" : "orange",
+            aiCompatibility: relaySupported ? "Supported through paired phone" : "Dependent on paired phone",
+            aiCapability: "Relay",
+            aiHeadroom: relaySupported ? "Fair" : "Limited",
+            aiSupportReasons: relaySupported
+                ? ["AI features can use a nearby compatible phone."]
+                : [],
+            aiSupportWeaknesses: relaySupported
+                ? []
+                : ["Watch AI support depends on paired phone compatibility."]
+        };
+    }
+
+    const isIPhone = modelLower.includes("iphone");
+    const isAppleIntelligenceIPhone =
+        modelLower.includes("iphone 15 pro") ||
+        /^.*iphone\s+(1[6-9]|[2-9]\d)/i.test(modelLower) ||
+        chip.isA17ProOrNewer;
+    const isAndroidAIClass =
+        modelLower.includes("galaxy") ||
+        modelLower.includes("pixel") ||
+        modelLower.includes("ultra") ||
+        modelLower.includes("fold") ||
+        chip.isSnapdragonAIClass ||
+        chip.isTensorAIClass ||
+        chip.isExynosAIClass ||
+        chip.isDimensityAIClass;
+
+    if (deviceType === "phone") {
+        if (isIPhone && isAppleIntelligenceIPhone) {
+            aiCompatibility = "Supported";
+            aiCapability = "High";
+            aiHeadroom = chip.isA19ProOrNewer ? "Excellent" : "Good";
+            score = chip.isA19ProOrNewer ? 92 : 85;
+            color = "green";
+            reasons.push(
+                "Device belongs to an Apple Intelligence-capable hardware generation."
+            );
+        } else if (!isIPhone && isAndroidAIClass) {
+            aiCompatibility = "Supported";
+            aiCapability = "High";
+            aiHeadroom = ramGB >= 12 ? "Excellent" : "Good";
+            score = ramGB >= 12 ? 90 : 82;
+            color = "green";
+            reasons.push("Device uses a modern AI-capable Android hardware class.");
+        }
+
+        if (aiCompatibility === "Supported" && ramGB > 0 && ramGB < 8) {
+            aiHeadroom = "Fair";
+            score -= 5;
+            weaknesses.push(
+                "Available memory may reduce future on-device AI headroom."
+            );
+        }
+    } else if (deviceType === "tablet") {
+        const compatible =
+            chip.isAppleSilicon ||
+            chip.isA17ProOrNewer ||
+            chip.isSnapdragonAIClass ||
+            chip.isTensorAIClass;
+        if (compatible) {
+            aiCompatibility = "Supported";
+            aiCapability = chip.isM4OrNewer ? "High" : "Moderate";
+            aiHeadroom = chip.isM4OrNewer || ramGB >= 12 ? "Excellent" : "Good";
+            score = chip.isM4OrNewer || ramGB >= 12 ? 90 : 76;
+            color = "green";
+            reasons.push("Tablet uses an AI-capable processor family.");
+        }
+    } else if (deviceType === "computer") {
+        const compatible = chip.isAppleSilicon || chip.isSnapdragonAIClass;
+        if (compatible) {
+            aiCompatibility = "Supported";
+            aiCapability = chip.isM3OrNewer || chip.isSnapdragonAIClass
+                ? "High"
+                : "Moderate";
+            aiHeadroom = ramGB >= 24
+                ? "Excellent"
+                : ramGB >= 16
+                    ? "Good"
+                    : "Fair";
+            score = ramGB >= 24 ? 95 : ramGB >= 16 ? 88 : 75;
+            color = ramGB >= 16 ? "green" : "yellow";
+            reasons.push("Computer uses a modern AI-capable processor family.");
+            if (ramGB > 0 && ramGB < 16) {
+                weaknesses.push(
+                    "Memory may limit larger local models and future professional AI workloads."
+                );
+            }
         }
     }
 
-    if (deviceType === "accessory") {
-        level = "Not Applicable";
-        score = 0;
-        color = "gray";
-        reasons.push("Accessories do not need direct AI feature support.");
-    }
-
-    if (!hasEnoughStorageForAI && level !== "None" && level !== "Not Applicable") {
+    if (storageGB > 0 && storageGB < 128 && aiCompatibility === "Supported") {
         score -= 8;
         weaknesses.push("Lower storage may limit local AI model flexibility.");
     }
 
     if (reasons.length === 0 && weaknesses.length === 0) {
-        weaknesses.push("Does not appear to meet current AI hardware requirements.");
+        weaknesses.push(
+            "The available model and chip data do not establish current AI compatibility."
+        );
     }
 
+    const aiSupportLevel = aiCompatibility === "Supported"
+        ? `${aiCapability} Capability`
+        : aiCompatibility;
+
     return {
-        aiSupportLevel: level,
-        aiSupportScore: Math.max(0, Math.min(100, score)),
+        aiSupportLevel,
+        aiSupportScore: Math.max(0, Math.min(100, Math.round(score))),
         aiSupportColor: color,
+        aiCompatibility,
+        aiCapability,
+        aiHeadroom,
         aiSupportReasons: reasons,
         aiSupportWeaknesses: weaknesses
     };
 }
-
 // ======================
 // FUTURE AI TARGET
 // ======================
 function calculateFutureAITarget(item, futureTarget) {
     const deviceType = detectDeviceType(item);
-    const model = String(item.model || "").toLowerCase();
-    const target = String(futureTarget.futureUpgradeTarget || "").toLowerCase();
+    const futureClass = String(futureTarget.targetClass || "").toLowerCase();
 
     if (deviceType === "accessory") {
         return {
@@ -2578,41 +2602,31 @@ function calculateFutureAITarget(item, futureTarget) {
 
     if (deviceType === "phone") {
         if (
-            target.includes("pro") ||
-            target.includes("pro max") ||
-            target.includes("air") ||
-            target.includes("ultra") ||
-            target.includes("fold") ||
-            model.includes("galaxy") ||
-            model.includes("pixel")
+            futureClass.includes("pro") ||
+            futureClass.includes("ultra") ||
+            futureClass.includes("flagship")
         ) {
             return {
-                level: "Maximum",
+                level: "High",
                 color: "green",
-                reason: "Future target is a flagship phone class, so the goal should be maximum AI headroom."
+                reason: "The future target is a flagship-class device intended to provide strong long-term AI headroom."
             };
         }
 
         return {
             level: "Advanced",
             color: "green",
-            reason: "Future target should aim for stronger AI headroom than the current device."
+            reason: "The future target should prioritize modern on-device AI hardware and long software support."
         };
     }
 
     if (deviceType === "tablet") {
-        if (target.includes("pro") || target.includes("ultra")) {
-            return {
-                level: "Maximum",
-                color: "green",
-                reason: "Future tablet target should prioritize Pro/Ultra-class chip and memory headroom."
-            };
-        }
-
         return {
-            level: "Advanced",
+            level: futureClass.includes("pro") || futureClass.includes("ultra")
+                ? "High"
+                : "Advanced",
             color: "green",
-            reason: "Future tablet target should prioritize newer silicon and enough memory."
+            reason: "The future tablet target should prioritize modern silicon, sufficient memory, and long software support."
         };
     }
 
@@ -2620,68 +2634,112 @@ function calculateFutureAITarget(item, futureTarget) {
         return {
             level: "Advanced",
             color: "green",
-            reason: "Future computer target should prioritize newer silicon with at least 16GB memory."
+            reason: "The future computer target should prioritize modern AI hardware with sufficient memory and storage."
         };
     }
 
     return {
         level: "Advanced",
         color: "green",
-        reason: "Future target should prioritize stronger AI feature support."
+        reason: "The future target should prioritize stronger AI feature support."
     };
 }
-
 // ======================
 // DEVICE SCORE
 // Higher score = healthier device
-// Lower score = more upgrade urgency
 // ======================
 function calculateUpgradeScore(item) {
-    const age = calculateDeviceAge(item.dateBought);
-    const battery = Number(item.batteryHealth ?? 100);
-    const cycles = getBatteryCycles(item);
+    const deviceAge = calculateDateAge(item.dateReleased);
+    const batteryValue = Number(item.batteryHealth ?? 100);
+    const battery = Number.isFinite(batteryValue)
+        ? Math.max(0, Math.min(100, batteryValue))
+        : 100;
     const support = checkDeviceSupport(item);
     const osStatus = checkOSStatus(item.osVersion, item.osChannel);
+    const storageGB = Number(item.storageGB || 0);
 
-    let score = 100;
+    let hardwareScore = 25;
+    let batteryScore = Math.min(20, battery * 0.2);
+    let softwareScore = 25;
+    let supportScore = 20;
+    let storageScore = 10;
 
-    if (age) score -= age.years * 10;
-    score -= (100 - battery) * 1.2;
-    score -= cycles * 0.008;
+    if (deviceAge && deviceAge.years >= 6) {
+        hardwareScore -= 8;
+    } else if (deviceAge && deviceAge.years >= 4) {
+        hardwareScore -= 4;
+    }
 
-    if (cycles >= techThresholds.cycleVeryOld) score -= 10;
-    if (osStatus && osStatus.isBehindPublic && !osStatus.isBeta) score -= 8;
-    if (osStatus && osStatus.status === "Very Outdated") score -= 18;
+    if (osStatus?.isBehindPublic && !osStatus.isBeta) {
+        softwareScore -= osStatus.status === "Very Outdated" ? 12 : 8;
+    }
 
-    if (support.supportLevel === "Limited Support") score -= 10;
-    if (support.supportLevel === "Older Device") score -= 14;
-    if (support.supportLevel === "Support Ending Soon") score -= 12;
-    if (support.supportLevel === "Support Ending Next Year") score -= 8;
-    if (!support.supported) score -= 25;
+    if (!support.supported) {
+        supportScore -= 15;
+    } else if (
+        support.supportLevel === "Support Ending Soon" ||
+        support.supportLevel === "Support Ending Next Year"
+    ) {
+        supportScore -= 6;
+    } else if (
+        support.supportLevel === "Limited Support" ||
+        support.supportLevel === "Older Device"
+    ) {
+        supportScore -= 4;
+    }
 
-    score = Math.max(0, Math.min(100, Math.round(score)));
+    if (storageGB > 0 && storageGB <= 128) {
+        storageScore -= 4;
+    }
+
+    hardwareScore = Math.max(0, hardwareScore);
+    batteryScore = Math.max(0, batteryScore);
+    softwareScore = Math.max(0, softwareScore);
+    supportScore = Math.max(0, supportScore);
+    storageScore = Math.max(0, storageScore);
+
+    const score = Math.max(
+        0,
+        Math.min(
+            100,
+            Math.round(
+                hardwareScore +
+                batteryScore +
+                softwareScore +
+                supportScore +
+                storageScore
+            )
+        )
+    );
 
     let label = "Excellent";
     let color = "green";
-
     if (score < 80) {
         label = "Good";
         color = "yellow";
     }
-
     if (score < 60) {
         label = "Aging";
         color = "orange";
     }
-
     if (score < 40) {
         label = "Needs Attention";
         color = "red";
     }
 
-    return { score, label, color };
+    return {
+        score,
+        label,
+        color,
+        components: {
+            hardware: Math.round(hardwareScore),
+            battery: Math.round(batteryScore),
+            software: Math.round(softwareScore),
+            support: Math.round(supportScore),
+            storage: Math.round(storageScore)
+        }
+    };
 }
-
 // ======================
 // FUTURE-PROOF SCORE
 // ======================
@@ -2712,26 +2770,29 @@ function calculateFutureProofScore(item) {
         }
     }
 
-    if (ai.aiSupportLevel === "Maximum") {
-        score += 20;
-        reasons.push("Maximum AI feature headroom");
-    } else if (ai.aiSupportLevel === "Advanced") {
-        score += 15;
-        reasons.push("Strong AI feature headroom");
-    } else if (ai.aiSupportLevel === "Standard") {
-        score += 8;
-        reasons.push("Supports current AI feature class");
-    } else if (ai.aiSupportLevel === "Limited" || ai.aiSupportLevel === "None") {
+    if (ai.aiCompatibility === "Supported") {
+        score += ai.aiCapability === "High" ? 15 : 8;
+        reasons.push("Current AI compatibility is supported by the device hardware family");
+
+        if (ai.aiHeadroom === "Excellent") {
+            score += 5;
+            reasons.push("Excellent future AI headroom");
+        } else if (ai.aiHeadroom === "Good") {
+            score += 3;
+            reasons.push("Good future AI headroom");
+        } else if (ai.aiHeadroom === "Limited") {
+            score -= 5;
+            weaknesses.push("Limited future AI headroom");
+        }
+    } else if (ai.aiCompatibility !== "Not Applicable") {
         score -= 10;
-        weaknesses.push("Limited AI feature support");
+        weaknesses.push("Current AI compatibility is not established");
     }
 
     if (deviceType === "phone") {
         if (ramGB >= 12) {
-            score += 8;
-            reasons.push("Higher RAM improves long-term AI and multitasking headroom");
-        } else if (ramGB > 0 && ramGB < 12) {
-            weaknesses.push("RAM may limit future advanced AI features");
+            score += 4;
+            reasons.push("Higher memory improves multitasking headroom where the platform exposes memory capacity");
         }
 
         if (storageGB >= 512) {
@@ -2834,82 +2895,157 @@ function calculateFutureProofScore(item) {
 // ======================
 // FUTURE UPGRADE TARGET
 // ======================
+function getFutureProductTarget(item) {
+    const deviceType = detectDeviceType(item);
+    const modelLower = String(item.model || "").trim().toLowerCase();
+
+    if (deviceType === "phone" && modelLower.includes("iphone")) {
+        const targetClass = modelLower.includes("pro max")
+            ? "Pro Max"
+            : modelLower.includes("pro")
+                ? "Pro"
+                : "Standard";
+
+        return {
+            manufacturer: "Apple",
+            productFamily: "iPhone",
+            targetClass,
+            modelName: null,
+            confidence: "High"
+        };
+    }
+
+    if (deviceType === "phone" && (modelLower.includes("galaxy") || modelLower.includes("samsung"))) {
+        return {
+            manufacturer: "Samsung",
+            productFamily: "Galaxy",
+            targetClass: modelLower.includes("ultra") ? "Ultra" : "Flagship",
+            modelName: null,
+            confidence: "High"
+        };
+    }
+
+    if (deviceType === "phone" && modelLower.includes("pixel")) {
+        return {
+            manufacturer: "Google",
+            productFamily: "Pixel",
+            targetClass: modelLower.includes("pro") ? "Pro" : "Flagship",
+            modelName: null,
+            confidence: "High"
+        };
+    }
+
+    return {
+        manufacturer: "",
+        productFamily: "",
+        targetClass: deviceType === "phone" ? "Flagship" : "",
+        modelName: null,
+        confidence: "Medium"
+    };
+}
+
 function getRecommendedFutureUpgradeTarget(item) {
     const deviceType = detectDeviceType(item);
-    const model = String(item.model || "");
-    const modelLower = model.toLowerCase();
+    const modelLower = String(item.model || "").toLowerCase();
     const modelYear = Number(item.modelYear || new Date().getFullYear());
-    const expectedKeepYears = Number(item.expectedKeepYears || item.expectedYearsOfUse || 4);
-    const targetYear = modelYear + expectedKeepYears;
+    const expectedKeepYears = Number(
+        item.expectedKeepYears || item.expectedYearsOfUse || upgradeCycleDefaults[deviceType] || 4
+    );
+    const configuredTargetYear = Number(item.targetYear);
+    const targetYear = Number.isFinite(configuredTargetYear) && configuredTargetYear > 0
+        ? configuredTargetYear
+        : modelYear + expectedKeepYears;
     const futureProof = calculateFutureProofScore(item);
+    const productTarget = getFutureProductTarget(item);
 
     let target = "Next meaningful upgrade";
+    let targetFamily = productTarget.productFamily;
+    let targetClass = productTarget.targetClass;
+    let targetModelName = productTarget.modelName;
+    let targetModelConfidence = productTarget.confidence;
+    let manufacturer = productTarget.manufacturer;
     let recommendedSpecs = "";
     let avoid = "";
     let reason = "";
 
     if (deviceType === "phone") {
-        const iPhoneMatch = model.match(/iPhone\s+(\d+)/i);
-        const currentGeneration = iPhoneMatch ? Number(iPhoneMatch[1]) : null;
         const isIPhone = modelLower.includes("iphone");
-        const isPro = modelLower.includes("pro");
-        const isProMax = modelLower.includes("pro max");
         const isSamsung = modelLower.includes("galaxy") || modelLower.includes("samsung");
         const isPixel = modelLower.includes("pixel");
 
-        if (isIPhone && currentGeneration) {
-            const targetGeneration = currentGeneration + expectedKeepYears;
-            target = `iPhone ${targetGeneration}${isProMax ? " Pro Max" : isPro ? " Pro" : ""}`;
+        if (isIPhone) {
+            target = `Future iPhone ${targetClass}-class device`;
+            recommendedSpecs = "256GB minimum, 512GB recommended, strong on-device AI hardware, current-generation processor, and long software support";
+            avoid = "Avoid choosing solely by model number; prioritize storage, memory, battery efficiency, processor capability, and software support";
+            reason = "Apple product names and numbering can change. The system targets the future iPhone class rather than predicting an unreleased model name.";
         } else if (isSamsung) {
-            target = "Future Samsung Ultra-class Galaxy phone";
+            target = "Future Samsung Galaxy Ultra-class device";
+            targetFamily = "Galaxy";
+            targetClass = "Ultra";
+            manufacturer = "Samsung";
+            recommendedSpecs = "256GB minimum, 512GB recommended, flagship processor, strong AI hardware, and long software support";
+            avoid = "Avoid low-storage or lower-tier models if you plan to keep the phone long term";
+            reason = "The system targets the future flagship class rather than assuming an unreleased model number.";
         } else if (isPixel) {
-            target = "Future Google Pixel Pro-class phone";
+            target = "Future Google Pixel Pro-class device";
+            targetFamily = "Pixel";
+            targetClass = "Pro";
+            manufacturer = "Google";
+            recommendedSpecs = "256GB minimum, 512GB recommended, current Tensor platform, strong AI hardware, and long software support";
+            avoid = "Avoid low-storage models if you plan to keep the phone long term";
+            reason = "The system targets the future Pixel Pro class rather than predicting an unreleased model name.";
         } else {
             target = "Future flagship phone with strong AI hardware";
+            targetFamily = "Phone";
+            targetClass = "Flagship";
+            recommendedSpecs = "256GB minimum, 12GB+ RAM where applicable, 512GB preferred, and long software support";
+            avoid = "Avoid low-RAM or 128GB-only models for long-term ownership";
+            reason = "Future phone recommendations prioritize hardware capability, storage, battery, AI support, and software longevity.";
         }
-
-        recommendedSpecs = "256GB minimum, 512GB recommended, 12GB+ RAM preferred for long-term AI features";
-        avoid = "Avoid low-RAM or 128GB-only models if you plan to keep the next phone long term";
-        reason = "Phones age mostly through battery, storage, AI feature headroom, camera needs, and software support.";
-    }
-
-    if (deviceType === "tablet") {
+    } else if (deviceType === "tablet") {
         const isAndroidTablet = modelLower.includes("galaxy tab") || modelLower.includes("pixel tablet") || modelLower.includes("android");
         target = isAndroidTablet
             ? "Future Pro/Ultra-class Android tablet"
-            : "iPad Air/Pro-class tablet depending on use";
-        recommendedSpecs = "256GB minimum, 12GB+ RAM preferred for heavier AI/productivity use, keyboard/Pencil support if needed";
+            : "Future iPad Air/Pro-class device";
+        targetFamily = isAndroidTablet ? "Android tablet" : "iPad";
+        targetClass = isAndroidTablet ? "Pro/Ultra" : "Air/Pro";
+        recommendedSpecs = "256GB minimum, sufficient memory for heavier AI and productivity use, and current accessory support";
         avoid = "Avoid low storage if using it for school, drawing, content, or productivity";
-        reason = "Tablets age through chip support, storage, accessory support, and whether they are used casually or as laptop replacements.";
-    }
-
-    if (deviceType === "computer") {
-        const isWindowsOrAndroidChip = modelLower.includes("windows") || modelLower.includes("snapdragon");
-        target = isWindowsOrAndroidChip
-            ? "Modern AI-capable computer with stronger memory and storage headroom"
-            : "Apple silicon computer with stronger memory and storage headroom";
-        recommendedSpecs = "16GB memory minimum, 24GB+ preferred for heavier use, 512GB+ storage";
-        avoid = "Avoid base memory/storage if this will be a main computer";
-        reason = "Computers age mostly through memory, storage, processor headroom, ports, thermals, workload, and OS support.";
-    }
-
-    if (deviceType === "watch") {
-        target = "Newer watch with current health sensors and stronger battery life";
-        recommendedSpecs = "Current sensor package, good battery health, preferred case size";
+        reason = "Tablets age through chip support, storage, accessory support, and workload requirements.";
+    } else if (deviceType === "computer") {
+        const isWindows = modelLower.includes("windows") || modelLower.includes("snapdragon");
+        target = isWindows
+            ? "Future AI-capable computer with stronger memory and storage headroom"
+            : "Future Apple silicon computer with stronger memory and storage headroom";
+        targetFamily = isWindows ? "PC" : "Mac";
+        targetClass = "AI-capable";
+        recommendedSpecs = "16GB memory minimum, 24GB+ preferred for heavier use, and 512GB+ storage";
+        avoid = "Avoid base memory or storage if this will be a main computer";
+        reason = "Computers age through memory, storage, processor headroom, ports, thermals, workload, and OS support.";
+    } else if (deviceType === "watch") {
+        target = "Future watch with current health sensors and stronger battery life";
+        targetFamily = "Watch";
+        targetClass = "Current-generation";
+        recommendedSpecs = "Current sensor package, good battery health, and preferred case size";
         avoid = "Avoid upgrading yearly unless battery, sensors, or support are limiting";
         reason = "Watches are worth replacing when battery, health sensors, or software support become limiting.";
-    }
-
-    if (deviceType === "accessory") {
+    } else if (deviceType === "accessory") {
         target = "Current-standard compatible replacement";
-        recommendedSpecs = "USB-C, MagSafe, Qi2, Bluetooth LE, or current standard depending on accessory";
+        targetFamily = "Accessory";
+        targetClass = "Current-standard";
+        recommendedSpecs = "USB-C, MagSafe, Qi2, Bluetooth LE, or the current standard for the accessory";
         avoid = "Avoid older connector standards unless needed for legacy devices";
-        reason = "Accessories age mostly through compatibility, connector standards, battery condition, and reliability.";
+        reason = "Accessories age through compatibility, connector standards, battery condition, and reliability.";
     }
 
     return {
         futureUpgradeTarget: target,
         targetYear,
+        manufacturer,
+        targetFamily,
+        targetClass,
+        targetModelName,
+        targetModelConfidence,
         recommendedFutureSpecs: recommendedSpecs,
         avoidRecommendation: avoid,
         futureUpgradeReason: reason,
@@ -2918,41 +3054,68 @@ function getRecommendedFutureUpgradeTarget(item) {
         futureProofColor: futureProof.futureProofColor
     };
 }
-
 // ======================
 // UPGRADE PRIORITY LABEL
 // ======================
+const recommendationLevels = {
+    maintain: "Keep",
+    monitor: "Monitor",
+    battery: "Service Battery",
+    plan: "Plan Upgrade",
+    replace: "Upgrade Recommended"
+};
+
 function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
     const condition = String(item.condition || "").toLowerCase();
     const ownershipConfig = getOwnershipConfig(item);
+    const batteryHealth = Number(item.batteryHealth ?? 100);
 
-    if (ownershipConfig.mode === "archive") {
-        return { label: "Not Needed", color: "green", level: "not-needed" };
+    if (ownershipConfig.mode === "archive" || condition === "retired") {
+        return {
+            label: recommendationLevels.maintain,
+            color: "green",
+            level: "maintain"
+        };
     }
 
-    if (condition === "retired") {
-        return { label: "Not Needed", color: "green", level: "not-needed" };
+    if (condition === "needs repair" || !support.supported || upgradeScore.score <= 39) {
+        return {
+            label: recommendationLevels.replace,
+            color: "red",
+            level: "replace"
+        };
     }
 
-    if (!support.supported || condition === "needs repair") {
-        return { label: "Critical", color: "red", level: "critical" };
+    if (batteryHealth < techThresholds.batteryBad) {
+        return {
+            label: recommendationLevels.battery,
+            color: "yellow",
+            level: "battery"
+        };
     }
 
-    if (upgrade.status === "Upgrade Recommended" && upgradeScore.score <= 40) {
-        return { label: "Critical", color: "red", level: "critical" };
+    if (upgradeScore.score <= 59 || upgrade.status === "Upgrade Recommended") {
+        return {
+            label: recommendationLevels.plan,
+            color: "yellow",
+            level: "plan"
+        };
     }
 
-    if (upgradeScore.score <= 55) {
-        return { label: "Recommended", color: "yellow", level: "recommended" };
+    if (upgradeScore.score <= 79 || upgrade.status === "Aging") {
+        return {
+            label: recommendationLevels.monitor,
+            color: "gray",
+            level: "monitor"
+        };
     }
 
-    if (upgradeScore.score <= 75) {
-        return { label: "Optional", color: "gray", level: "optional" };
-    }
-
-    return { label: "Not Needed", color: "green", level: "not-needed" };
+    return {
+        label: recommendationLevels.maintain,
+        color: "green",
+        level: "maintain"
+    };
 }
-
 // ======================
 // RECOMMENDED UPGRADE YEAR
 // ======================
@@ -3039,12 +3202,12 @@ function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) 
     let window = `${recommendedYear}–${recommendedYear + 1}`;
     let timing = `Plan around ${recommendedYear}.`;
 
-    if (priority.level === "critical") {
+    if (priority.level === "replace") {
         window = `${currentYear}`;
         timing = "Upgrade as soon as practical.";
-    } else if (priority.level === "recommended") {
+    } else if (priority.level === "plan") {
         timing = `Upgrade around ${recommendedYear}, especially if battery life, support, or performance gets worse.`;
-    } else if (priority.level === "optional") {
+    } else if (priority.level === "monitor") {
         timing = `Consider upgrading around ${recommendedYear}, but it is not urgent.`;
     } else {
         timing = `Keep using this device. A realistic upgrade target is around ${recommendedYear}.`;
@@ -3074,15 +3237,15 @@ function generateUpgradeExplanation(item, priority, recommendedUpgrade, upgrade,
 
     const reasonText = reasons.length > 0 ? reasons.join(", ") : "No major issues detected";
 
-    if (priority.level === "critical") {
+    if (priority.level === "replace") {
         return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasonText}.`;
     }
 
-    if (priority.level === "recommended") {
+    if (priority.level === "plan") {
         return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasonText}.`;
     }
 
-    if (priority.level === "optional") {
+    if (priority.level === "monitor") {
         return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasonText}.`;
     }
 
@@ -3353,6 +3516,10 @@ function normalizeTechItem(itemData) {
     normalized.plannedWindow = getFirstField(itemData, ["plannedWindow", "plannedFor"], "");
     normalized.plannedReason = getFirstField(itemData, ["plannedReason", "reason"], "");
     normalized.futureUpgradeTarget = getFirstField(itemData, ["futureUpgradeTarget", "plannedRole"], "");
+    normalized.targetFamily = getFirstField(itemData, ["targetFamily"], "");
+    normalized.targetClass = getFirstField(itemData, ["targetClass"], "");
+    normalized.targetModelName = getFirstField(itemData, ["targetModelName"], "");
+    normalized.targetModelConfidence = getFirstField(itemData, ["targetModelConfidence"], "");
     normalized.targetYear = getFirstField(itemData, ["targetYear"], "");
     normalized.replacesDevice = getFirstField(itemData, ["replacesDevice", "replaces"], "");
     normalized.expectedChip = getFirstField(itemData, ["expectedChip"], "");
@@ -4480,7 +4647,8 @@ function renderTechItemHomepage(itemData) {
         : null;
 
     const upgrade = calculateUpgradeData(item);
-    const age = calculateDeviceAge(item.dateBought);
+    const deviceAge = calculateDateAge(item.dateReleased);
+    const ownershipAge = calculateDateAge(item.dateBought);
     const batteryTrend = estimateBatteryTrend(item);
     const upgradeScore = calculateUpgradeScore(item);
 
@@ -4622,10 +4790,20 @@ function renderTechItemHomepage(itemData) {
     const futureProofHtml = `
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-brain"></i>
-        <span class="tech-label">Current AI Support:</span>
+        <span class="tech-label">AI Compatibility:</span>
         <span class="support-badge ${aiSupport.aiSupportColor}">
-            ${escapeHTML(aiSupport.aiSupportLevel)}
+            ${escapeHTML(aiSupport.aiCompatibility)}
         </span>
+    </div>
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-microchip"></i>
+        <span class="tech-label">AI Capability:</span>
+        <span class="tech-value">${escapeHTML(aiSupport.aiCapability)}</span>
+    </div>
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-chart-line"></i>
+        <span class="tech-label">Future AI Headroom:</span>
+        <span class="tech-value">${escapeHTML(aiSupport.aiHeadroom)}</span>
     </div>
 
     <div class="tech-detail smart-upgrade-row">
@@ -4640,7 +4818,7 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-hourglass-half"></i>
         <span class="tech-label">Est. Major Support End:</span>
         <span class="tech-value">
-            ${supportLife.estimatedMajorSupportEndYear ? escapeHTML(supportLife.estimatedMajorSupportEndYear) : "N/A"}
+            ${supportLife.estimatedMajorSupportEndYear ? `${supportLife.supportEstimate ? "~" : ""}${escapeHTML(supportLife.estimatedMajorSupportEndYear)}` : "N/A"}
         </span>
     </div>
 
@@ -4648,7 +4826,7 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-shield-halved"></i>
         <span class="tech-label">Est. Security Support End:</span>
         <span class="tech-value">
-            ${supportLife.estimatedSecuritySupportEndYear ? escapeHTML(supportLife.estimatedSecuritySupportEndYear) : "N/A"}
+            ${supportLife.estimatedSecuritySupportEndYear ? `${supportLife.supportEstimate ? "~" : ""}${escapeHTML(supportLife.estimatedSecuritySupportEndYear)}` : "N/A"}
         </span>
     </div>
 
@@ -4664,6 +4842,26 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-bullseye"></i>
         <span class="tech-label">Upgrade Target:</span>
         <span class="tech-value">${escapeHTML(futureTarget.futureUpgradeTarget)}</span>
+    </div>
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-layer-group"></i>
+        <span class="tech-label">Target Family:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetFamily || "TBD")}</span>
+    </div>
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-star"></i>
+        <span class="tech-label">Target Class:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetClass || "TBD")}</span>
+    </div>
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-tag"></i>
+        <span class="tech-label">Target Model:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetModelName || "TBD")}</span>
+    </div>
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-signal"></i>
+        <span class="tech-label">Target Confidence:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetModelConfidence || "Medium")}</span>
     </div>
 
     <div class="tech-detail smart-upgrade-row">
@@ -4688,12 +4886,19 @@ function renderTechItemHomepage(itemData) {
         </span>
     </div>`;
 
-    const ageHtml = age ? `
+    const ageHtml = `
+    ${deviceAge ? `
     <div class="tech-detail">
         <i class="fas fa-clock"></i>
         <span>Device Age:</span>
-        ${age.days} days (${age.years} years)
-    </div>` : "";
+        ${deviceAge.days} days (${deviceAge.years} years)
+    </div>` : ""}
+    ${ownershipAge ? `
+    <div class="tech-detail">
+        <i class="fas fa-user-clock"></i>
+        <span>Owned For:</span>
+        ${ownershipAge.days} days (${ownershipAge.years} years)
+    </div>` : ""}`;
 
     const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
     <div class="tech-detail">
@@ -4711,6 +4916,13 @@ function renderTechItemHomepage(itemData) {
 
     <div class="score-bar">
         <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
+    </div>
+    <div class="tech-score-components">
+        <div class="tech-detail"><span>Hardware:</span> ${upgradeScore.components.hardware}/25</div>
+        <div class="tech-detail"><span>Battery:</span> ${upgradeScore.components.battery}/20</div>
+        <div class="tech-detail"><span>Software:</span> ${upgradeScore.components.software}/25</div>
+        <div class="tech-detail"><span>Support:</span> ${upgradeScore.components.support}/20</div>
+        <div class="tech-detail"><span>Storage:</span> ${upgradeScore.components.storage}/10</div>
     </div>`;
 
     const formattedOSType = osStatus ? formatOSType(osStatus.osType) : "";
@@ -4971,6 +5183,10 @@ function applyTechFiltersAndSort() {
             item.previousRole,
             item.roleStatus,
             item.futureUpgradeTarget,
+            item.targetFamily,
+            item.targetClass,
+            item.targetModelName,
+            item.targetModelConfidence,
             item.plannedWindow,
             item.plannedReason,
             item.replacesDevice,
@@ -5013,8 +5229,8 @@ function sortTechItems(items, sortValue) {
                 const itemA = normalizeTechItem(a);
                 const itemB = normalizeTechItem(b);
 
-                const ageA = calculateDeviceAge(itemA.dateBought)?.days ?? -1;
-                const ageB = calculateDeviceAge(itemB.dateBought)?.days ?? -1;
+                const ageA = calculateDateAge(itemA.dateReleased)?.days ?? -1;
+                const ageB = calculateDateAge(itemB.dateReleased)?.days ?? -1;
 
                 if (ageA === -1 && ageB === -1) return 0;
                 if (ageA === -1) return 1;
@@ -5052,10 +5268,11 @@ function sortTechItems(items, sortValue) {
                 const priorityB = getUpgradePriorityLabel(itemB, scoreB, supportB, upgradeB).level;
 
                 const priorityOrder = {
-                    critical: 0,
-                    recommended: 1,
-                    optional: 2,
-                    "not-needed": 3
+                    replace: 0,
+                    plan: 1,
+                    battery: 2,
+                    monitor: 3,
+                    maintain: 4
                 };
 
                 return (
