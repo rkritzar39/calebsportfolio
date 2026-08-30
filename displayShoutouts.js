@@ -19,7 +19,7 @@ import {
   getDocs,
   doc,
   getDoc,
-  onSnapshot,        // 👈 add this
+  onSnapshot,        // ðŸ‘ˆ add this
   Timestamp,
   orderBy,
   query,
@@ -53,7 +53,7 @@ function watchLiveStatus() {
     liveStatusRef,
     (snap) => {
       if (!snap.exists()) {
-        el.textContent = "🛌 Offline";
+        el.textContent = "ðŸ›Œ Offline";
         container.classList.remove("active");
         container.classList.add("hidden");
         return;
@@ -64,18 +64,18 @@ function watchLiveStatus() {
       const isActive = data.isActive === true || message.length > 0;
 
       if (isActive) {
-        el.textContent = message || "🟢 Active";
+        el.textContent = message || "ðŸŸ¢ Active";
         container.classList.remove("hidden");
         container.classList.add("active");
       } else {
-        el.textContent = "🛌 Offline";
+        el.textContent = "ðŸ›Œ Offline";
         container.classList.remove("active");
         container.classList.add("hidden");
       }
     },
     (error) => {
       console.error("Live status listener error:", error);
-      el.textContent = "🛌 Offline";
+      el.textContent = "ðŸ›Œ Offline";
       container.classList.remove("active");
       container.classList.add("hidden");
     }
@@ -129,7 +129,7 @@ try {
 }
 
 /* ==========================================================
-   🔔 FIREBASE CLOUD MESSAGING — PUSH NOTIFICATION SETUP
+   ðŸ”” FIREBASE CLOUD MESSAGING â€” PUSH NOTIFICATION SETUP
    ========================================================== */
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
@@ -148,18 +148,18 @@ async function initializePushNotifications() {
     }
 
     const messaging = getMessaging();
-    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // 🔑 Replace with your real VAPID key
+    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // ðŸ”‘ Replace with your real VAPID key
 
     // Register your service worker (must be at root)
     const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-    console.log("✅ Service Worker registered for push notifications:", registration);
+    console.log("âœ… Service Worker registered for push notifications:", registration);
 
     // Get an FCM token for this device
     const token = await getToken(messaging, {
       vapidKey,
       serviceWorkerRegistration: registration
     });
-    console.log("🔑 FCM Token:", token);
+    console.log("ðŸ”‘ FCM Token:", token);
 
     // Optionally save token to Firestore to identify this user later
     // const tokenRef = doc(db, "user_tokens", token);
@@ -167,13 +167,13 @@ async function initializePushNotifications() {
 
     // Listen for foreground notifications (while site is open)
     onMessage(messaging, (payload) => {
-      console.log("📩 Push message received in foreground:", payload);
+      console.log("ðŸ“© Push message received in foreground:", payload);
       const { title, body, icon } = payload.notification || {};
       showSmartToast(title || "Notification", body || "You have a new update!");
     });
 
   } catch (err) {
-    console.error("❌ Push notification setup failed:", err);
+    console.error("âŒ Push notification setup failed:", err);
   }
 }
 
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================
-   🔔 SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
+   ðŸ”” SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
    ========================================================== */
 
 // --- Cache system to prevent duplicates ---
@@ -313,7 +313,7 @@ function setupSmartRealtimeNotifications() {
     rememberDoc("mainProfile");
   });
 
-  console.log("✅ Smart Firestore notifications initialized (all collections).");
+  console.log("âœ… Smart Firestore notifications initialized (all collections).");
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -326,13 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
 const assumedBusinessTimezone = 'America/New_York'; // Your business's primary IANA timezone
 
 /* =========================================================
-   ACADEMIC AVAILABILITY – STORAGE
+   ACADEMIC AVAILABILITY â€“ STORAGE
 ========================================================= */
 
 let academicAvailability = null;
 
 /* =========================================================
-   ACADEMIC AVAILABILITY – FIRESTORE LISTENER
+   ACADEMIC AVAILABILITY â€“ FIRESTORE LISTENER
 ========================================================= */
 
 function watchAcademicAvailability() {
@@ -346,7 +346,7 @@ function watchAcademicAvailability() {
 }
 
 /* =========================================================
-   ACADEMIC CHECK – IN CLASS RIGHT NOW?
+   ACADEMIC CHECK â€“ IN CLASS RIGHT NOW?
 ========================================================= */
 
 function isInClassNow(now) {
@@ -727,7 +727,7 @@ function renderYouTubeCard(account) {
 
                 <p class="youtube-stats">
                     ${escapeHTML(subscribers)} subscribers
-                    ${videos && videos !== "0" ? ` · ${escapeHTML(videos)} videos` : ""}
+                    ${videos && videos !== "0" ? ` Â· ${escapeHTML(videos)} videos` : ""}
                 </p>
             </div>
         </div>
@@ -1256,7 +1256,7 @@ async function loadAndDisplayDisabilities() {
             textElement.textContent = data.name;
 
             arrowElement.classList.add('disability-link-arrow');
-            arrowElement.textContent = '→';
+            arrowElement.textContent = 'â†’';
             arrowElement.setAttribute('aria-hidden', 'true');
 
             linkElement.append(textElement, arrowElement);
@@ -3036,7 +3036,7 @@ function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) 
         recommendedYear = earliestAllowedYear;
     }
 
-    let window = `${recommendedYear}–${recommendedYear + 1}`;
+    let window = `${recommendedYear}â€“${recommendedYear + 1}`;
     let timing = `Plan around ${recommendedYear}.`;
 
     if (priority.level === "critical") {
@@ -3075,18 +3075,18 @@ function generateUpgradeExplanation(item, priority, recommendedUpgrade, upgrade,
     const reasonText = reasons.length > 0 ? reasons.join(", ") : "No major issues detected";
 
     if (priority.level === "critical") {
-        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasonText}.`;
+        return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasonText}.`;
     }
 
     if (priority.level === "recommended") {
-        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasonText}.`;
+        return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasonText}.`;
     }
 
     if (priority.level === "optional") {
-        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasonText}.`;
+        return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasonText}.`;
     }
 
-    return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still useful enough to keep. There is not enough reason to replace it right now. Main reasons: ${reasonText}.`;
+    return `${priority.label} â€” ${recommendedUpgrade.timing} This ${deviceType} is still useful enough to keep. There is not enough reason to replace it right now. Main reasons: ${reasonText}.`;
 }
 
 // ======================
@@ -3490,7 +3490,7 @@ function calculateCostEfficiency(item) {
     return {
         costPerDay,
         costPerYear,
-        label: `$${costPerYear.toFixed(0)}/year • $${costPerDay.toFixed(2)}/day`
+        label: `$${costPerYear.toFixed(0)}/year â€¢ $${costPerDay.toFixed(2)}/day`
     };
 }
 
@@ -6222,7 +6222,7 @@ function hasAcademicScheduleData(academicAvailability) {
 }
 
 function formatAcademicDays(daysValue) {
-  if (!daysValue) return '—';
+  if (!daysValue) return 'â€”';
 
   if (Array.isArray(daysValue)) {
     return daysValue
@@ -6239,7 +6239,7 @@ function formatAcademicDays(daysValue) {
       .join(', ');
   }
 
-  return '—';
+  return 'â€”';
 }
 
 function normalizeAcademicDayValue(dayValue) {
@@ -6297,10 +6297,10 @@ function getNextRecurringClassLabel(item, nowInBusinessTimezone, fallbackTodayLa
       const nextDayName = nextDate.toFormat('cccc');
 
       if (offset === 1) {
-        return `${fallbackTodayLabel} • Next class tomorrow`;
+        return `${fallbackTodayLabel} â€¢ Next class tomorrow`;
       }
 
-      return `${fallbackTodayLabel} • Next class ${nextDayName}`;
+      return `${fallbackTodayLabel} â€¢ Next class ${nextDayName}`;
     }
   }
 
@@ -6481,7 +6481,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.course || 'Class';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : '—';
+        : 'â€”';
     const days = formatAcademicDays(item.days || item.day);
     const statusLabel = getRecurringClassSmartLabel(item, nowInBusinessTimezone);
 
@@ -6501,7 +6501,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.course || 'Exam';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : '—';
+        : 'â€”';
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -6524,7 +6524,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.course || 'Final';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : '—';
+        : 'â€”';
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -6547,7 +6547,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.label || 'Event';
     const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
-        : '—';
+        : 'â€”';
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -6573,7 +6573,7 @@ function renderAcademicSchedulePanel({
     const label = item.title || item.company || item.role || 'Internship/Co-Op';
     const dates = (item.startDate && item.endDate)
         ? `${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}`
-        : (item.startDate ? escapeHtml(formatDate(item.startDate)) : '—');
+        : (item.startDate ? escapeHtml(formatDate(item.startDate)) : 'â€”');
         
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
@@ -6774,7 +6774,7 @@ function setLocalTimeLine(visitorTimezone) {
 
     element.textContent = `Local time: ${formatted}`;
   } catch (error) {
-    element.textContent = 'Local time: —';
+    element.textContent = 'Local time: â€”';
   }
 }
 
@@ -6794,7 +6794,7 @@ function formatStoreLocalTime() {
 
     element.textContent = formatted;
   } catch (error) {
-    element.textContent = '—';
+    element.textContent = 'â€”';
   }
 }
 
@@ -6942,12 +6942,12 @@ function installCopyToday() {
       Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
     const textToCopy = [
-      'Caleb’s Merch Store',
+      'Calebâ€™s Merch Store',
       `Timezone: ${timezone}`,
       statusText ? `Status: ${statusText}` : '',
       reasonText ? `Schedule: ${reasonText}` : '',
-      todayHours ? `Today’s hours: ${todayHours}` : '',
-      nextOpening && nextOpening !== '—' ? `Next opening: ${nextOpening}` : ''
+      todayHours ? `Todayâ€™s hours: ${todayHours}` : '',
+      nextOpening && nextOpening !== 'â€”' ? `Next opening: ${nextOpening}` : ''
     ].filter(Boolean).join('\n');
 
     try {
@@ -7002,8 +7002,8 @@ function renderTodayTimeline({
   if (earliestOpen == null || latestClose == null || latestClose <= earliestOpen) {
     fillElement.style.width = '0%';
     nowElement.style.left = '0%';
-    startElement.textContent = '—';
-    endElement.textContent = '—';
+    startElement.textContent = 'â€”';
+    endElement.textContent = 'â€”';
     return;
   }
 
@@ -7087,7 +7087,7 @@ function buildPremiumStatusHint({
   }
 
   if (finalType === 'holiday') {
-    return 'Holiday hours are affecting today’s schedule.';
+    return 'Holiday hours are affecting todayâ€™s schedule.';
   }
 
   if (finalType === 'temporary') {
@@ -7148,7 +7148,7 @@ function setStatusChip(statusText, statusType = 'regular', isManualOverride = fa
   }
 
   if (isManualOverride) {
-    chip.textContent = `${label} • Manual`;
+    chip.textContent = `${label} â€¢ Manual`;
     chip.style.color = manualColor;
     chip.style.borderColor = `color-mix(in srgb, ${manualColor} 40%, transparent)`;
     return;
@@ -7366,8 +7366,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   setMetaRow('bizUserTz', visitorTimezone);
   setLocalTimeLine(visitorTimezone);
   formatStoreLocalTime();
-  setMetaRow('bizNextOpen', '—');
-  setMetaRow('bizTodayHours', '—');
+  setMetaRow('bizNextOpen', 'â€”');
+  setMetaRow('bizTodayHours', 'â€”');
 
   if (!window.assumedBusinessTimezone) {
     statusMainTextElement.textContent = 'Configuration Error';
@@ -7533,7 +7533,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
         setMetaRow(
           'bizTodayHours',
-          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} – ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} â€“ ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
         );
 
         return;
@@ -7541,7 +7541,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       const joinedRanges = todaySourceSchedule.ranges
         .map((range) =>
-          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}–${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}â€“${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
         )
         .join(', ');
 
@@ -7561,7 +7561,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       setMetaRow(
         'bizTodayHours',
-        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} – ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} â€“ ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
       );
 
       return;
@@ -7569,7 +7569,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
     const joinedRanges = schedule.ranges
       .map((range) =>
-        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}–${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+        `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}â€“${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
       )
       .join(', ');
 
@@ -7578,7 +7578,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
   (function setSubStatusAndNextOpen() {
     statusSubTextElement.textContent = '';
-    setMetaRow('bizNextOpen', '—');
+    setMetaRow('bizNextOpen', 'â€”');
 
     const formatDayLabelFromDateTime = (dateTime) => {
       if (!LuxonLibrary || !nowInBusinessTimezone || !dateTime) return 'Today';
@@ -7606,7 +7606,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           );
           const nextOpenLabel = formatDayLabelFromDateTime(activeAcademic.backAt);
 
-          setMetaRow('bizNextOpen', `${nextOpenLabel} • ${reopeningTimeText}`);
+          setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${reopeningTimeText}`);
 
           if (minutesAway <= TEMPORARY_WARNING_MINUTES) {
             isAcademicEndingSoon = true;
@@ -7623,13 +7623,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       }
       
       statusSubTextElement.textContent = '';
-      setMetaRow('bizNextOpen', '—');
+      setMetaRow('bizNextOpen', 'â€”');
       return;
     }
 
     if (finalType === 'temporary' && isManualOverride) {
       statusSubTextElement.textContent = 'Manual temporary override is active';
-      setMetaRow('bizNextOpen', '—');
+      setMetaRow('bizNextOpen', 'â€”');
       return;
     }
 
@@ -7638,7 +7638,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       if (!LuxonLibrary || !nowInBusinessTimezone || !activeRange?.close) {
         statusSubTextElement.textContent = 'Temporarily unavailable';
-        setMetaRow('bizNextOpen', '—');
+        setMetaRow('bizNextOpen', 'â€”');
         return;
       }
 
@@ -7646,7 +7646,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       if (temporaryCloseMinutes == null) {
         statusSubTextElement.textContent = 'Temporarily unavailable';
-        setMetaRow('bizNextOpen', '—');
+        setMetaRow('bizNextOpen', 'â€”');
         return;
       }
 
@@ -7664,7 +7664,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
         const nextOpenLabel = formatDayLabelFromDateTime(reopeningDateTime);
 
-        setMetaRow('bizNextOpen', `${nextOpenLabel} • ${reopeningTimeText}`);
+        setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${reopeningTimeText}`);
 
         if (minutesAway <= TEMPORARY_WARNING_MINUTES) {
           isTemporaryEndingSoon = true;
@@ -7697,7 +7697,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           visitorTimezone
         );
 
-        setMetaRow('bizNextOpen', `${nextOpeningAfterTemporary.dayLabel} • ${prettyTime}`);
+        setMetaRow('bizNextOpen', `${nextOpeningAfterTemporary.dayLabel} â€¢ ${prettyTime}`);
 
         if (nextOpeningAfterTemporary.offset === 0) {
           statusSubTextElement.textContent = `Reopens today at ${prettyTime}`;
@@ -7708,7 +7708,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       } else {
         statusSubTextElement.textContent = '';
-        setMetaRow('bizNextOpen', '—');
+        setMetaRow('bizNextOpen', 'â€”');
       }
 
       return;
@@ -7717,7 +7717,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     if (finalType === 'holiday') {
       if (!LuxonLibrary || !nowInBusinessTimezone) {
         statusSubTextElement.textContent = '';
-        setMetaRow('bizNextOpen', '—');
+        setMetaRow('bizNextOpen', 'â€”');
         return;
       }
 
@@ -7761,13 +7761,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
             const prettyNextTime = formatDisplayTimeBusinessInfo(nextHolidayOpeningToday, visitorTimezone);
             const nextOpenLabel = formatDayLabelFromDateTime(nextHolidayOpenDateTime);
 
-            setMetaRow('bizNextOpen', `${nextOpenLabel} • ${prettyNextTime}`);
+            setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${prettyNextTime}`);
           } else {
-            setMetaRow('bizNextOpen', '—');
+            setMetaRow('bizNextOpen', 'â€”');
           }
         } else {
           statusSubTextElement.textContent = '';
-          setMetaRow('bizNextOpen', '—');
+          setMetaRow('bizNextOpen', 'â€”');
         }
 
         return;
@@ -7795,7 +7795,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openingDateTime);
           const nextOpenLabel = formatDayLabelFromDateTime(openingDateTime);
 
-          setMetaRow('bizNextOpen', `${nextOpenLabel} • ${prettyTime}`);
+          setMetaRow('bizNextOpen', `${nextOpenLabel} â€¢ ${prettyTime}`);
 
           if (minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
             isOpeningSoon = true;
@@ -7831,7 +7831,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           visitorTimezone
         );
 
-        setMetaRow('bizNextOpen', `${nextOpeningAfterHoliday.dayLabel} • ${prettyTime}`);
+        setMetaRow('bizNextOpen', `${nextOpeningAfterHoliday.dayLabel} â€¢ ${prettyTime}`);
 
         if (nextOpeningAfterHoliday.offset === 1) {
           statusSubTextElement.textContent = `Reopens tomorrow at ${prettyTime}`;
@@ -7840,7 +7840,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       } else {
         statusSubTextElement.textContent = '';
-        setMetaRow('bizNextOpen', '—');
+        setMetaRow('bizNextOpen', 'â€”');
       }
 
       return;
@@ -7922,13 +7922,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       }
 
-      setMetaRow('bizNextOpen', '—');
+      setMetaRow('bizNextOpen', 'â€”');
       return;
     }
 
     if (!LuxonLibrary || !nowInBusinessTimezone) {
       statusSubTextElement.textContent = '';
-      setMetaRow('bizNextOpen', '—');
+      setMetaRow('bizNextOpen', 'â€”');
       return;
     }
 
@@ -7951,11 +7951,11 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       const prettyTime = formatDisplayTimeBusinessInfo(nextOpenTime, visitorTimezone);
 
       if (offset === 0) {
-        setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
+        setMetaRow('bizNextOpen', `Today â€¢ ${prettyTime}`);
       } else if (offset === 1) {
-        setMetaRow('bizNextOpen', `Tomorrow • ${prettyTime}`);
+        setMetaRow('bizNextOpen', `Tomorrow â€¢ ${prettyTime}`);
       } else {
-        setMetaRow('bizNextOpen', `${capitalizeFirstLetter(scheduleObject.labelDay)} • ${prettyTime}`);
+        setMetaRow('bizNextOpen', `${capitalizeFirstLetter(scheduleObject.labelDay)} â€¢ ${prettyTime}`);
       }
 
       const openMinutes = timeStringToMinutes(nextOpenTime);
@@ -7990,7 +7990,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     }
 
     statusSubTextElement.textContent = '';
-    setMetaRow('bizNextOpen', '—');
+    setMetaRow('bizNextOpen', 'â€”');
   })();
 
   const subStatusText = statusSubTextElement.textContent || '';
@@ -8204,7 +8204,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       html += `<li>
         <strong>${escapeHtml(temporarySchedule.label || 'Temporary Schedule')}</strong>
-        <span class="hours">${escapeHtml(rangeText || '—')}</span>
+        <span class="hours">${escapeHtml(rangeText || 'â€”')}</span>
         <span class="dates">${escapeHtml(formatDate(temporarySchedule.startDate))} to ${escapeHtml(formatDate(temporarySchedule.endDate))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>`;
@@ -8270,7 +8270,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       html += `<li>
         <strong>${escapeHtml(holiday.label || 'Holiday')}</strong>
-        <span class="hours">${escapeHtml(rangeText || '—')}</span>
+        <span class="hours">${escapeHtml(rangeText || 'â€”')}</span>
         <span class="dates">${escapeHtml(formatDate(holiday.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>`;
@@ -8325,8 +8325,8 @@ function renderErrorState(message = 'Error Loading') {
   }
 
   setStatusHint('Business information is temporarily unavailable.');
-  setMetaRow('bizNextOpen', '—');
-  setMetaRow('bizTodayHours', '—');
+  setMetaRow('bizNextOpen', 'â€”');
+  setMetaRow('bizTodayHours', 'â€”');
   setStatusChip('Temporary Closure', 'temporary', true);
   setTrafficLight({
     statusText: 'Temporary Closure',
@@ -8360,8 +8360,8 @@ function renderFromCache() {
    FIRESTORE LOADING
 ------------------------- */
 async function oneTimeFetchFallback() {
-  setMetaRow('bizNextOpen', '—');
-  setMetaRow('bizTodayHours', '—');
+  setMetaRow('bizNextOpen', 'â€”');
+  setMetaRow('bizTodayHours', 'â€”');
 
   try {
     if (academicDocumentReferenceLocal && typeof getDoc === 'function') {
@@ -8441,8 +8441,8 @@ function startBusinessInfoRefresh() {
   setMetaRow('bizUserTz', cachedVisitorTimezone);
   setLocalTimeLine(cachedVisitorTimezone);
   formatStoreLocalTime();
-  setMetaRow('bizNextOpen', '—');
-  setMetaRow('bizTodayHours', '—');
+  setMetaRow('bizNextOpen', 'â€”');
+  setMetaRow('bizTodayHours', 'â€”');
   updateBizTimeFormatToggleUI();
 
   startLiveLocalClock();
@@ -8596,7 +8596,7 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     const section = document.querySelector('.countdown-section');
     if (!section) return console.warn("Countdown section not found.");
 
-    // 🔒 Prevent multiple countdown instances
+    // ðŸ”’ Prevent multiple countdown instances
     if (section.dataset.countdownInitialized === "true") return;
     section.dataset.countdownInitialized = "true";
 
@@ -8666,11 +8666,11 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     /* ------------------------------------------------------------ */
     function generateMessages(t) {
         return [
-            `Anticipation builds as ${t} approaches…`,
-            `Every moment brings us closer to ${t}…`,
-            `${t} is almost here…`,
-            `Final preparations underway for ${t}…`,
-            `All paths lead toward ${t}…`
+            `Anticipation builds as ${t} approachesâ€¦`,
+            `Every moment brings us closer to ${t}â€¦`,
+            `${t} is almost hereâ€¦`,
+            `Final preparations underway for ${t}â€¦`,
+            `All paths lead toward ${t}â€¦`
         ].sort(() => Math.random() - 0.5);
     }
 
@@ -8708,7 +8708,7 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
             clearInterval(loop);
             clearInterval(statusInterval);
 
-            // 🔕 Kill status messages completely
+            // ðŸ”• Kill status messages completely
             if (statusEl) {
                 statusEl.textContent = "";
                 statusEl.style.display = "none";
