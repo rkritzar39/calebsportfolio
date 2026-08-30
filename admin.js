@@ -3368,13 +3368,25 @@ function createRecurringClassRow(data = {}) {
     <input type="text" class="class-title" placeholder="Course Title" value="${data.title || ""}">
     <input type="text" class="class-instructor" placeholder="Instructor" value="${data.instructor || ""}">
     <input type="text" class="class-location" placeholder="Location" value="${data.location || ""}">
+    <select class="class-type" aria-label="Class type">
+      <option value="lecture">Lecture</option>
+      <option value="lab">Lab</option>
+      <option value="discussion">Discussion</option>
+      <option value="seminar">Seminar</option>
+      <option value="studio">Studio</option>
+      <option value="online">Online</option>
+      <option value="hybrid">Hybrid</option>
+      <option value="other">Other</option>
+    </select>
     <input type="text" class="class-days" placeholder="Days (mon,wed,fri)" value="${(data.days || []).join(",")}">
+    <input type="text" class="class-timezone" list="academic-timezone-options" placeholder="Timezone" value="${data.timezone || "America/New_York"}" aria-label="Class timezone">
     <input type="time" class="class-start" value="${data.startTime || ""}">
     <input type="time" class="class-end" value="${data.endTime || ""}">
     <input type="date" class="class-start-date" value="${data.startDate || ""}">
     <input type="date" class="class-end-date" value="${data.endDate || ""}">
     <button type="button" class="danger-btn remove-class-btn">×</button>
   `;
+  row.querySelector(".class-type").value = data.type || "lecture";
   row.querySelector(".remove-class-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
@@ -3522,7 +3534,9 @@ async function saveRecurringClasses(e) {
     title: row.querySelector(".class-title")?.value.trim() || "",
     instructor: row.querySelector(".class-instructor")?.value.trim() || "",
     location: row.querySelector(".class-location")?.value.trim() || "",
+    type: row.querySelector(".class-type")?.value || "lecture",
     days: row.querySelector(".class-days")?.value.split(",").map(d => d.trim().toLowerCase()).filter(Boolean),
+    timezone: row.querySelector(".class-timezone")?.value.trim() || document.getElementById("academic-timezone")?.value.trim() || "America/New_York",
     startTime: row.querySelector(".class-start")?.value || "",
     endTime: row.querySelector(".class-end")?.value || "",
     startDate: row.querySelector(".class-start-date")?.value || "",
