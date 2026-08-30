@@ -1,98 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="author" content="Caleb Kritzar" />
-  <meta name="description" content="Read my latest blog posts on technology, coding, and personal insights." />
-  <title>Blog - Caleb's Profile</title>
-
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/settings.css" />
-  <link rel="stylesheet" href="blog.css" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#3ddc84" />
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
-
-  <script>
-    (() => {
-      try {
-        const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-        const savedTheme = settings.theme || settings.appearance || settings.themeMode || localStorage.getItem("theme") || localStorage.getItem("websiteTheme") || "dark";
-        const normalizedTheme = String(savedTheme).trim().toLowerCase();
-        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-        const usesDeviceTheme = normalizedTheme === "system" || normalizedTheme === "device" || normalizedTheme === "auto" || normalizedTheme.includes("match");
-        const isLightTheme = normalizedTheme.includes("light") || (usesDeviceTheme && prefersLight);
-        const appearanceClass = isLightTheme ? "light-mode" : "dark-mode";
-        document.documentElement.classList.add(appearanceClass);
-        document.documentElement.dataset.theme = isLightTheme ? "light" : "dark";
-      } catch (error) {
-        document.documentElement.classList.add("dark-mode");
-      }
-    })();
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="dark-mode">
-  <div class="container">
-    <!-- Navigation -->
-    <nav class="onyx-dock" aria-label="Primary navigation">
-      <span class="dock-active-lens" aria-hidden="true"></span>
-      <a href="/" class="dock-item"><span class="dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 10.65 12 3.5l8.5 7.15v8.6A2.75 2.75 0 0 1 18.25 21h-2.5v-5h-3.5v5h-2.5A2.75 2.75 0 0 1 3.5 19.25Z"></path></svg></span></a>
-      <a href="/beta" class="dock-item"><span class="dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M9 2.75a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5H9Zm-2.66 7.25a.75.75 0 1 0-1.5 0v6a2.75 2.75 0 0 0 2.75 2.75h9.82a2.75 2.75 0 0 0 2.75-2.75v-6a.75.75 0 1 0-1.5 0v6a1.25 1.25 0 0 1-1.25 1.25H7.59a1.25 1.25 0 0 1-1.25-1.25Z"></path></svg></span></a>
-      <a href="/education" class="dock-item" data-education-link><span class="dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path></svg></span></a>
-      <a href="/resume" class="dock-item"><span class="dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V4.75A2.75 2.75 0 0 0 17.25 2ZM8.5 6h7v1.75h-7Zm0 3.5h7v6h-7Zm-2-3.5h2v1.75h-2Zm0 3.5h2v6h-2Zm9.5 8.75h-7v-1.5h7Z"></path></svg></span></a>
-      <a href="/settings" class="dock-item"><span class="dock-icon dock-icon-settings" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12 2a.75.75 0 0 1 .75.75v1.04a5.48 5.48 0 0 1 3.64 1.86l.74-.74a.75.75 0 0 1 1.06 1.06l-.74.74a5.48 5.48 0 0 1 1.86 3.64h1.04a.75.75 0 0 1 0 1.5h-1.04a5.48 5.48 0 0 1-1.86 3.64l.74.74a.75.75 0 0 1-1.06 1.06l-.74-.74a5.48 5.48 0 0 1-3.64 1.86v1.04a.75.75 0 0 1-1.5 0v-1.04a5.48 5.48 0 0 1-3.64-1.86l-.74.74a.75.75 0 0 1-1.06-1.06l.74-.74a5.48 5.48 0 0 1-1.86-3.64H2.75a.75.75 0 0 1 0-1.5h1.04a5.48 5.48 0 0 1 1.86-3.64l-.74-.74a.75.75 0 1 1 1.06-1.06l.74.74a5.48 5.48 0 0 1 3.64-1.86V2.75A.75.75 0 0 1 12 2Zm0 5.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" clip-rule="evenodd"></path></svg></span></a>
-    </nav>
+<body>
+    <div class="blog-container">
+        <!-- Navigation -->
+        <nav class="blog-navbar">
+            <div class="blog-navbar-brand">
+                <h1>Blog</h1>
+            </div>
+            <ul class="blog-navbar-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="lms.html" class="nav-link">Learning Center</a></li>
+            </ul>
+        </nav>
 
-    <!-- Blog Header -->
-    <section class="blog-header section">
-      <div class="blog-header-content">
-        <h1>Blog</h1>
-        <p class="blog-subtitle">Insights on technology, coding, and personal growth.</p>
-      </div>
-    </section>
+        <!-- Main Blog Content -->
+        <main class="blog-main">
+            <div class="blog-header">
+                <h1>Blog Posts</h1>
+                <p class="blog-subtitle">Latest articles and updates</p>
+            </div>
 
-    <!-- Search & Filter -->
-    <section class="blog-controls section">
-      <div class="search-container unified">
-        <span class="search-icon"></span>
-        <input type="search" id="blog-search" class="creator-search" placeholder="Search blog posts..." aria-label="Search blog posts" autocomplete="off" />
-        <button type="button" id="blog-search-clear" class="tech-search-clear" aria-label="Clear search" hidden>×</button>
-      </div>
+            <!-- Blog Feed Container -->
+            <div id="blog-feed" class="blog-feed">
+                <!-- Blog posts will be injected here by admin tool -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">✍️</div>
+                    <h2>No blog posts published yet</h2>
+                    <p>Check back soon for new articles and insights.</p>
+                </div>
+            </div>
+        </main>
 
-      <div class="blog-filters">
-        <button class="blog-filter-chip active" data-filter="all">All Posts</button>
-        <button class="blog-filter-chip" data-filter="technology">Technology</button>
-        <button class="blog-filter-chip" data-filter="coding">Coding</button>
-        <button class="blog-filter-chip" data-filter="personal">Personal</button>
-      </div>
-    </section>
+        <!-- Footer -->
+        <footer class="blog-footer">
+            <p>&copy; 2024 My Portfolio. All rights reserved.</p>
+        </footer>
+    </div>
 
-    <!-- Blog Posts Grid -->
-    <section class="blog-posts section" id="blog-posts-container">
-      <p style="text-align: center; color: var(--text-secondary);">Loading blog posts...</p>
-    </section>
-
-    <!-- Empty State -->
-    <section id="blog-empty-state" class="blog-empty-state section" hidden>
-      <i class="fas fa-search"></i>
-      <h3>No Posts Found</h3>
-      <p>Try adjusting your search or filter criteria.</p>
-    </section>
-
-    <!-- Footer -->
-    <footer class="no-rearrange" id="site-footer">
-      <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
-    </footer>
-  </div>
-
-  <script src="blog.js"></script>
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+    <script src="blog.js"></script>
 </body>
 </html>
