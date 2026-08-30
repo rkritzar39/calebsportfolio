@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="lms-container">
+        <!-- Top Navigation Bar -->
+        <nav class="lms-navbar">
+            <div class="lms-navbar-brand">
+                <h1>Learning Center</h1>
+            </div>
+            <ul class="lms-navbar-menu">
+                <li><a href="#courses" class="nav-link active">Courses</a></li>
+                <li><a href="#groups" class="nav-link">Groups</a></li>
+                <li><a href="#resources" class="nav-link">Resources</a></li>
+                <li class="nav-profile-dropdown">
+                    <button class="nav-profile-btn">
+                        <span class="profile-icon">👤</span>
+                    </button>
+                    <div class="profile-dropdown-menu">
+                        <a href="#profile">My Profile</a>
+                        <a href="#settings">Settings</a>
+                        <a href="#help">Help</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="lms-main-wrapper">
+            <!-- Left Sidebar Navigation -->
+            <aside class="lms-sidebar">
+                <div class="sidebar-header">
+                    <h2 id="course-title">Select a Course</h2>
+                </div>
+                <nav class="sidebar-nav">
+                    <button class="sidebar-tab active" data-tab="materials">
+                        📁 Materials
+                    </button>
+                    <button class="sidebar-tab" data-tab="updates">
+                        📢 Updates
+                    </button>
+                    <button class="sidebar-tab" data-tab="grades">
+                        📊 Grades
+                    </button>
+                    <button class="sidebar-tab" data-tab="mastery">
+                        ⭐ Mastery
+                    </button>
+                    <button class="sidebar-tab" data-tab="members">
+                        👥 Members
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="lms-content">
+                <!-- Materials Tab -->
+                <div class="lms-tab-content active" id="materials">
+                    <div class="tab-header">
+                        <h2>Course Materials</h2>
+                    </div>
+                    <div class="breadcrumb-path">
+                        <span class="breadcrumb-item active">Home</span>
+                    </div>
+                    <!-- Folders and items will be injected here by admin tool -->
+                    <div id="materials-container" class="materials-grid">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📁</div>
+                            <h3>No materials yet</h3>
+                            <p>Course materials will appear here once they are uploaded.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Updates Tab -->
+                <div class="lms-tab-content" id="updates">
+                    <div class="tab-header">
+                        <h2>Course Updates</h2>
+                    </div>
+                    <!-- Announcements will be injected here by admin tool -->
+                    <div id="updates-container" class="updates-feed">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📢</div>
+                            <h3>No updates yet</h3>
+                            <p>Check back soon for course announcements and updates.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grades Tab -->
+                <div class="lms-tab-content" id="grades">
+                    <div class="tab-header">
+                        <h2>Grades</h2>
+                    </div>
+                    <div id="grades-container" class="grades-table">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <h3>No grades available</h3>
+                            <p>Grades will appear here as assignments are graded.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mastery Tab -->
+                <div class="lms-tab-content" id="mastery">
+                    <div class="tab-header">
+                        <h2>Mastery Tracking</h2>
+                    </div>
+                    <div id="mastery-container" class="mastery-grid">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">⭐</div>
+                            <h3>No mastery data</h3>
+                            <p>Complete assignments to see your mastery progress.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Members Tab -->
+                <div class="lms-tab-content" id="members">
+                    <div class="tab-header">
+                        <h2>Course Members</h2>
+                    </div>
+                    <div id="members-container" class="members-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <h3>No members</h3>
+                            <p>Course members will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for viewing folder/item details -->
+    <div id="lms-modal" class="lms-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="lms.js"></script>
+</body>
+</html>
