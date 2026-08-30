@@ -2395,15 +2395,14 @@ function estimateSupportLifespan(item) {
 // BATTERY TREND
 // ======================
 function estimateBatteryTrend(item) {
-    const deviceAge = calculateDateAge(item.dateReleased);
     const ownershipAge = calculateDateAge(item.dateBought);
-    if (!age) return null;
+    if (!ownershipAge) return null;
 
     const currentHealth = Number(item.batteryHealth ?? 100);
     if (isNaN(currentHealth)) return null;
 
     const degradationRate = 5;
-    const estimatedLoss = age.years * degradationRate;
+    const estimatedLoss = ownershipAge.years * degradationRate;
     const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
     const declineValue = Math.max(0, estimatedOriginal - currentHealth);
     const decline = declineValue.toFixed(1);
