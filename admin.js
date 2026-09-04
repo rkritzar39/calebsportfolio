@@ -1958,56 +1958,16 @@ function formatTimeForAdminPreview(timeString) {
     }
 }
 
+function academicLocalDate(date=new Date()){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
+function academicBreakOn(data,date){return (data?.breaks||[]).find(x=>{const s=x.startDate||x.date||'',e=x.endDate||x.startDate||x.date||'';return s&&e&&date>=s&&date<=e;})||null;}
+function academicDays(value){const m={sunday:'sun',monday:'mon',tuesday:'tue',wednesday:'wed',thursday:'thu',friday:'fri',saturday:'sat',tues:'tue',weds:'wed',thurs:'thu'};return (Array.isArray(value)?value:String(value||'').split(',')).map(x=>{x=String(x).trim().toLowerCase();return m[x]||x.slice(0,3)}).filter(Boolean);}
 function getAcademicAvailability(academicData) {
-    if (!academicData) return { available: true };
-    
-    const now = new Date();
-    const todayDateStr = now.toISOString().slice(0, 10);
-    const todayDayName = daysOfWeek[(now.getDay() + 6) % 7];
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-    // 0. Check Academic Breaks (Runs first, overrides everything)
-    if (Array.isArray(academicData.breaks)) {
-        for (const b of academicData.breaks) {
-            if (b.startDate && b.endDate && todayDateStr >= b.startDate && todayDateStr <= b.endDate) {
-                return { available: false, reason: b.name || 'Academic Break' };
-            }
-        }
-    }
-
-    // 1. Check Exams
-    if (Array.isArray(academicData.exams)) {
-        for (const exam of academicData.exams) {
-            if (exam.date === todayDateStr && exam.startTime && exam.endTime) {
-                const start = timeStringToMinutesBI(exam.startTime);
-                const end = timeStringToMinutesBI(exam.endTime);
-                if (currentMinutes >= start && currentMinutes < end) {
-                    return {available: false, reason: 'Exam in Progress', backAt: exam.endTime};
-                }
-            }
-        }
-    }
-
-    // 2. Check Recurring Classes
-    if (Array.isArray(academicData.recurringClasses)) {
-        for (const cls of academicData.recurringClasses) {
-            if (cls.startDate && cls.endDate && todayDateStr >= cls.startDate && todayDateStr <= cls.endDate) {
-                if (cls.days && cls.days.includes(todayDayName) && cls.startTime && cls.endTime) {
-                    const start = timeStringToMinutesBI(cls.startTime);
-                    const end = timeStringToMinutesBI(cls.endTime);
-                    if (currentMinutes >= start && currentMinutes < end) {
-                        return {
-                            available: false,
-                            reason: 'In Class',
-                            backAt: cls.endTime
-                        };
-                    }
-                }
-            }
-        }
-    }
-
-    return { available: true };
+ if(!academicData)return {available:true}; const now=new Date(),date=academicLocalDate(now),day=['sun','mon','tue','wed','thu','fri','sat'][now.getDay()],mins=now.getHours()*60+now.getMinutes(),brk=academicBreakOn(academicData,date);
+ const active=x=>{const s=timeStringToMinutesBI(x?.startTime),e=timeStringToMinutesBI(x?.endTime);return s!=null&&e!=null&&(e>s?mins>=s&&mins<e:mins>=s||mins<e)};
+ for(const x of academicData.finals||[])if(x.date===date&&active(x))return {available:false,reason:x.title||x.course||'Final Exam',backAt:x.endTime};
+ for(const x of academicData.exams||[])if(x.date===date&&active(x))return {available:false,reason:x.title||x.course||'Exam',backAt:x.endTime};
+ if(!brk)for(const x of academicData.recurringClasses||[]){const inRange=(!x.startDate||date>=x.startDate)&&(!x.endDate||date<=x.endDate);if(inRange&&academicDays(x.days||x.day).includes(day)&&active(x))return {available:false,reason:x.title||x.course||'In Class',backAt:x.endTime};}
+ return {available:true,academicBreak:brk?(brk.name||brk.title||'Academic Break'):null};
 }
 
 /* -------------------------
@@ -3618,8 +3578,11 @@ async function saveRecurringClasses(e) {
     };
   });
 
+  const invalidBreak=breaks.find(x=>(x.name||x.startDate||x.endDate)&&(!x.startDate||!x.endDate||x.endDate<x.startDate));
+  const invalidClass=classes.find(x=>(x.course||x.title)&&(!x.days.length||!x.startTime||!x.endTime||(x.startDate&&x.endDate&&x.endDate<x.startDate)));
+  if(invalidBreak||invalidClass){const msg=document.getElementById('academic-status-message');if(msg)msg.textContent=invalidBreak?'Every break needs valid start and end dates.':'Every class needs days, times, and a valid date range.';return;}
   const academicAvailability = {
-    recurringClasses: classes,
+    recurringClasses: classes.filter(x=>x.course||x.title),
     exams: exams,
     finals: finals,
     universityEvents: universityEvents,
