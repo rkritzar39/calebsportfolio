@@ -349,19 +349,8 @@ function watchAcademicAvailability() {
    ACADEMIC CHECK – IN CLASS RIGHT NOW?
 ========================================================= */
 
-function isInClassNow(now) {
-  if (!academicAvailability) return false;
-
-  const classes = academicAvailability.recurringClasses || [];
-  const weekday = now.toFormat('cccc').toLowerCase();
-  const timeNow = now.toFormat("HH:mm");
-
-  return classes.some(cls =>
-    getRecurringClassDays(cls).includes(normalizeAcademicDayValue(weekday)) &&
-    cls.startTime <= timeNow &&
-    cls.endTime >= timeNow
-  );
-}
+function getAcademicBreakForIsoDate(data,date){return (data?.breaks||[]).find(x=>{const s=x.startDate||x.date||'',e=x.endDate||x.startDate||x.date||'';return s&&e&&date>=s&&date<=e;})||null;}
+function isInClassNow(now){if(!academicAvailability||!now)return false;const date=now.toISODate();if(getAcademicBreakForIsoDate(academicAvailability,date))return false;const day=normalizeAcademicDayValue(now.toFormat('cccc')),mins=now.hour*60+now.minute;return (academicAvailability.recurringClasses||[]).some(x=>{if((x.startDate&&date<x.startDate)||(x.endDate&&date>x.endDate)||!getRecurringClassDays(x).includes(day))return false;const s=timeStringToMinutes(x.startTime),e=timeStringToMinutes(x.endTime);return s!=null&&e!=null&&(e>s?mins>=s&&mins<e:mins>=s||mins<e);});}
 
 // --- Helper Functions ---
 function formatFirestoreTimestamp(firestoreTimestamp) {
@@ -6342,19 +6331,10 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
     return null;
   };
 
-  // Priority 1: Academic Breaks
-  const breaks = Array.isArray(academicAvailability.breaks) ? academicAvailability.breaks : [];
-  for (const brk of breaks) {
-    if (isInDateWindow(nowInBusinessTimezone, brk.startDate, brk.endDate)) {
-      return {
-        active: true,
-        reason: brk.title || brk.label || 'Academic Break',
-        backAt: null
-      };
-    }
-  }
+  // Breaks cancel recurring class occurrences, not all-day availability.
+  const activeBreak = getAcademicBreakForIsoDate(academicAvailability, currentIsoDate);
 
-  // Priority 2: Finals
+  // Priority 1: Finals
   const finals = Array.isArray(academicAvailability.finals) ? academicAvailability.finals : [];
   const activeFinal = checkBlocks(finals, 'date', currentIsoDate);
   if (activeFinal) {
@@ -6365,7 +6345,7 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
     };
   }
 
-  // Priority 3: Exams
+  // Priority 2: Exams
   const exams = Array.isArray(academicAvailability.exams) ? academicAvailability.exams : [];
   const activeExam = checkBlocks(exams, 'date', currentIsoDate);
   if (activeExam) {
@@ -6376,7 +6356,8 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
     };
   }
 
-  // Priority 4: Recurring Classes
+  // Priority 3: Recurring Classes
+  if (activeBreak) return { active: false, academicBreak: activeBreak };
   const classes = (Array.isArray(academicAvailability.recurringClasses) ? academicAvailability.recurringClasses : [])
     .filter((cls) => {
       if (!cls.startDate || !cls.endDate) return true;
@@ -6478,6 +6459,7 @@ function getAcademicStartingSoonMinutes(academicAvailability, nowInBusinessTimez
   });
 
   classes.forEach((item) => {
+    if (getAcademicBreakForIsoDate(academicAvailability, currentIsoDate)) return;
     const isTodayMatch =
       matchesField(item, 'days', currentDayOfWeek) || matchesField(item, 'day', currentDayOfWeek);
 
@@ -6607,12 +6589,12 @@ function getNextRecurringClassDate(item, nowInBusinessTimezone) {
     ? classStartDate.startOf('day')
     : nowInBusinessTimezone.startOf('day');
 
-  for (let offset = 0; offset <= 14; offset += 1) {
+  for (let offset = 0; offset <= 370; offset += 1) {
     const candidate = searchStart.plus({ days: offset });
     const candidateDay = normalizeAcademicDayValue(candidate.toFormat('ccc'));
 
     if (classEndDate && candidate > classEndDate.endOf('day')) break;
-    if (classDays.includes(candidateDay)) return candidate;
+    if (classDays.includes(candidateDay) && !getAcademicBreakForIsoDate(cachedAcademicData, candidate.toISODate())) return candidate;
   }
 
   return null;
@@ -6640,6 +6622,8 @@ function getRecurringClassSmartLabel(item, nowInBusinessTimezone) {
     return 'Concluded';
   }
 
+  const currentBreak=getAcademicBreakForIsoDate(cachedAcademicData,nowInBusinessTimezone.toISODate());
+  if(currentBreak){const next=getNextRecurringClassDate(item,nowInBusinessTimezone.plus({days:1}).startOf('day'));const name=currentBreak.title||currentBreak.name||currentBreak.label||'Academic Break';return next?`${name} • ${formatRecurringClassDateLabel(next,nowInBusinessTimezone)}`:`${name} • No remaining class meetings`;}
   const normalizedClassDays = getRecurringClassDays(item);
   const currentDay = normalizeAcademicDayValue(nowInBusinessTimezone.toFormat('ccc'));
   const termHasStarted = !classStartDate || nowInBusinessTimezone >= classStartDate.startOf('day');
