@@ -300,7 +300,7 @@ body {
 
     color: var(--text-color);
 
-    /* âœ… THIS is what makes glass look real */
+    /* ✅ THIS is what makes glass look real */
     background:
         radial-gradient(
             circle at 20% 15%,
@@ -395,7 +395,7 @@ body.tinted-mode {
 }
 
 /* =======================================================
-   HIGH CONTRAST MODE â€” YELLOW ON BLACK
+   HIGH CONTRAST MODE — YELLOW ON BLACK
    ======================================================= */
 body.high-contrast {
   --hc-bg: #000000;
@@ -3722,24 +3722,3 @@ html.dark-mode body .delay-info-button::before {
         transition: none !important;
     }
 }
-
-/* ======================================================= */
-/* SETTINGS THEME CORRECTION - FINAL OVERRIDES             */
-/* ======================================================= */
-body.settings-page { background: var(--onyx-page-bg) fixed !important; }
-body.settings-page .settings-header, body.settings-page .settings-subsection, body.settings-page .settings-footer, body.settings-page #cookie-consent-banner {
-  background: var(--onyx-section-bg) !important;
-  border: 1px solid var(--onyx-section-border) !important;
-  box-shadow: var(--onyx-section-shadow) !important;
-}
-body.settings-page .setting-card:hover { background: var(--onyx-card-bg) !important; }
-body.settings-page select, body.settings-page input:not([type="checkbox"]):not([type="range"]):not([type="color"]), body.settings-page textarea, body.settings-page .segmented-control, body.settings-page .button {
-  background: var(--onyx-control-bg) !important;
-  border-color: var(--onyx-control-border) !important;
-  box-shadow: var(--onyx-control-shadow) !important;
-  color: var(--text-color) !important;
-}
-body.light-e.settings-page .setting-title, body.light-e.settings-page .settings-header h1,
-body.light-mode.settings-page .setting-title, body.light-mode.settings-page .settings-header h1,
-html.light-mode body.settings-page .setting-title, html.light-mode body.settings-page .settings-header h1 { color: #111318 !important; }
-body.light-e.settings-page .setting-description, body.light-mode.settings-page .setting-description, html.light-mode body.settings-page .setting-description { color: #565e6b !important; }
