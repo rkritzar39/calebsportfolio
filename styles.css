@@ -427,7 +427,7 @@ border-color var(--transition-medium),
 box-shadow var(--transition-medium); 
 }
 
-/* 🕒 Live Time */
+/* ðŸ•’ Live Time */
 
 #live-time { 
 font-weight: 650; 
@@ -459,7 +459,7 @@ inset 0 1px 2px color-mix(in srgb, var(--glow-color) 58%, transparent),
 0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent); 
 }
 
-/* 🌤️ Weather */
+/* ðŸŒ¤ï¸ Weather */
 
 #weather-widget { 
 display: inline-block;
@@ -492,7 +492,7 @@ inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
 0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent); 
 }
 
-/* 💬 Daily Focus */
+/* ðŸ’¬ Daily Focus */
 
 #daily-focus { 
 width: 100%; 
@@ -534,7 +534,7 @@ color: var(--secondary-text);
 font-size: 1em; 
 }
 
-/* 🔋 Battery */
+/* ðŸ”‹ Battery */
 
 #battery-widget { 
 font-size: 1rem; 
@@ -815,7 +815,7 @@ body.reduced-motion .mouse-trail-container {
 display: none !important; 
 }
 
-/* 📱 Mobile Responsiveness */
+/* ðŸ“± Mobile Responsiveness */
 
 @media (max-width: 600px) { 
 body { 
@@ -2056,7 +2056,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================================= */
-/* 🔍 NEXT-GEN ONYX SEARCH BAR — FULL SECTION               */
+/* ðŸ” NEXT-GEN ONYX SEARCH BAR â€” FULL SECTION               */
 /* ======================================================= */
 
 .search-container.unified {
@@ -2068,7 +2068,7 @@ body.dark-mode .live-activity {
 	margin: 0 auto 34px auto;
 	border-radius: 16px;
 
-	/* ✨ Layered glass background */
+	/* âœ¨ Layered glass background */
 	background:
 		linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
 		color-mix(in srgb, var(--content-bg) 82%, transparent);
@@ -2092,7 +2092,7 @@ body.dark-mode .live-activity {
 		background 0.25s ease;
 }
 
-/* ✨ subtle glass shine layer */
+/* âœ¨ subtle glass shine layer */
 .search-container.unified::after {
 	content: "";
 	position: absolute;
@@ -2110,7 +2110,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================================= */
-/* 🔍 SEARCH INPUT                                         */
+/* ðŸ” SEARCH INPUT                                         */
 /* ======================================================= */
 
 .creator-search {
@@ -2137,7 +2137,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================================= */
-/* 🔎 SEARCH ICON                                          */
+/* ðŸ”Ž SEARCH ICON                                          */
 /* ======================================================= */
 
 .search-icon {
@@ -2156,7 +2156,7 @@ body.dark-mode .live-activity {
 	background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23A9A9A9' fill='none' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8' stroke-width='2'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65' stroke-width='2'/%3E%3C/svg%3E");
 }
 
-/* ✨ focus + typing glow */
+/* âœ¨ focus + typing glow */
 .search-container.unified:focus-within .search-icon,
 .search-container.unified.typing .search-icon {
 	opacity: 1;
@@ -2168,7 +2168,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================================= */
-/* 🎯 FOCUS STATE                                          */
+/* ðŸŽ¯ FOCUS STATE                                          */
 /* ======================================================= */
 
 .search-container.unified:focus-within {
@@ -2184,7 +2184,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================================= */
-/* 🔽 SORT DROPDOWN                                        */
+/* ðŸ”½ SORT DROPDOWN                                        */
 /* ======================================================= */
 
 .sort-inline-select {
@@ -2242,7 +2242,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================================= */
-/* 📱 MOBILE                                               */
+/* ðŸ“± MOBILE                                               */
 /* ======================================================= */
 
 @media (max-width: 600px) {
@@ -2280,7 +2280,7 @@ body.dark-mode .live-activity {
 
 
 /* ======================================== /
-/ Social Links Section – Liquid Glass      /
+/ Social Links Section â€“ Liquid Glass      /
 / iOS Capsule Buttons                      /
 / Light/Dark Onyx Compatible               /
 / ======================================== */
@@ -2412,7 +2412,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================== /
-/ Social Button – Liquid Glass Capsule     /
+/ Social Button â€“ Liquid Glass Capsule     /
 / Icon Left, Text Center, Arrow Right      /
 / ======================================== */
 
@@ -2631,7 +2631,7 @@ body.dark-mode .live-activity {
 }
 
 /* ======================================== /
-/ Hover – Liquid Accent Glow               /
+/ Hover â€“ Liquid Accent Glow               /
 / ======================================== */
 
 .social-button:hover {
@@ -3127,7 +3127,7 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 }
 
 /* ======================================== */
-/* == Useful Links Section – Onyx Bubble Glass == */
+/* == Useful Links Section â€“ Onyx Bubble Glass == */
 /* ======================================== */
 
 .useful-links-section {
@@ -3253,7 +3253,7 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 }
 
 /* ========================================
-   HOVER — SAME AS SOCIAL BUTTONS
+   HOVER â€” SAME AS SOCIAL BUTTONS
 ======================================== */
 .link-button:hover {
 	background:
@@ -3320,7 +3320,7 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 }
 
 /* ======================================== */
-/* == Tech Information Section – Onyx Glass System == */
+/* == Tech Information Section â€“ Onyx Glass System == */
 /* ======================================== */
 
 /* Add this to your base CSS */
@@ -3390,7 +3390,7 @@ backdrop-filter: blur(14px) saturate(135%);
 box-sizing: border-box;
 width: 100%;
 
-/* 🚨 FIX: Replaced aggressive 'break-word' to stop single-letter stacking */
+/* ðŸš¨ FIX: Replaced aggressive 'break-word' to stop single-letter stacking */
 overflow-wrap: normal;
 word-break: normal; 
 }
@@ -3461,7 +3461,7 @@ margin: 10px 0;
 position: relative; 
 z-index: 1;
 
-/* 🚨 FIX: Ensures the flex row itself stays strictly within the glass tile */
+/* ðŸš¨ FIX: Ensures the flex row itself stays strictly within the glass tile */
 width: 100%;
 box-sizing: border-box;
 }
@@ -3617,7 +3617,7 @@ margin-top: 2px;
 }
 
 /* ======================== */
-/* Disabilities Section – Onyx Bubble Glass */
+/* Disabilities Section â€“ Onyx Bubble Glass */
 /* ======================== */
 .disabilities-section {
 	background: var(--content-bg);
@@ -3655,7 +3655,7 @@ margin-top: 2px;
 }
 
 /* ========================================
-   Button Links – Onyx Glass Matched
+   Button Links â€“ Onyx Glass Matched
 ======================================== */
 .disabilities-section a {
 	display: flex;
@@ -3763,7 +3763,7 @@ margin-top: 2px;
 	transition: color 0.2s ease;
 }
 
-/* Hover – same accent glass treatment */
+/* Hover â€“ same accent glass treatment */
 .disabilities-section a:hover {
 	background:
 		linear-gradient(
@@ -3812,7 +3812,7 @@ margin-top: 2px;
 }
 
 /* ============================================================
-   Shoutouts Section – Root-Themed Onyx Liquid Glass
+   Shoutouts Section â€“ Root-Themed Onyx Liquid Glass
    Fully compatible with light-e and dark-mode variables
 ============================================================ */
 
@@ -5420,7 +5420,7 @@ body.dark-mode .youtube-channel-card {
 }
 
 #quote-section h2::before {
-  content: "💬";
+  content: "ðŸ’¬";
   font-size: 1.2em;
 }
 
@@ -5799,7 +5799,7 @@ body.dark-mode .youtube-channel-card {
 }
 
 /* ===================================================== */
-/* Apple Vision Pro – Spatial Glass Scroll Orb (Full) */
+/* Apple Vision Pro â€“ Spatial Glass Scroll Orb (Full) */
 /* ===================================================== */
 
 .scroll-to-top {
@@ -6053,7 +6053,7 @@ body.dark-mode .youtube-channel-card {
 }
 
 /* ======================================================= */
-/* ONYX GLASS v2 – Version & Legal Sections               */
+/* ONYX GLASS v2 â€“ Version & Legal Sections               */
 /* Cleaner depth, better light/dark balance               */
 /* Fixed for current HTML IDs and optional classes         */
 /* ======================================================= */
@@ -6166,7 +6166,7 @@ body.dark-mode .youtube-channel-card {
 }
 
 .version-header::before {
-  content: "📊";
+  content: "ðŸ“Š";
   opacity: 0.8;
 }
 
@@ -6444,7 +6444,7 @@ body.light-mode .version-list li {
 }
 
 /* ======================== */
-/* Legal Section — Onyx Redesign */
+/* Legal Section â€” Onyx Redesign */
 /* ======================== */
 
 .legal-section {
@@ -6519,7 +6519,7 @@ body.light-mode .version-list li {
 }
 
 .legal-header::before {
-  content: "⚖️";
+  content: "âš–ï¸";
   font-size: 1.15em;
   opacity: 0.9;
 }
@@ -6586,7 +6586,7 @@ body.light-mode .version-list li {
 /* Icon bubble */
 .copy-protection-message::before,
 .legal-protection-message::before {
-  content: "⚠️";
+  content: "âš ï¸";
   width: 34px;
   height: 34px;
   min-width: 34px;
@@ -6743,7 +6743,7 @@ img {
 }
 
 /* ======================== */
-/* Footer – Liquid Glass Match */
+/* Footer â€“ Liquid Glass Match */
 /* ======================== */
 
 footer {
@@ -6908,7 +6908,7 @@ body:not(.focus-outline-disabled) textarea:focus {
 }
 
 /* ======================== */
-/* Maintenance Overlay – Onyx Bubble Glass */
+/* Maintenance Overlay â€“ Onyx Bubble Glass */
 /* ======================== */
 
 body.maintenance-active {
@@ -6986,7 +6986,7 @@ body.maintenance-active {
 /* Text content */
 .maintenance-content h1 {
 	color: var(--text-color);
-	font-size: clamp(calc(var(--font-size-base, 20px) * 1.44), 5vw, calc(var(--font-size-base, 20px) * 2.0)); /* ✨ Updated for text scaling ✨ */
+	font-size: clamp(calc(var(--font-size-base, 20px) * 1.44), 5vw, calc(var(--font-size-base, 20px) * 2.0)); /* âœ¨ Updated for text scaling âœ¨ */
 	margin: 0 0 20px;
 	font-weight: 700;
 	line-height: 1.2;
@@ -6994,7 +6994,7 @@ body.maintenance-active {
 
 .maintenance-content p {
 	color: var(--secondary-text);
-	font-size: clamp(calc(var(--font-size-base, 20px) * 0.8), 3vw, calc(var(--font-size-base, 20px) * 0.92)); /* ✨ Updated for text scaling ✨ */
+	font-size: clamp(calc(var(--font-size-base, 20px) * 0.8), 3vw, calc(var(--font-size-base, 20px) * 0.92)); /* âœ¨ Updated for text scaling âœ¨ */
 	margin: 0 0 30px;
 	line-height: 1.6;
 }
@@ -7011,7 +7011,7 @@ body.maintenance-active {
 
 .maintenance-socials p {
 	color: var(--secondary-text);
-	font-size: clamp(calc(var(--font-size-base, 20px) * 0.72), 2.5vw, calc(var(--font-size-base, 20px) * 0.8)); /* ✨ Updated for text scaling ✨ */
+	font-size: clamp(calc(var(--font-size-base, 20px) * 0.72), 2.5vw, calc(var(--font-size-base, 20px) * 0.8)); /* âœ¨ Updated for text scaling âœ¨ */
 	margin: 0;
 	font-weight: 500;
 }
@@ -7022,7 +7022,7 @@ body.maintenance-active {
 	gap: 8px;
 	color: var(--text-color);
 	text-decoration: none;
-	font-size: clamp(calc(var(--font-size-base, 20px) * 0.72), 2.5vw, calc(var(--font-size-base, 20px) * 0.8)); /* ✨ Updated for text scaling ✨ */
+	font-size: clamp(calc(var(--font-size-base, 20px) * 0.72), 2.5vw, calc(var(--font-size-base, 20px) * 0.8)); /* âœ¨ Updated for text scaling âœ¨ */
 	padding: 10px 20px;
 	border-radius: 25px;
 	background: var(--content-bg);
@@ -7072,7 +7072,7 @@ body.maintenance-active {
 }
 
 /* =========================================================
-   Business Section – Premium Final CSS
+   Business Section â€“ Premium Final CSS
    ONYX GLASS FULL VERSION
    Includes:
    - Full section-level onyx glass shell
@@ -7890,7 +7890,7 @@ main .business-section{
 }
 
 .biz-details summary::after{
-  content:"▾";
+  content:"â–¾";
   opacity:.8;
   transition:transform .18s ease;
 }
@@ -8982,7 +8982,7 @@ main .business-section{
 }
 
 /* =========================================================
-   Accessibility Mode Overrides — Final Clean Version
+   Accessibility Mode Overrides â€” Final Clean Version
    ========================================================= */
 
 /* Helper tokens */
@@ -9522,7 +9522,7 @@ body.maintenance-active .onyx-dock {
 }
 
 /* ========================================
-   DAILY QUOTE — MATCHES SOCIAL LINKS
+   DAILY QUOTE â€” MATCHES SOCIAL LINKS
 ======================================== */
 
 .quote-section {
@@ -9987,7 +9987,7 @@ body.maintenance-active .onyx-dock {
 
 /* Custom arrow */
 .tech-advanced-details summary::before {
-    content: "▸";
+    content: "â–¸";
     color: var(--accent-color);
     font-size: 0.85rem;
 
@@ -10057,7 +10057,7 @@ body.maintenance-active .onyx-dock {
 font-weight: 600; 
 color: var(--secondary-text);
 
-/* 🚨 FIX: Removed 'white-space: nowrap'. Labels can now wrap naturally if they are too long */
+/* ðŸš¨ FIX: Removed 'white-space: nowrap'. Labels can now wrap naturally if they are too long */
 white-space: normal; 
 flex: 0 1 auto; 
 }
@@ -10066,7 +10066,7 @@ flex: 0 1 auto;
 font-weight: 500; 
 color: var(--text-color);
 
-/* 🚨 FIX: Uses flex-basis 0% so it behaves consistently. It drops to a new line if space is < 100px */
+/* ðŸš¨ FIX: Uses flex-basis 0% so it behaves consistently. It drops to a new line if space is < 100px */
 flex: 1 1 0%;
 min-width: 100px; 
 
@@ -10088,7 +10088,7 @@ word-break: break-word;
 }
 
 /* ============================================================
-   TIKTOK LIGHT MODE FIX — FINAL
+   TIKTOK LIGHT MODE FIX â€” FINAL
    Makes TikTok match the light glass container style
    and keeps text readable
 ============================================================ */
@@ -10410,7 +10410,7 @@ body.light-e .creator-sort-controls select option {
 }
 
 .platform-visit-button::after {
-    content: "→";
+    content: "â†’";
     position: absolute;
     right: 20px;
     top: 50%;
@@ -12569,7 +12569,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* =======================================================
-   📌 TECH SEARCH STICKY WRAPPER
+   ðŸ“Œ TECH SEARCH STICKY WRAPPER
 ======================================================= */
 
 .tech-search-sticky {
@@ -12599,7 +12599,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* =======================================================
-   ✕ TECH SEARCH CLEAR BUTTON
+   âœ• TECH SEARCH CLEAR BUTTON
 ======================================================= */
 
 .tech-search-clear {
@@ -12669,7 +12669,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* =======================================================
-   🧩 TECH FILTER CHIPS
+   ðŸ§© TECH FILTER CHIPS
 ======================================================= */
 
 .tech-filter-chips {
@@ -12770,7 +12770,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* =======================================================
-   📱 MOBILE TECH SEARCH FIXES
+   ðŸ“± MOBILE TECH SEARCH FIXES
 ======================================================= */
 
 @media (max-width: 600px) {
@@ -12815,7 +12815,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 📌 TECH SEARCH STICKY ONYX WRAPPER                      */
+/* ðŸ“Œ TECH SEARCH STICKY ONYX WRAPPER                      */
 /* ======================================================= */
 
 .tech-search-sticky {
@@ -12841,7 +12841,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔍 TECH SEARCH CONTAINER — STACKED ONYX STYLE           */
+/* ðŸ” TECH SEARCH CONTAINER â€” STACKED ONYX STYLE           */
 /* ======================================================= */
 
 .tech-search-container {
@@ -12890,7 +12890,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* ✕ TECH SEARCH CLEAR BUTTON                             */
+/* âœ• TECH SEARCH CLEAR BUTTON                             */
 /* ======================================================= */
 
 .tech-search-clear {
@@ -12952,7 +12952,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔽 TECH SORT DROPDOWN — LARGE INNER CAPSULE            */
+/* ðŸ”½ TECH SORT DROPDOWN â€” LARGE INNER CAPSULE            */
 /* ======================================================= */
 
 .tech-search-container .tech-sort-select {
@@ -13044,7 +13044,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🧩 TECH FILTER CHIPS — ONYX CAPSULE FILTERS             */
+/* ðŸ§© TECH FILTER CHIPS â€” ONYX CAPSULE FILTERS             */
 /* ======================================================= */
 
 .tech-filter-chips {
@@ -13149,7 +13149,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 📱 TECH SEARCH MOBILE                                  */
+/* ðŸ“± TECH SEARCH MOBILE                                  */
 /* ======================================================= */
 
 @media (max-width: 600px) {
@@ -13218,13 +13218,13 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 💻 TECH SEARCH BAR — ONYX LIQUID GLASS FULL CSS         */
+/* ðŸ’» TECH SEARCH BAR â€” ONYX LIQUID GLASS FULL CSS         */
 /* Search, clear button, sort capsule, sticky bar, filters */
 /* Light/Dark readable input text included                 */
 /* ======================================================= */
 
 /* ======================================================= */
-/* 📌 TECH SEARCH STICKY WRAPPER                           */
+/* ðŸ“Œ TECH SEARCH STICKY WRAPPER                           */
 /* ======================================================= */
 
 .tech-search-sticky {
@@ -13243,7 +13243,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔍 TECH SEARCH MAIN GLASS CONTAINER                     */
+/* ðŸ” TECH SEARCH MAIN GLASS CONTAINER                     */
 /* ======================================================= */
 
 .tech-search-container {
@@ -13289,7 +13289,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* ✨ SOFT GLASS HIGHLIGHT LAYER                           */
+/* âœ¨ SOFT GLASS HIGHLIGHT LAYER                           */
 /* ======================================================= */
 
 .tech-search-container::after {
@@ -13311,7 +13311,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔎 SEARCH ROW                                           */
+/* ðŸ”Ž SEARCH ROW                                           */
 /* ======================================================= */
 
 .tech-search-top-row {
@@ -13328,7 +13328,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔤 TECH SEARCH INPUT                                    */
+/* ðŸ”¤ TECH SEARCH INPUT                                    */
 /* ======================================================= */
 
 .tech-search-input {
@@ -13383,7 +13383,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔎 SEARCH ICON                                          */
+/* ðŸ”Ž SEARCH ICON                                          */
 /* ======================================================= */
 
 .tech-search-container .search-icon {
@@ -13415,7 +13415,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* ✕ CLEAR SEARCH BUTTON                                   */
+/* âœ• CLEAR SEARCH BUTTON                                   */
 /* ======================================================= */
 
 .tech-search-clear {
@@ -13475,7 +13475,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🔽 SORT DROPDOWN — COMPACT INNER CAPSULE                */
+/* ðŸ”½ SORT DROPDOWN â€” COMPACT INNER CAPSULE                */
 /* ======================================================= */
 
 .tech-search-container .tech-sort-select {
@@ -13564,7 +13564,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🎯 SEARCH CONTAINER FOCUS / TYPING STATE                */
+/* ðŸŽ¯ SEARCH CONTAINER FOCUS / TYPING STATE                */
 /* ======================================================= */
 
 .tech-search-container:focus-within,
@@ -13579,7 +13579,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 🧩 FILTER CHIPS                                         */
+/* ðŸ§© FILTER CHIPS                                         */
 /* ======================================================= */
 
 .tech-filter-chips {
@@ -13676,7 +13676,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 📦 TECH ITEMS LIST SPACING                              */
+/* ðŸ“¦ TECH ITEMS LIST SPACING                              */
 /* ======================================================= */
 
 .tech-items-list {
@@ -13685,7 +13685,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* 💤 EMPTY STATE                                          */
+/* ðŸ’¤ EMPTY STATE                                          */
 /* ======================================================= */
 
 .tech-empty-state {
@@ -13696,7 +13696,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* ☀️ LIGHT MODE READABILITY                               */
+/* â˜€ï¸ LIGHT MODE READABILITY                               */
 /* Supports data-theme and body light-mode class           */
 /* ======================================================= */
 
@@ -13737,7 +13737,7 @@ body.light-mode .tech-search-container .tech-sort-select option {
 }
 
 /* ======================================================= */
-/* 🌙 DARK MODE READABILITY                                */
+/* ðŸŒ™ DARK MODE READABILITY                                */
 /* Supports data-theme and body dark-mode class            */
 /* ======================================================= */
 
@@ -13868,7 +13868,7 @@ body.dark-mode .tech-chip.active {
 }
 
 /* ======================================================= */
-/* 🧩 SAFARI / CHROME AUTOFILL FIX                         */
+/* ðŸ§© SAFARI / CHROME AUTOFILL FIX                         */
 /* ======================================================= */
 
 .tech-search-input:-webkit-autofill,
@@ -13895,7 +13895,7 @@ body.dark-mode .tech-search-input:-webkit-autofill {
 }
 
 /* ======================================================= */
-/* 📱 MOBILE POLISH                                        */
+/* ðŸ“± MOBILE POLISH                                        */
 /* ======================================================= */
 
 @media (max-width: 600px) {
@@ -14487,5 +14487,301 @@ body.dark-mode .tech-search-input:-webkit-autofill {
 
   .beta-feedback-privacy {
     font-size: 0.88rem;
+  }
+}
+
+/* ========================================================= */
+/* LIQUID GLASS / ONYX FOUNDATION - AUTHORITATIVE OVERRIDES  */
+/* Keep this block last so older duplicate :root blocks cannot */
+/* override the active design tokens or page layout.           */
+/* ========================================================= */
+:root {
+  color-scheme: light;
+  --font-size-base: 16px;
+  --line-height-base: 1.65;
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --page-max-width: 1180px;
+  --page-gutter: clamp(12px, 3vw, 32px);
+
+  --bg-color: linear-gradient(145deg, #eef6ff 0%, #f8fbff 44%, #eaf3ff 100%);
+  --content-bg: rgba(255, 255, 255, 0.62);
+  --text-color: #111114;
+  --secondary-text: rgba(30, 30, 36, 0.72);
+  --border-color: rgba(255, 255, 255, 0.76);
+  --border-color-rgb: 255, 255, 255;
+  --accent-color: #007aff;
+  --accent-color-rgb: 0, 122, 255;
+  --hover-color: #0066d6;
+  --link-color: #006edc;
+  --icon-color: #1d1d1f;
+  --social-icon-text-color: #111114;
+  --shadow-color: rgba(27, 39, 61, 0.16);
+  --glow-color: rgba(255, 255, 255, 0.94);
+
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 15px;
+  --radius-pill: 999px;
+  --transition-fast: 180ms ease;
+  --transition-medium: 280ms ease;
+  --transition-slow: 480ms ease;
+
+  --backdrop-blur: blur(28px) saturate(165%);
+  --bubble-gradient:
+    radial-gradient(circle at 18% 4%, rgba(255, 255, 255, 0.92), transparent 42%),
+    radial-gradient(circle at 88% 12%, rgba(205, 232, 255, 0.50), transparent 46%);
+  --liquid-refraction:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.16) 48%, rgba(54, 72, 96, 0.05));
+  --liquid-reflection:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.30) 34%, rgba(255, 255, 255, 0.08) 62%, transparent);
+  --bubble-highlight:
+    inset 0 1px 0 rgba(255, 255, 255, 0.94),
+    inset 0 -1px 0 rgba(42, 52, 68, 0.08),
+    inset 0 0 18px rgba(255, 255, 255, 0.24);
+  --bubble-shadow:
+    0 20px 48px rgba(31, 45, 70, 0.14),
+    0 4px 14px rgba(31, 45, 70, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.78);
+  --glass-surface: var(--bubble-gradient), var(--liquid-refraction), rgba(255, 255, 255, 0.58);
+  --glass-top-glow: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.72), transparent 62%);
+  --glass-bottom-depth: radial-gradient(circle at 50% 100%, rgba(42, 56, 78, 0.12), transparent 72%);
+
+  --a11y-mask-bg: rgba(0, 0, 0, 0.06);
+  --a11y-accent: var(--accent-color);
+  --a11y-text-strong: #111114;
+  --a11y-muted: #5f636d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg-color:
+      radial-gradient(circle at 18% -8%, rgba(46, 82, 126, 0.22), transparent 34%),
+      radial-gradient(circle at 90% 8%, rgba(104, 72, 143, 0.14), transparent 30%),
+      #050506;
+    --content-bg: rgba(18, 18, 22, 0.72);
+    --text-color: #f7f7fa;
+    --secondary-text: rgba(235, 235, 245, 0.70);
+    --border-color: rgba(255, 255, 255, 0.14);
+    --border-color-rgb: 255, 255, 255;
+    --accent-color: #0a84ff;
+    --accent-color-rgb: 10, 132, 255;
+    --hover-color: #409cff;
+    --link-color: #64a8ff;
+    --icon-color: #f2f2f7;
+    --social-icon-text-color: #f7f7fa;
+    --shadow-color: rgba(0, 0, 0, 0.66);
+    --glow-color: rgba(255, 255, 255, 0.20);
+
+    --bubble-gradient:
+      radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.13), transparent 44%),
+      radial-gradient(circle at 88% 8%, rgba(96, 155, 255, 0.08), transparent 42%);
+    --liquid-refraction:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025) 48%, rgba(0, 0, 0, 0.30));
+    --liquid-reflection:
+      linear-gradient(125deg, rgba(255, 255, 255, 0.27), rgba(255, 255, 255, 0.07) 34%, rgba(255, 255, 255, 0.018) 62%, transparent);
+    --bubble-highlight:
+      inset 0 1px 0 rgba(255, 255, 255, 0.20),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.48),
+      inset 0 0 20px rgba(255, 255, 255, 0.035);
+    --bubble-shadow:
+      0 26px 62px rgba(0, 0, 0, 0.58),
+      0 6px 20px rgba(0, 0, 0, 0.32);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-surface: var(--bubble-gradient), var(--liquid-refraction), rgba(13, 13, 16, 0.76);
+    --glass-top-glow: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.13), transparent 62%);
+    --glass-bottom-depth: radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.48), transparent 72%);
+
+    --a11y-text-strong: #ffffff;
+    --a11y-muted: #b7bbc5;
+  }
+}
+
+/* Explicit preference classes remain supported by settings.js. */
+body.light-e,
+body.light-mode {
+  color-scheme: light;
+  --bg-color: linear-gradient(145deg, #eef6ff 0%, #f8fbff 44%, #eaf3ff 100%);
+  --content-bg: rgba(255, 255, 255, 0.62);
+  --text-color: #111114;
+  --secondary-text: rgba(30, 30, 36, 0.72);
+  --border-color: rgba(255, 255, 255, 0.76);
+  --accent-color: #007aff;
+  --shadow-color: rgba(27, 39, 61, 0.16);
+  --glow-color: rgba(255, 255, 255, 0.94);
+}
+
+html.dark-mode body,
+body.dark-mode {
+  color-scheme: dark;
+  --bg-color: #050506;
+  --content-bg: rgba(18, 18, 22, 0.72);
+  --text-color: #f7f7fa;
+  --secondary-text: rgba(235, 235, 245, 0.70);
+  --border-color: rgba(255, 255, 255, 0.14);
+  --accent-color: #0a84ff;
+  --shadow-color: rgba(0, 0, 0, 0.66);
+  --glow-color: rgba(255, 255, 255, 0.20);
+}
+
+/* Layout normalization belongs on elements, never in :root. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: #f5f7fb;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  padding: var(--page-gutter);
+  overflow-x: clip;
+  background: var(--bg-color);
+  background-attachment: fixed;
+  color: var(--text-color);
+  font-family: var(--font-system);
+}
+
+.container {
+  width: min(100%, var(--page-max-width));
+  margin-inline: auto;
+  padding: 0;
+}
+
+#rearrangeable-container,
+#main-content-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Shared physical glass edge for main shells and cards. */
+.section,
+.profile-section,
+.social-links-section,
+.shoutouts-section,
+.tech-section,
+.useful-links-section,
+.disabilities-section,
+.countdown-section,
+#business-section,
+#version-info-section,
+#legal-section,
+footer,
+.onyx-dock,
+.glass,
+.glass-panel {
+  border: 1px solid var(--glass-border);
+  background-color: var(--content-bg);
+  box-shadow:
+    var(--bubble-highlight),
+    var(--bubble-shadow);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  backdrop-filter: var(--backdrop-blur);
+}
+
+/* Text inputs remain readable because transparency is on the surface, not the element. */
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  color: var(--text-color);
+  caret-color: var(--accent-color);
+}
+
+::placeholder {
+  color: var(--secondary-text);
+  opacity: 0.78;
+}
+
+/* Restore selectable text and form controls. Copy protection must not break usability. */
+p,
+li,
+span,
+strong,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+textarea,
+select,
+code,
+pre {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  :root {
+    --content-bg: rgba(250, 252, 255, 0.97);
+    --glass-surface: #f7f9fc;
+  }
+
+  .section,
+  .profile-section,
+  .social-links-section,
+  .shoutouts-section,
+  .tech-section,
+  .useful-links-section,
+  .disabilities-section,
+  .countdown-section,
+  #business-section,
+  #version-info-section,
+  #legal-section,
+  footer,
+  .onyx-dock,
+  .glass,
+  .glass-panel {
+    background: var(--content-bg);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --content-bg: rgba(18, 18, 22, 0.98);
+      --glass-surface: #121216;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) calc(104px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  }
+
+  .section,
+  .profile-section,
+  .social-links-section,
+  .shoutouts-section,
+  .tech-section,
+  .useful-links-section,
+  .disabilities-section,
+  .countdown-section,
+  #business-section,
+  #version-info-section,
+  #legal-section {
+    width: 100%;
+    max-width: 100%;
   }
 }
