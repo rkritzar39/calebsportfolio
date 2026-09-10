@@ -242,7 +242,9 @@ function showSmartToast(title, message) {
 }
 
 // --- Initialize smart realtime notifications ---
+let smartRealtimeNotificationsInitialized = false;
 function setupSmartRealtimeNotifications() {
+  if (smartRealtimeNotificationsInitialized) return;
   const prefs = getNotifPrefs();
   if (!prefs.enabled) return;
 
@@ -7179,7 +7181,7 @@ function startMinuteAlignedRefresh() {
 
   minuteRefreshTimer = setInterval(() => {
     renderFromCache();
-  }, 5000);
+  }, 60000);
 }
 
 function installPanelToggle() {
@@ -9101,7 +9103,6 @@ async function initializeHomepageContent() {
     let maintenanceEnabled = false;
     let maintenanceTitle = "Site Under Maintenance";
     let maintenanceMessage = "We are currently performing scheduled maintenance. Please check back later for updates.";
-    let hideTikTokSection = false;
     let countdownTargetDate = null;
     let countdownTitle = null;
     let countdownExpiredMessage = null;
@@ -9114,7 +9115,6 @@ async function initializeHomepageContent() {
             maintenanceEnabled = siteSettings.isMaintenanceModeEnabled || false;
             maintenanceTitle = siteSettings.maintenanceTitle || maintenanceTitle;
             maintenanceMessage = siteSettings.maintenanceMessage || maintenanceMessage;
-            hideTikTokSection = siteSettings.hideTikTokSection || false;
             countdownTargetDate = siteSettings.countdownTargetDate instanceof Timestamp ? siteSettings.countdownTargetDate : null;
             countdownTitle = siteSettings.countdownTitle;
             countdownExpiredMessage = siteSettings.countdownExpiredMessage;
@@ -9181,20 +9181,10 @@ async function initializeHomepageContent() {
         if (!tiktokHeaderContainer || !tiktokGridContainer) {
             if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
         } else {
-            if (hideTikTokSection) {
-                tiktokHeaderContainer.style.display = 'none';
-                tiktokGridContainer.style.display = 'none';
-                if (tiktokUnavailableMessage) {
-                    tiktokUnavailableMessage.innerHTML = '<p>TikTok shoutouts are currently hidden by the site administrator.</p>';
-                    tiktokUnavailableMessage.style.display = 'block';
-                }
-                isTikTokVisible = false;
-            } else {
-                tiktokHeaderContainer.style.display = ''; 
-                tiktokGridContainer.style.display = ''; 
-                if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
-                isTikTokVisible = true;
-            }
+            tiktokHeaderContainer.style.display = '';
+            tiktokGridContainer.style.display = '';
+            if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
+            isTikTokVisible = true;
         }
 
         console.log("Initiating loading of other content sections...");
@@ -9249,10 +9239,10 @@ async function initializeHomepageContent() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (firebaseAppInitialized && db) {
+  if (firebaseAppInitialized && db && typeof setupRealtimeNotifications === 'function') {
     setupRealtimeNotifications();
   }
 });
 
 // --- Call the main initialization function when the DOM is ready ---
-document.addEventListener('DOMContentLoaded', initializeHomepageContent);
+// Homepage initialization is registered once by the guarded handler above.
