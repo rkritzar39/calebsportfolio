@@ -9,7 +9,7 @@ class SettingsManager {
       themeStyle: "clear",
       accentColor: "#3ddc84",
       matchSongAccent: "enabled",
-      
+
       // Scheduler
       darkModeScheduler: "off",
       darkModeStart: "20:00",
@@ -52,7 +52,6 @@ class SettingsManager {
       rearrangingEnabled: "disabled",
 
       // Homepage sections visibility
-      showEducationPage: "enabled",
       showSocialLinks: "enabled",
       showPresidentSection: "enabled",
       showTiktokShoutouts: "enabled",
@@ -148,15 +147,6 @@ class SettingsManager {
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
       this.initNotificationSettings();
-
-      // Ensure theme assets (logo/icons) are applied on init
-      this.applyThemeAssets();
-      // Make icons themed (inline SVGs, wrap rasters)
-      this.applyThemeToIcons();
-
-      // mark page ready to avoid layout flash
-      document.documentElement.classList.add('js-ready');
-      document.body.classList.add('page-ready');
     };
 
     // Safe DOM-ready conditional guard
@@ -624,99 +614,1218 @@ class SettingsManager {
     if (preview) preview.style.backgroundColor = accent;
 
     this.checkAccentColor(accent);
-
-    // Re-apply theme assets (icons/logos) because accent or theme may have changed
-    this.applyThemeAssets();
   }
 
-  /* New method: apply theme-aware assets and icon variables */
-  applyThemeAssets() {
-    // set icon color variable
-    const iconColor = getComputedStyle(document.documentElement).getPropertyValue('--icon-color') || getComputedStyle(document.body).getPropertyValue('--icon-color');
-    if (iconColor) {
-      document.documentElement.style.setProperty('--icon-color', iconColor.trim());
-    }
-
-    // Swap site logo if present
-    try {
-      const logo = document.getElementById('site-logo');
-      if (logo) {
-        const isLight = document.documentElement.classList.contains('light-mode') || document.body.classList.contains('light-mode') || document.documentElement.classList.contains('light-e') || document.body.classList.contains('light-e');
-        const lightLogo = '/assets/logo-light.svg';
-        const darkLogo = '/assets/logo-dark.svg';
-        logo.src = isLight ? lightLogo : darkLogo;
-        logo.alt = logo.alt || 'Caleb';
-      }
-    } catch (e) {
-      // fail silently
-    }
-
-    // Attempt to theme icons as well
-    this.applyThemeToIcons();
+  applyFontSize() {
+    document.documentElement.style.setProperty("--font-size-base", `${this.settings.fontSize}px`);
   }
 
-  /* New: Inline SVGs and wrap raster icons to make them theme-aware without uploads */
-  async applyThemeToIcons() {
-    // Inline SVG images marked with .themed-icon (src ends with .svg)
-    const svgImgs = Array.from(document.querySelectorAll('img.themed-icon'));
-    for (const img of svgImgs) {
-      try {
-        const src = img.getAttribute('src');
-        if (!src || !src.endsWith('.svg')) continue;
-        const res = await fetch(src, { cache: 'no-store' });
-        if (!res.ok) continue;
-        const text = await res.text();
-        const container = document.createElement('span');
-        container.className = 'themed-icon-wrapper';
-        container.innerHTML = text;
-        const svg = container.querySelector('svg');
-        if (!svg) continue;
-        svg.setAttribute('role', img.getAttribute('role') || 'img');
-        svg.setAttribute('aria-hidden', img.getAttribute('aria-hidden') || 'true');
-        // Set sizes if present
-        if (img.width) svg.style.width = img.width + 'px';
-        if (img.height) svg.style.height = img.height + 'px';
-        // Replace common fill values with currentColor when safe
-        svg.querySelectorAll('[fill]').forEach(node => {
-          const fill = node.getAttribute('fill');
-          if (fill && fill !== 'none') {
-            // avoid overwriting gradients or urls
-            if (!fill.startsWith('url(') && !/^rgba?\(/.test(fill)) node.setAttribute('fill', 'currentColor');
-          }
-        });
-        img.replaceWith(svg);
-        svg.classList.add('icon-svg');
-      } catch (e) {
-        // ignore and leave original
-      }
-    }
+  applyMotionEffects() {
+    const reduced = this.settings.motionEffects === "disabled";
+    document.body.classList.toggle("reduced-motion", reduced);
+  }
 
-    // Wrap raster icons (PNG/JPG) marked with .themed-icon-raster
-    const rasterImgs = Array.from(document.querySelectorAll('img.themed-icon-raster'));
-    rasterImgs.forEach(img => {
-      const parent = img.parentElement;
-      if (parent && parent.classList.contains('raster-icon-wrap')) return;
-      const wrap = document.createElement('span');
-      wrap.className = 'raster-icon-wrap';
-      // size inherit
-      const size = img.getAttribute('data-size') || img.width || img.height || 28;
-      wrap.style.width = typeof size === 'number' ? `${size}px` : size;
-      wrap.style.height = typeof size === 'number' ? `${size}px` : size;
-      img.style.width = '70%';
-      img.style.height = '70%';
-      img.style.objectFit = 'contain';
-      img.style.display = 'inline-block';
-      img.style.verticalAlign = 'middle';
-      parent.replaceChild(wrap, img);
-      wrap.appendChild(img);
-    });
+  updateSliderFill(slider) {
+    if (!slider) return;
+
+    const min = slider.min || 0;
+    const max = slider.max || 100;
+    const val = slider.value;
+    const pct = ((val - min) / (max - min)) * 100;
+
+    slider.style.setProperty("--_fill", `${pct}%`);
+  }
+
+  getContrastColor(hex) {
+    if (!hex) return "#fff";
+
+    hex = hex.replace("#", "");
+
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return yiq >= 128 ? "#000" : "#fff";
+  }
+
+  checkAccentColor(hex) {
+    const warn = document.getElementById("whiteAccentWarning");
+    if (!warn || !hex) return;
+
+    const isLight =
+      document.documentElement.classList.contains("light-mode") ||
+      document.body.classList.contains("light-mode");
+
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+
+    const isLightColor = r > 240 && g > 240 && b > 240;
+    warn.style.display = isLightColor && isLight ? "block" : "none";
   }
 
   /* =============================
-     Misc (rest of class follows — unchanged)
+     Custom Background & Blur
   ============================= */
+  ensureWallpaperLayers() {
+    let layer = document.getElementById("wallpaper-layer");
 
-  /* ... the rest of settings.js stays unchanged and is included in repo ... */
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.id = "wallpaper-layer";
+
+      Object.assign(layer.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "-1",
+        pointerEvents: "none",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        transition: "opacity 1.2s ease, filter 0.3s ease",
+        opacity: "0",
+      });
+
+      document.body.prepend(layer);
+    }
+
+    let tint = document.getElementById("wallpaper-tint");
+
+    if (!tint) {
+      tint = document.createElement("div");
+      tint.id = "wallpaper-tint";
+
+      Object.assign(tint.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "-1",
+        pointerEvents: "none",
+        background: "transparent",
+        transition: "background 0.5s ease",
+      });
+
+      document.body.prepend(tint);
+    }
+
+    return { layer, tint };
+  }
+
+  initCustomBackgroundControls() {
+    const upload = document.getElementById("customBgUpload");
+    const remove = document.getElementById("removeCustomBg");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const previewContainer = document.getElementById("customBgPreviewContainer");
+    const previewImage = document.getElementById("customBgPreview");
+    const separator = document.getElementById("customBgSeparator");
+
+    if (!upload || !previewContainer || !previewImage) return;
+
+    const savedBg = localStorage.getItem("customBackground");
+    const savedName = localStorage.getItem("customBackgroundName");
+    const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
+
+    if (savedBg) {
+      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+      if (remove) remove.style.display = "inline-block";
+
+      this.toggleWallpaperBlurCard(true);
+      previewContainer.classList.add("visible");
+      previewImage.src = savedBg;
+      previewImage.onload = () => previewImage.classList.add("loaded");
+
+      if (separator) separator.classList.add("visible");
+      this.applyWallpaperBlur(savedBlur);
+
+      const blurSlider = document.getElementById("blur-slider");
+      const blurBadge = document.getElementById("blurValue");
+
+      if (blurSlider && blurBadge) {
+        blurSlider.value = savedBlur;
+        blurBadge.textContent = `${savedBlur}px`;
+      }
+    } else {
+      this.toggleWallpaperBlurCard(false);
+      if (separator) separator.classList.remove("visible");
+    }
+
+    upload.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+      const reader = new FileReader();
+
+      reader.onload = (evt) => {
+        const imageData = evt.target.result;
+
+        localStorage.setItem("customBackground", imageData);
+        localStorage.setItem("customBackgroundName", file.name);
+
+        const blurSlider = document.getElementById("blur-slider");
+        const blurValue = blurSlider
+          ? blurSlider.value
+          : localStorage.getItem("wallpaperBlur") || "0";
+
+        localStorage.setItem("wallpaperBlur", blurValue);
+
+        this.applyCustomBackground(true);
+        this.applyWallpaperBlur(blurValue);
+
+        const blurBadge = document.getElementById("blurValue");
+        if (blurBadge) blurBadge.textContent = `${blurValue}px`;
+
+        if (remove) remove.style.display = "inline-block";
+
+        this.toggleWallpaperBlurCard(true);
+
+        previewContainer.classList.add("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = imageData;
+        previewImage.onload = () => previewImage.classList.add("loaded");
+
+        if (separator) separator.classList.add("visible");
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    if (remove) {
+      remove.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        localStorage.removeItem("customBackground");
+        localStorage.removeItem("customBackgroundName");
+        localStorage.removeItem("wallpaperBlur");
+
+        const layer = document.getElementById("wallpaper-layer");
+        if (layer) {
+          layer.style.backgroundImage = "";
+          layer.style.opacity = "0";
+        }
+
+        this.applyCustomBackground(false);
+        this.toggleWallpaperBlurCard(false);
+
+        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+
+        remove.style.display = "none";
+
+        previewContainer.classList.remove("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = "";
+
+        if (separator) separator.classList.remove("visible");
+
+        const blurSlider = document.getElementById("blur-slider");
+        const blurBadge = document.getElementById("blurValue");
+
+        if (blurSlider && blurBadge) {
+          blurSlider.value = 0;
+          blurBadge.textContent = "0px";
+        }
+      });
+    }
+  }
+
+  applyCustomBackground(fade = false) {
+    const bg = localStorage.getItem("customBackground");
+    const { layer, tint } = this.ensureWallpaperLayers();
+
+    if (bg) {
+      document.body.style.backgroundColor = "transparent";
+      document.body.style.backgroundImage = "";
+
+      if (fade) {
+        layer.style.opacity = "0";
+
+        requestAnimationFrame(() => {
+          layer.style.backgroundImage = `url("${bg}")`;
+          setTimeout(() => {
+            layer.style.opacity = "1";
+          }, 50);
+        });
+      } else {
+        layer.style.backgroundImage = `url("${bg}")`;
+        layer.style.opacity = "1";
+      }
+    } else {
+      document.body.style.backgroundColor = "";
+      document.body.style.backgroundImage = "";
+      layer.style.backgroundImage = "";
+      layer.style.opacity = "0";
+    }
+
+    const isDark =
+      document.documentElement.classList.contains("dark-mode") ||
+      document.body.classList.contains("dark-mode");
+
+    tint.style.background = isDark ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.15)";
+
+    const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
+    this.applyWallpaperBlur(blurValue);
+  }
+
+  applyWallpaperBlur(value) {
+    const layer = document.getElementById("wallpaper-layer");
+    if (!layer) return;
+
+    const blurAmount = parseInt(value, 10) || 0;
+    layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
+  }
+
+  initWallpaperBlurControl() {
+    const slider = document.getElementById("blur-slider");
+    const badge = document.getElementById("blurValue");
+
+    if (!slider || !badge) return;
+
+    const stored = localStorage.getItem("wallpaperBlur") ?? "0";
+
+    slider.value = stored;
+    badge.textContent = `${stored}px`;
+
+    this.applyWallpaperBlur(stored);
+    this.updateSliderFill(slider);
+
+    slider.addEventListener("input", (e) => {
+      const val = e.target.value;
+
+      badge.textContent = `${val}px`;
+      localStorage.setItem("wallpaperBlur", val);
+
+      this.applyWallpaperBlur(val);
+      this.updateSliderFill(slider);
+    });
+  }
+
+  toggleWallpaperBlurCard(show) {
+    const card = document.getElementById("wallpaperBlurCard");
+    if (!card) return;
+
+    card.style.display = show ? "" : "none";
+  }
+
+  syncWallpaperUIVisibility() {
+    const hasBg = !!localStorage.getItem("customBackground");
+    this.toggleWallpaperBlurCard(hasBg);
+  }
+
+  /* =============================
+     Per-Day Scheduling
+  ============================= */
+  isWeekend(d = new Date()) {
+    const day = d.getDay();
+    return day === 0 || day === 6;
+  }
+
+  todayISO(d = new Date()) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${da}`;
+  }
+
+  ensurePerDayRule(groupKey) {
+    this.settings.darkModePerDayRules = this.settings.darkModePerDayRules || {};
+
+    if (!this.settings.darkModePerDayRules[groupKey]) {
+      this.settings.darkModePerDayRules[groupKey] = {
+        mode: "off",
+        start: "20:00",
+        end: "06:00",
+      };
+    }
+  }
+
+  getEffectiveScheduleForNow() {
+    if (this.settings.darkModePerDayEnabled === "enabled") {
+      const today = this.todayISO(new Date());
+      const holidays = Array.isArray(this.settings.darkModeHolidayDates)
+        ? this.settings.darkModeHolidayDates
+        : [];
+
+      const isHoliday = holidays.includes(today);
+      const groupKey = isHoliday ? "holidays" : this.isWeekend() ? "weekends" : "weekdays";
+      const rule = this.settings.darkModePerDayRules?.[groupKey];
+
+      if (rule && rule.mode) {
+        return {
+          source: `per_day:${groupKey}`,
+          mode: rule.mode,
+          start: rule.start ?? this.settings.darkModeStart,
+          end: rule.end ?? this.settings.darkModeEnd,
+        };
+      }
+    }
+
+    return {
+      source: "global",
+      mode: this.settings.darkModeScheduler || "off",
+      start: this.settings.darkModeStart,
+      end: this.settings.darkModeEnd,
+    };
+  }
+
+  initPerDayControlsUI() {
+    const toggle = document.getElementById("darkModePerDayToggle");
+    const panel = document.getElementById("perDaySchedulePanel");
+
+    if (toggle) toggle.checked = this.settings.darkModePerDayEnabled === "enabled";
+    if (panel) panel.style.display = this.settings.darkModePerDayEnabled === "enabled" ? "" : "none";
+
+    this.syncPerDayEditorFromSettings();
+  }
+
+  syncPerDayEditorFromSettings() {
+    const groupSel = document.getElementById("perDayGroupSelect");
+    const modeSel = document.getElementById("perDayModeSelect");
+    const startEl = document.getElementById("perDayStartTime");
+    const endEl = document.getElementById("perDayEndTime");
+    const customBox = document.getElementById("perDayCustomTimes");
+
+    if (!groupSel || !modeSel) return;
+
+    const group = groupSel.value || "weekdays";
+    this.ensurePerDayRule(group);
+
+    const rule = this.settings.darkModePerDayRules[group];
+
+    modeSel.value = rule.mode || "off";
+
+    const showCustom = rule.mode === "custom";
+    if (customBox) customBox.style.display = showCustom ? "" : "none";
+    if (startEl) startEl.value = rule.start || "20:00";
+    if (endEl) endEl.value = rule.end || "06:00";
+  }
+
+  renderHolidayListUI() {
+    const el = document.getElementById("holidayListText");
+    if (!el) return;
+
+    const arr = Array.isArray(this.settings.darkModeHolidayDates)
+      ? this.settings.darkModeHolidayDates
+      : [];
+
+    el.textContent = arr.length ? arr.join(", ") : "None";
+  }
+
+  initAutoRecommendUI() {
+    const t = document.getElementById("autoRecommendSchedulerToggle");
+    if (t) t.checked = this.settings.autoRecommendScheduler !== "disabled";
+  }
+
+  renderScheduleRecommendationUI() {
+    const card = document.getElementById("scheduleRecommendationCard");
+    const text = document.getElementById("scheduleRecommendationText");
+
+    if (!card || !text) return;
+
+    const rec = this.settings.pendingScheduleRecommendation;
+
+    if (!rec) {
+      card.style.display = "none";
+      return;
+    }
+
+    card.style.display = "";
+    text.textContent = `You often switch around the same time. Auto-schedule dark mode from ${rec.start} → ${rec.end}?`;
+  }
+
+  logThemeBehavior(newMode) {
+    if (newMode !== "dark" && newMode !== "light") return;
+
+    const entry = { t: Date.now(), mode: newMode };
+    const log = Array.isArray(this.settings.themeBehaviorLog)
+      ? this.settings.themeBehaviorLog
+      : [];
+
+    log.push(entry);
+
+    while (log.length > 60) log.shift();
+
+    this.settings.themeBehaviorLog = log;
+    this.saveSettings();
+  }
+
+  minutesSinceMidnight(ts) {
+    const d = new Date(ts);
+    return d.getHours() * 60 + d.getMinutes();
+  }
+
+  median(nums) {
+    const a = [...nums].sort((x, y) => x - y);
+    const mid = Math.floor(a.length / 2);
+
+    return a.length % 2 ? a[mid] : Math.round((a[mid - 1] + a[mid]) / 2);
+  }
+
+  stddev(nums) {
+    const mean = nums.reduce((s, n) => s + n, 0) / nums.length;
+    const v = nums.reduce((s, n) => s + (n - mean) ** 2, 0) / nums.length;
+
+    return Math.sqrt(v);
+  }
+
+  minutesToHHMM(mins) {
+    const h = String(Math.floor(mins / 60)).padStart(2, "0");
+    const m = String(mins % 60).padStart(2, "0");
+
+    return `${h}:${m}`;
+  }
+
+  maybeRecommendSchedule() {
+    if (this.settings.autoRecommendScheduler === "disabled") return;
+    if (this.settings.darkModeScheduler !== "off") return;
+    if (this.settings.pendingScheduleRecommendation) return;
+
+    const log = Array.isArray(this.settings.themeBehaviorLog)
+      ? this.settings.themeBehaviorLog
+      : [];
+
+    if (log.length < 6) return;
+
+    const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+    const recent = log.filter((e) => e.t >= cutoff);
+
+    const darkEvents = recent.filter((e) => e.mode === "dark");
+    const lightEvents = recent.filter((e) => e.mode === "light");
+
+    if (darkEvents.length < 3 || lightEvents.length < 3) return;
+
+    const darkMins = darkEvents.map((e) => this.minutesSinceMidnight(e.t));
+    const lightMins = lightEvents.map((e) => this.minutesSinceMidnight(e.t));
+
+    const darkMed = this.median(darkMins);
+    const lightMed = this.median(lightMins);
+
+    const darkSd = this.stddev(darkMins);
+    const lightSd = this.stddev(lightMins);
+
+    if (darkSd > 35 || lightSd > 35) return;
+
+    const recId = `autoSched_${darkMed}_${lightMed}`;
+
+    if (this.settings.dismissedRecommendations?.[recId]) return;
+
+    const start = this.minutesToHHMM(darkMed);
+    const end = this.minutesToHHMM(lightMed);
+
+    this.settings.pendingScheduleRecommendation = { recId, start, end };
+    this.saveSettings();
+  }
+
+  /* =============================
+     Scheduler
+  ============================= */
+  initSchedulerInterval() {
+    clearInterval(this.schedulerInterval);
+    this.checkDarkModeSchedule(true);
+    this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
+  }
+
+  dateKey(d = new Date()) {
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  }
+
+  formatTime12h(date) {
+    const d = new Date(date);
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hh = ((h + 11) % 12) + 1;
+    const mm = String(m).padStart(2, "0");
+
+    return `${hh}:${mm} ${ampm}`;
+  }
+
+  ensureSunCache() {
+    if (typeof SunCalc === "undefined") return null;
+
+    const lat = this.settings.darkModeLat;
+    const lon = this.settings.darkModeLon;
+
+    if (lat == null || lon == null) return null;
+
+    const todayKey = this.dateKey(new Date());
+    const cached = this.settings.darkModeSunCache;
+
+    if (cached && cached.dateKey === todayKey && cached.lat === lat && cached.lon === lon) {
+      return cached;
+    }
+
+    const times = SunCalc.getTimes(new Date(), lat, lon);
+
+    const next = {
+      dateKey: todayKey,
+      lat,
+      lon,
+      sunriseISO: times.sunrise.toISOString(),
+      sunsetISO: times.sunset.toISOString(),
+    };
+
+    this.settings.darkModeSunCache = next;
+    this.saveSettings();
+
+    return next;
+  }
+
+  syncLocationButtonUI() {
+    const btn = document.getElementById("setLocationBtn");
+    if (!btn) return;
+
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
+
+    const needsLocation =
+      (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") &&
+      (this.settings.darkModeLat == null || this.settings.darkModeLon == null);
+
+    btn.style.display = needsLocation ? "" : "none";
+  }
+
+  updateDarkModeStatusUI() {
+    const el = document.getElementById("darkModeStatusText");
+    if (!el) return;
+
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
+    const now = new Date();
+
+    const tag = eff.source?.startsWith("per_day:")
+      ? ` • ${eff.source.replace("per_day:", "").toUpperCase()}`
+      : "";
+
+    if (mode === "off") {
+      el.textContent = "Scheduler is off.";
+      return;
+    }
+
+    if (mode === "always_dark") {
+      el.textContent = `Dark mode is always on.${tag}`;
+      return;
+    }
+
+    if (mode === "always_light") {
+      el.textContent = `Light mode is always on.${tag}`;
+      return;
+    }
+
+    if (mode === "custom") {
+      const [sh, sm] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
+      const [eh, em] = (eff.end || this.settings.darkModeEnd).split(":").map(Number);
+
+      const start = new Date(now);
+      start.setHours(sh, sm, 0, 0);
+
+      const end = new Date(now);
+      end.setHours(eh, em, 0, 0);
+
+      let isDark;
+      let nextSwitch;
+
+      if (end <= start) {
+        isDark = now >= start || now < end;
+
+        if (isDark) {
+          nextSwitch = new Date(end);
+          if (now >= start) nextSwitch.setDate(nextSwitch.getDate() + 1);
+        } else {
+          nextSwitch = start;
+        }
+      } else {
+        isDark = now >= start && now < end;
+        nextSwitch = isDark ? end : start;
+      }
+
+      el.textContent = `${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.${tag}`;
+      return;
+    }
+
+    if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
+      const lat = this.settings.darkModeLat;
+      const lon = this.settings.darkModeLon;
+
+      if (lat == null || lon == null) {
+        el.textContent = `Needs location to calculate sunrise/sunset.${tag}`;
+        return;
+      }
+
+      const sun = this.ensureSunCache();
+
+      if (!sun) {
+        el.textContent = `Sun times unavailable. SunCalc may be missing.${tag}`;
+        return;
+      }
+
+      const sunrise = new Date(sun.sunriseISO);
+      const sunset = new Date(sun.sunsetISO);
+
+      let isDark;
+      let nextLabel;
+
+      if (mode === "sunset_to_sunrise") {
+        isDark = now >= sunset || now < sunrise;
+        // FIXED: Stripped the trailing broken template evaluation context wrapper
+        nextLabel = isDark ? this.formatTime12h(sunrise) : this.formatTime12h(sunset);
+      } else {
+        isDark = now >= sunrise && now < sunset;
+        nextLabel = isDark ? this.formatTime12h(sunset) : this.formatTime12h(sunrise);
+      }
+
+      el.textContent = `${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.${tag}`;
+      return;
+    }
+
+    el.textContent = `Unknown scheduler mode.${tag}`;
+  }
+
+  requestUserLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation isn’t supported on this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.settings.darkModeLat = pos.coords.latitude;
+        this.settings.darkModeLon = pos.coords.longitude;
+        this.settings.darkModeSunCache = null;
+
+        this.saveSettings();
+
+        this.showToast("Location Saved", "Sunrise/sunset scheduling is now ready.");
+        this.syncLocationButtonUI();
+        this.checkDarkModeSchedule(true);
+        this.updateDarkModeStatusUI();
+      },
+      (err) => {
+        console.error("Location error:", err);
+        alert("Couldn’t get your location. Please allow location permission.");
+        this.syncLocationButtonUI();
+        this.updateDarkModeStatusUI();
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 3600000,
+      }
+    );
+  }
+
+  checkDarkModeSchedule(force = false) {
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
+
+    this.toggleScheduleInputs();
+    this.updateDarkModeStatusUI();
+    this.syncLocationButtonUI();
+
+    if (mode === "off") {
+      this.syncAppearanceModeUIForManual();
+
+      if (force) {
+        this.applyAppearanceMode();
+        this.applyCustomBackground(false);
+      }
+
+      return;
+    }
+
+    if (mode === "always_dark") {
+      this.setThemeClasses(true);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      this.syncAppearanceModeUIForScheduler(true);
+      return;
+    }
+
+    if (mode === "always_light") {
+      this.setThemeClasses(false);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      this.syncAppearanceModeUIForScheduler(false);
+      return;
+    }
+
+    if (mode === "custom") {
+      const now = new Date();
+
+      const [startH, startM] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
+      const [endH, endM] = (eff.end || this.settings.darkModeEnd).split(":").map(Number);
+
+      const start = new Date(now);
+      start.setHours(startH, startM, 0, 0);
+
+      const end = new Date(now);
+      end.setHours(endH, endM, 0, 0);
+
+      const isDark = end <= start
+        ? now >= start || now < end
+        : now >= start && now < end;
+
+      this.setThemeClasses(isDark);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      this.syncAppearanceModeUIForScheduler(isDark);
+      return;
+    }
+
+    if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
+      const lat = this.settings.darkModeLat;
+      const lon = this.settings.darkModeLon;
+
+      if (lat == null || lon == null) {
+        this.syncAppearanceModeUIForManual();
+
+        if (force) {
+          this.applyAppearanceMode();
+          this.applyCustomBackground(false);
+        }
+
+        return;
+      }
+
+      const sun = this.ensureSunCache();
+
+      if (!sun) {
+        this.syncAppearanceModeUIForManual();
+
+        if (force) {
+          this.applyAppearanceMode();
+          this.applyCustomBackground(false);
+        }
+
+        return;
+      }
+
+      const now = new Date();
+      const sunrise = new Date(sun.sunriseISO);
+      const sunset = new Date(sun.sunsetISO);
+
+      const isDark =
+        mode === "sunset_to_sunrise"
+          ? now >= sunset || now < sunrise
+          : now >= sunrise && now < sunset;
+
+      this.setThemeClasses(isDark);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      this.syncAppearanceModeUIForScheduler(isDark);
+      return;
+    }
+
+    this.syncAppearanceModeUIForManual();
+
+    if (force) {
+      this.applyAppearanceMode();
+      this.applyCustomBackground(false);
+    }
+  }
+
+  toggleScheduleInputs() {
+    const group = document.getElementById("customScheduleGroup");
+    if (!group) return;
+
+    const eff = this.getEffectiveScheduleForNow();
+    group.style.display = eff.mode === "custom" ? "" : "none";
+  }
+
+  /* =============================
+     Apply Settings
+  ============================= */
+  applyAllSettings() {
+    Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
+
+    this.applyCustomBackground(false);
+    this.toggleScheduleInputs();
+    this.syncWallpaperUIVisibility();
+    this.checkDarkModeSchedule(true);
+    this.updateDarkModeStatusUI();
+    this.syncLocationButtonUI();
+
+    this.initPerDayControlsUI();
+    this.initAutoRecommendUI();
+    this.renderHolidayListUI();
+    this.renderScheduleRecommendationUI();
+    this.applyNotificationUI();
+  }
+
+  applySetting(key) {
+    const actions = {
+      appearanceMode: () => this.applyAppearanceMode(),
+      accentColor: () => this.applyAccentColor(),
+      fontSize: () => this.applyFontSize(),
+
+      focusOutline: () =>
+        document.body.classList.toggle(
+          "focus-outline-disabled",
+          this.settings.focusOutline === "disabled"
+        ),
+
+      motionEffects: () => this.applyMotionEffects(),
+
+      highContrast: () =>
+        document.body.classList.toggle("high-contrast", this.settings.highContrast === "enabled"),
+
+      dyslexiaFont: () =>
+        document.body.classList.toggle("dyslexia-font", this.settings.dyslexiaFont === "enabled"),
+
+      underlineLinks: () =>
+        document.body.classList.toggle("underline-links", this.settings.underlineLinks === "enabled"),
+
+      mouseTrail: () =>
+        document.body.classList.toggle("mouse-trail-enabled", this.settings.mouseTrail === "enabled"),
+    };
+
+    actions[key]?.();
+
+    if (key.startsWith("show")) {
+      const sectionId = key
+        .replace(/^show/, "")
+        .replace(/^[A-Z]/, (m) => m.toLowerCase())
+        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
+      const el =
+        document.getElementById(`${sectionId}-section`) ||
+        document.querySelector(`[data-section-id="${sectionId}"]`);
+
+      if (el) {
+        const visible = this.settings[key] === "enabled";
+
+        el.style.transition =
+          "opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease";
+        el.style.overflow = "hidden";
+
+        if (visible) {
+          el.style.display = "";
+          el.style.maxHeight = "0";
+          el.style.opacity = "0";
+
+          const height = el.scrollHeight + "px";
+
+          requestAnimationFrame(() => {
+            el.style.maxHeight = height;
+            el.style.opacity = "1";
+          });
+
+          el.addEventListener(
+            "transitionend",
+            function handler() {
+              el.style.maxHeight = "";
+              el.removeEventListener("transitionend", handler);
+            }
+          );
+        } else {
+          const height = el.scrollHeight + "px";
+
+          el.style.maxHeight = height;
+          el.style.opacity = "1";
+
+          requestAnimationFrame(() => {
+            el.style.maxHeight = "0";
+            el.style.opacity = "0";
+            el.style.paddingTop = "0";
+            el.style.paddingBottom = "0";
+            el.style.marginTop = "0";
+            el.style.marginBottom = "0";
+          });
+
+          el.addEventListener(
+            "transitionend",
+            function handler() {
+              el.style.display = "none";
+              el.style.paddingTop = "";
+              el.style.paddingBottom = "";
+              el.style.marginTop = "";
+              el.style.marginBottom = "";
+              el.removeEventListener("transitionend", handler);
+            }
+          );
+        }
+      }
+    }
+
+    if (key === "showLiveActivity") {
+      const liveActivity = document.getElementById("live-activity");
+
+      if (liveActivity) {
+        const visible = this.settings.showLiveActivity === "enabled";
+
+        if (visible) {
+          liveActivity.style.display = "";
+          requestAnimationFrame(() => {
+            liveActivity.style.opacity = "1";
+          });
+
+          if (typeof updateLiveStatus === "function") {
+            setTimeout(() => updateLiveStatus(), 300);
+          }
+        } else {
+          liveActivity.style.opacity = "0";
+          setTimeout(() => {
+            liveActivity.style.display = "none";
+          }, 250);
+        }
+      }
+    }
+  }
+
+  /* =============================
+     In-Site Notifications
+  ============================= */
+  ensureToastContainer() {
+    let c = document.getElementById("toast-container");
+
+    if (!c) {
+      c = document.createElement("div");
+      c.id = "toast-container";
+
+      Object.assign(c.style, {
+        position: "fixed",
+        bottom: "30px",
+        right: "30px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        zIndex: "9999",
+        pointerEvents: "none",
+      });
+
+      document.body.appendChild(c);
+    }
+
+    return c;
+  }
+
+  escapeHTML(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  showToast(title, message) {
+    const container = this.ensureToastContainer();
+    const toast = document.createElement("div");
+
+    const accent =
+      getComputedStyle(document.body).getPropertyValue("--accent-color") ||
+      getComputedStyle(document.documentElement).getPropertyValue("--accent-color") ||
+      "#007aff";
+
+    toast.className = "toast";
+
+    Object.assign(toast.style, {
+      background: accent.trim(),
+      color: "var(--accent-text-color, #fff)",
+      borderRadius: "14px",
+      padding: "12px 14px",
+      boxShadow: "0 10px 28px rgba(0,0,0,.25)",
+      backdropFilter: "blur(10px)",
+      WebkitBackdropFilter: "blur(10px)",
+      maxWidth: "340px",
+      fontSize: "14px",
+      lineHeight: "1.35",
+      pointerEvents: "auto",
+      transform: "translateY(10px)",
+      opacity: "0",
+      transition: "opacity .25s ease, transform .25s ease",
+    });
+
+    toast.innerHTML = `
+      <strong style="display:block;margin-bottom:4px;">
+        ${this.escapeHTML(title)}
+      </strong>
+      <span>${this.escapeHTML(message)}</span>
+    `;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.style.transform = "translateY(0)";
+      toast.style.opacity = "1";
+    });
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateY(10px)";
+
+      setTimeout(() => toast.remove(), 250);
+    }, 4000);
+  }
+  
+  getNotificationSettings() {
+    let settings = {};
+
+    try {
+      settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    } catch {
+      settings = {};
+    }
+
+    return {
+      enabled: settings.notifications?.enabled ?? false,
+      categories: {
+        website: settings.notifications?.categories?.website ?? true,
+        college: settings.notifications?.categories?.college ?? false,
+        youtube: settings.notifications?.categories?.youtube ?? false,
+        discord: settings.notifications?.categories?.discord ?? false,
+      },
+    };
+  }
+
+  setNotificationSettings(next) {
+    let settings = {};
+
+    try {
+      settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    } catch {
+      settings = {};
+    }
+
+    settings.notifications = next;
+    localStorage.setItem("websiteSettings", JSON.stringify(settings));
+
+    this.applyNotificationUI();
+  }
+
+  applyNotificationUI() {
+    const state = this.getNotificationSettings();
+
+    const main = document.getElementById("enableNotificationsToggle");
+    const web = document.getElementById("topicWebsite");
+    const col = document.getElementById("topicCollege");
+    const yt = document.getElementById("topicYoutube");
+    const disc = document.getElementById("topicDiscord");
+
+    if (!main) return;
+
+    main.checked = !!state.enabled;
+
+    if (web) web.checked = !!state.categories.website;
+    if (col) col.checked = !!state.categories.college;
+    if (yt) yt.checked = !!state.categories.youtube;
+    if (disc) disc.checked = !!state.categories.discord;
+  }
+
+  initNotificationSettings() {
+    const main = document.getElementById("enableNotificationsToggle");
+    if (!main) return;
+
+    const web = document.getElementById("topicWebsite");
+    const col = document.getElementById("topicCollege");
+    const yt = document.getElementById("topicYoutube");
+    const disc = document.getElementById("topicDiscord");
+
+    // Load initial states on page load
+    this.applyNotificationUI();
+
+    // Listen for main toggle clicks
+    main.addEventListener("change", () => {
+      const state = this.getNotificationSettings();
+      state.enabled = main.checked;
+      
+      this.setNotificationSettings(state);
+
+      this.showToast(
+        state.enabled ? "Notifications Enabled" : "Notifications Disabled",
+        state.enabled ? "You’ll now receive updates." : "Notifications turned off."
+      );
+    });
+
+    // Reusable function to listen for sub-category clicks
+    const wireCat = (el, key) => {
+      if (!el) return;
+
+      el.addEventListener("change", () => {
+        const state = this.getNotificationSettings();
+        state.categories[key] = el.checked;
+        
+        this.setNotificationSettings(state);
+
+        const label = el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
+        this.showToast("Preference Saved", `${label} updated.`);
+      });
+    };
+
+    // Wire up all categories
+    wireCat(web, "website");
+    wireCat(col, "college");
+    wireCat(yt, "youtube");
+    wireCat(disc, "discord");
+  }
+
+
+  /* =============================
+     Reset Controls
+  ============================= */
+  resetSectionVisibility() {
+    if (confirm("Show all homepage sections again?")) {
+      const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith("show"));
+
+      keys.forEach((k) => {
+        this.settings[k] = "enabled";
+      });
+
+      this.saveSettings();
+      this.initializeControls();
+      this.applyAllSettings();
+
+      alert("All sections are now visible.");
+    }
+  }
+
+  resetSettings() {
+    if (
+      confirm("Reset all settings to factory defaults? This will also clear your custom background.")
+    ) {
+      this.settings = { ...this.defaultSettings };
+      this.saveSettings();
+
+      localStorage.removeItem("sectionOrder");
+      localStorage.removeItem("customBackground");
+      localStorage.removeItem("customBackgroundName");
+      localStorage.removeItem("wallpaperBlur");
+
+      const layer = document.getElementById("wallpaper-layer");
+
+      if (layer) {
+        layer.style.backgroundImage = "";
+        layer.style.opacity = "0";
+      }
+
+      const previewContainer = document.getElementById("customBgPreviewContainer");
+      const previewImage = document.getElementById("customBgPreview");
+      const fileNameDisplay = document.getElementById("fileNameDisplay");
+      const removeBtn = document.getElementById("removeCustomBg");
+
+      if (previewContainer && previewImage) {
+        previewContainer.classList.remove("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = "";
+      }
+
+      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+      if (removeBtn) removeBtn.style.display = "none";
+
+      this.initializeControls();
+      this.applyAllSettings();
+
+      alert("All settings have been reset to factory defaults.");
+    }
+  }
+
+  /* =============================
+     Misc Stubs
+  ============================= */
+  initScrollArrow() {}
+  initLoadingScreen() {}
+  initMouseTrail() {}
 }
 
 /* =============================
