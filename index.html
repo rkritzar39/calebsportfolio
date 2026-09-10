@@ -21,8 +21,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#050506" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#3ddc84" />
 
   <title>Home - Caleb's Profile</title>
 
@@ -58,7 +57,7 @@
   </script>
 </head>
 
-<body>
+<body class="dark-mode">
   <div class="container">
 
     <div id="maintenanceLoadingOverlay" class="maintenance-overlay" style="display:none;">
@@ -82,219 +81,79 @@
     <!-- REQUIRED for rearrange.js -->
     <div id="rearrangeable-container">
 
-<!-- ======================================================= -->
-<!-- LOCKED PROFILE                                          -->
-<!-- ======================================================= -->
+      <!-- LOCKED: Profile -->
+      <div class="profile-section section no-rearrange" id="profile-section">
+        <div class="profile-pic-wrapper">
+          <img
+            src="path/to/default-profile.jpg"
+            alt="Profile Picture"
+            class="profile-pic"
+            id="profile-pic-main"
+          />
+          <div
+            class="profile-status-container status-online"
+            id="profile-status-main-container">
+          </div>
+        </div>
 
-<div
-  class="profile-section section no-rearrange"
-  id="profile-section"
-  aria-labelledby="profile-username-main"
->
-  <!-- ======================================================= -->
-  <!-- PROFILE PICTURE                                        -->
-  <!-- ======================================================= -->
+        <div class="username-checkmark">
+          <h1 id="profile-username-main">Caleb Kritzar</h1>
+          <img src="check.png" alt="Verified" class="verified" />
+          <p class="profile-status-text status-online" id="profile-status-text-main">Active</p>
+        </div>
 
-  <div class="profile-pic-wrapper">
-    <img
-      src="path/to/default-profile.jpg"
-      alt="Profile picture"
-      class="profile-pic"
-      id="profile-pic-main"
-    />
+        <p class="profile-bio" id="profile-bio-main">
+          Hello, my name is Caleb, and I am 20 years old. I am autistic and have a strong interest in technology and coding websites.
+        </p>
 
-    <div
-      class="profile-status-container status-online"
-      id="profile-status-main-container"
-      aria-hidden="true"
-    ></div>
-  </div>
+        <!-- LIVE ACTIVITY SYSTEM -->
+        <div class="live-activity hidden" id="live-activity">
+          <div class="status-line" id="status-line">
+            <img
+              id="status-icon"
+              class="status-icon"
+              src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
+              alt="Status Icon"
+            />
+            <span id="status-line-text">Loading status…</span>
+          </div>
 
-  <!-- ======================================================= -->
-  <!-- PROFILE NAME AND STATUS                                -->
-  <!-- ======================================================= -->
+          <div
+            class="spotify-card hidden"
+            id="spotify-card"
+            role="button"
+            tabindex="0"
+            aria-label="Open in Spotify"
+          >
+            <div class="live-album-art">
+              <img id="live-activity-cover" src="path/to/default-cover.jpg" alt="Album Art" />
+            </div>
 
-  <div class="username-checkmark">
-    <div class="profile-name-row">
-      <h1 id="profile-username-main">
-        Caleb Kritzar
-      </h1>
+            <div class="live-info">
+              <div class="live-song-title-wrapper">
+                <span class="live-song-title" id="live-song-title">—</span>
+                <span class="explicit-badge" id="explicit-badge" style="display:none;">E</span>
+              </div>
 
-      <img
-        src="check.png"
-        alt="Verified profile"
-        class="verified"
-        id="profile-verified"
-      />
-    </div>
+              <div class="live-artist" id="live-song-artist">—</div>
 
-    <p
-      class="profile-status-text status-online"
-      id="profile-status-text-main"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      Active
-    </p>
-  </div>
+              <div class="music-progress-container">
+                <div class="music-progress-bar" id="music-progress-bar"></div>
+              </div>
 
-  <!-- ======================================================= -->
-  <!-- PROFILE BIOGRAPHY                                      -->
-  <!-- ======================================================= -->
+              <div class="music-progress-time">
+                <span id="elapsed-time">0:00</span>
+                <span id="remaining-time">-0:00</span>
+                <span id="total-time">0:00</span>
+              </div>
+            </div>
+          </div>
 
-  <p
-    class="profile-bio"
-    id="profile-bio-main"
-  >
-    Hello, my name is Caleb, and I am 20 years old. I am autistic
-    and have a strong interest in technology and coding websites.
-  </p>
-
-<!-- ======================================================= -->
-<!-- LIVE ACTIVITY SYSTEM                                    -->
-<!-- ======================================================= -->
-
-<div
-  class="live-activity hidden"
-  id="live-activity"
-  aria-label="Current activity"
->
-  <!-- Current Status -->
-
-  <div
-    class="status-line"
-    id="status-line"
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-  >
-    <img
-      id="status-icon"
-      class="status-icon"
-      src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
-      alt=""
-      aria-hidden="true"
-      decoding="async"
-    />
-
-    <span id="status-line-text">
-      Loading status…
-    </span>
-  </div>
-
-  <!-- Media Activity Card -->
-
-  <div
-    class="spotify-card hidden"
-    id="spotify-card"
-    role="button"
-    tabindex="0"
-    aria-label="Open current media activity"
-    aria-disabled="true"
-  >
-    <!-- Activity Artwork -->
-
-    <div class="live-album-art">
-      <img
-        id="live-activity-cover"
-        class="live-album-image"
-        src="path/to/default-cover.png"
-        alt="Current activity artwork"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-
-    <!-- Media Information -->
-
-    <div class="live-info">
-      <div class="live-song-title-wrapper">
-        <span
-          class="live-song-title"
-          id="live-song-title"
-        >
-          —
-        </span>
-
-        <span
-          class="explicit-badge hidden"
-          id="explicit-badge"
-          aria-label="Explicit content"
-          title="Explicit"
-        >
-          E
-        </span>
+          <div class="la-updated" id="live-activity-updated">Updated just now</div>
+        </div>
+        <!-- End Live Activity -->
       </div>
 
-      <div
-        class="live-artist"
-        id="live-song-artist"
-      >
-        —
-      </div>
-
-      <!-- Activity Progress -->
-
-      <div
-        class="music-progress-container"
-        role="progressbar"
-        aria-label="Activity progress"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow="0"
-      >
-        <div
-          id="music-progress-bar"
-          class="music-progress-bar"
-        ></div>
-      </div>
-
-      <!-- Activity Times -->
-
-      <div
-        class="music-progress-time"
-        aria-label="Activity playback times"
-      >
-        <span
-          id="elapsed-time"
-          aria-label="Elapsed time"
-        >
-          0:00
-        </span>
-
-        <span
-          id="remaining-time"
-          aria-label="Remaining time"
-        >
-          -0:00
-        </span>
-
-        <span
-          id="total-time"
-          aria-label="Total duration"
-        >
-          0:00
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Last Activity Update -->
-
-  <div
-    class="la-updated"
-    id="live-activity-updated"
-    aria-live="off"
-  >
-    Updated just now
-  </div>
-</div>
-
-<!-- ======================================================= -->
-<!-- END LIVE ACTIVITY                                       -->
-<!-- ======================================================= -->
-</div>
       <!-- Toast Notifications -->
       <div id="toast-container"></div>
 
@@ -1113,15 +972,6 @@
     <span class="dock-label">Beta</span>
   </a>
 
-
-  <a href="/education" class="dock-item" data-education-link>
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Education</span>
-  </a>
   <a href="/resume" class="dock-item">
     <span class="dock-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
@@ -1557,46 +1407,49 @@
        * ====================================================== */
 
       function finishPress(event, cancelled = false) {
-  if (!pointerIsDown || event.pointerId !== activePointerId) return;
+        if (!pointerIsDown || event.pointerId !== activePointerId) return;
 
-  const wasDragging = dragStarted;
+        const wasDragging = dragStarted;
+        const selectedLink = cancelled
+          ? activeLink
+          : wasDragging
+          ? getNearestLink(currentPointerX)
+          : pressedLink;
 
-  const selectedLink = cancelled
-    ? activeLink
-    : wasDragging
-      ? getNearestLink(currentPointerX)
-      : pressedLink;
+        if (wasDragging) {
+          suppressSyntheticClick();
+        }
 
-  clearInteractionState();
+        clearInteractionState();
 
-  try {
-    if (dock.hasPointerCapture(event.pointerId)) {
-      dock.releasePointerCapture(event.pointerId);
-    }
-  } catch (error) {
-    // Continue if pointer capture is unavailable.
-  }
+        try {
+          if (dock.hasPointerCapture(event.pointerId)) {
+            dock.releasePointerCapture(event.pointerId);
+          }
+        } catch (error) {
+          // Continue if pointer capture is unavailable
+        }
 
-  pointerIsDown = false;
-  dragStarted = false;
-  pressedLink = null;
-  dragTarget = null;
-  activePointerId = null;
+        pointerIsDown = false;
+        dragStarted = false;
+        pressedLink = null;
+        dragTarget = null;
+        activePointerId = null;
 
-  if (!selectedLink) return;
+        if (!selectedLink) return;
 
-  setActiveLink(selectedLink);
-  moveLensTo(selectedLink, true);
-  runSettlingAnimation(selectedLink);
+        setActiveLink(selectedLink);
+        moveLensTo(selectedLink, true);
+        runSettlingAnimation(selectedLink);
 
-  if (!cancelled) {
-    rotateSettingsGear(selectedLink);
+        if (!cancelled) {
+          rotateSettingsGear(selectedLink);
+        }
 
-    // Handle all pointer navigation here
-    suppressSyntheticClick();
-    navigateTo(selectedLink);
-  }
-}
+        if (!cancelled && wasDragging) {
+          navigateTo(selectedLink);
+        }
+      }
 
       /* ====================================================== *
        * Link Events                                            *
@@ -1616,44 +1469,32 @@
         });
 
         link.addEventListener("click", (event) => {
-  const modifiedClick =
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey ||
-    event.button !== 0;
+          const modifiedClick =
+            event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
 
-  const specialNavigation =
-    link.target === "_blank" ||
-    link.hasAttribute("download");
+          const specialNavigation = link.target === "_blank" || link.hasAttribute("download");
 
-  if (modifiedClick || specialNavigation) {
-    return;
-  }
+          if (modifiedClick || specialNavigation) return;
 
-  // Ignore the synthetic click after pointerup navigation
-  if (suppressNextClick) {
-    event.preventDefault();
+          if (suppressNextClick) {
+            event.preventDefault();
+            suppressNextClick = false;
 
-    suppressNextClick = false;
+            if (suppressionTimer !== null) {
+              window.clearTimeout(suppressionTimer);
+              suppressionTimer = null;
+            }
+            return;
+          }
 
-    if (suppressionTimer !== null) {
-      window.clearTimeout(suppressionTimer);
-      suppressionTimer = null;
-    }
+          event.preventDefault();
 
-    return;
-  }
-
-  // Keyboard activation still works
-  event.preventDefault();
-
-  setActiveLink(link);
-  moveLensTo(link, true);
-  runSettlingAnimation(link);
-  rotateSettingsGear(link);
-  navigateTo(link);
-});
+          setActiveLink(link);
+          moveLensTo(link, true);
+          runSettlingAnimation(link);
+          rotateSettingsGear(link);
+          navigateTo(link);
+        });
       });
 
       /* ====================================================== *
@@ -1796,23 +1637,5 @@
     }
   })();
 </script>
-
-<script data-education-link-settings>
-(() => {
-  const syncEducationLinks = () => {
-    try {
-      const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-      document.querySelectorAll("[data-education-link]").forEach(link => {
-        link.hidden = settings.showEducationPage === "disabled";
-      });
-    } catch (_) {}
-  };
-  syncEducationLinks();
-  window.addEventListener("storage", e => {
-    if (e.key === "websiteSettings") syncEducationLinks();
-  });
-})();
-</script>
-
 </body>
 </html>
