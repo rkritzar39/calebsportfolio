@@ -5,8 +5,8 @@
    Twitch via decapi uptime
    Reddit one-time banner per new post
    Settings apply instantly (same tab)
-   Match song accent OFF => CSS uses global --accent-color
-   Match song accent ON  => artwork-matched --album-accent extraction
+   Match song accent OFF => user accentColor
+   Match song accent ON  => artwork-matched accent extraction
    Time format ALWAYS hh:mm:ss
 */
 
@@ -29,7 +29,7 @@ const SHOW_ALL_PREMID_ACTIVITIES = true;
 let lastUpdateTime = null;
 let lastPollTime   = Date.now();
 let progressInterval = null;
-let currentMediaUrl = null;
+let currentSpotifyUrl = null;
 
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
@@ -205,69 +205,6 @@ function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
   };
 }
 
-/* Album artwork image handling */
-function setAlbumCover(imageUrl) {
-  const coverEl = $$("live-activity-cover") || $$("live-album-image");
-  if (!coverEl) return;
-
-  const url = String(imageUrl || "").trim();
-
-  if (!url) {
-    coverEl.onload = null;
-    coverEl.onerror = null;
-    coverEl.removeAttribute("src");
-    coverEl.classList.remove("is-loading");
-    coverEl.classList.add("no-cover");
-    coverEl.style.removeProperty("display");
-    coverEl.style.opacity = "0";
-    lastCoverUrl = null;
-    return;
-  }
-
-  const currentUrl = coverEl.getAttribute("src") || "";
-
-  if (currentUrl === url && coverEl.complete && coverEl.naturalWidth > 0) {
-    coverEl.classList.remove("is-loading", "no-cover");
-    coverEl.style.removeProperty("display");
-    coverEl.style.opacity = "1";
-    lastCoverUrl = url;
-    return;
-  }
-
-  coverEl.onload = null;
-  coverEl.onerror = null;
-  coverEl.classList.add("is-loading");
-  coverEl.classList.remove("no-cover");
-  coverEl.style.removeProperty("display");
-  coverEl.style.opacity = "0";
-
-  coverEl.onload = () => {
-    coverEl.classList.remove("is-loading", "no-cover");
-    coverEl.style.removeProperty("display");
-    coverEl.style.opacity = "1";
-    lastCoverUrl = url;
-  };
-
-  coverEl.onerror = () => {
-    coverEl.onload = null;
-    coverEl.onerror = null;
-    coverEl.classList.remove("is-loading");
-    coverEl.classList.add("no-cover");
-    coverEl.style.opacity = "0";
-    coverEl.removeAttribute("src");
-
-    if (lastCoverUrl === url) lastCoverUrl = null;
-    console.warn("Failed to load album artwork:", url);
-  };
-
-  coverEl.src = url;
-
-  /* Handle artwork already loaded from the browser cache */
-  if (coverEl.complete && coverEl.naturalWidth > 0) {
-    coverEl.onload();
-  }
-}
-
 /* =========================
    SETTINGS HELPERS
 ========================= */
@@ -283,25 +220,16 @@ function isMatchSongAccentEnabled() {
 }
 
 function applySongThemeClass() {
-  const activity = $$("live-activity");
+  const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent = settings.accentColor || "#1DB954";
+  const userAccent  = settings.accentColor || "#1DB954";
 
   activity.classList.toggle("song-theme-off", !matchAccent);
-  document.body.classList.toggle("dynamic-color-mode", matchAccent);
-  document.body.classList.toggle("accent-color-mode", !matchAccent);
-
-  activity.setAttribute(
-    "data-live-activity-color-mode",
-    matchAccent ? "dynamic" : "accent"
-  );
 
   if (!matchAccent) {
-    dynamicColorRequestId += 1;
-    activity.style.removeProperty("--album-accent");
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
@@ -738,7 +666,6 @@ function updateDynamicColors(imageUrl) {
   const requestId = ++dynamicColorRequestId;
 
   const resetColors = () => {
-    activity.style.removeProperty("--album-accent");
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
@@ -757,11 +684,6 @@ function updateDynamicColors(imageUrl) {
 
   img.onload = () => {
     if (requestId !== dynamicColorRequestId) return;
-
-    if (!isMatchSongAccentEnabled()) {
-      resetColors();
-      return;
-    }
 
     try {
       const canvas = document.createElement("canvas");
@@ -863,7 +785,6 @@ function updateDynamicColors(imageUrl) {
       const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
       const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
-      activity.style.setProperty("--album-accent", primaryCss);
       activity.style.setProperty("--dynamic-accent", primaryCss);
       activity.style.setProperty("--dynamic-accent-soft", softCss);
       activity.style.setProperty("--dynamic-accent-glow", glowCss);
@@ -1050,133 +971,23 @@ function isYouTubeMusicLike(act) {
    DISCORD / SPOTIFY + PreMiD
 ========================= */
 
-function resolveDiscordAssetUrl(activity, assetName = "large_image") {
-  const assets = activity?.assets;
-  if (!assets) return "";
+function resolveDiscordAssetUrl(activity) {
+  const a = activity?.assets;
+  if (!a) return "";
 
-  const rawAsset = String(assets?.[assetName] || "").trim();
-  const applicationId = String(activity?.application_id || "").trim();
+  const large = a.large_image || "";
+  const appId = activity?.application_id;
+  if (!large) return "";
 
-  if (!rawAsset) return "";
-
-  /* Direct or data-backed artwork */
-  if (/^(https?:\/\/|data:image\/)/i.test(rawAsset)) {
-    return rawAsset;
+  if (large.startsWith("mp:")) {
+    return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
   }
 
-  /* Discord media proxy asset used by many PreMiD activities */
-  if (rawAsset.startsWith("mp:")) {
-    const mediaPath = rawAsset.slice(3).replace(/^\/+/, "");
-    return mediaPath ? `https://media.discordapp.net/${mediaPath}` : "";
-  }
-
-  /* Spotify-backed Discord artwork */
-  if (rawAsset.startsWith("spotify:")) {
-    const imageId = rawAsset.slice("spotify:".length).trim();
-    return imageId ? `https://i.scdn.co/image/${imageId}` : "";
-  }
-
-  /* Twitch-backed Discord artwork */
-  if (rawAsset.startsWith("twitch:")) {
-    const channel = rawAsset.slice("twitch:".length).trim();
-    return channel
-      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${encodeURIComponent(channel)}-640x360.jpg`
-      : "";
-  }
-
-  /* Standard Discord rich-presence application asset */
-  if (applicationId) {
-    return `https://cdn.discordapp.com/app-assets/${applicationId}/${encodeURIComponent(rawAsset)}.png?size=512`;
+  if (appId) {
+    return `https://cdn.discordapp.com/app-assets/${appId}/${large}.png`;
   }
 
   return "";
-}
-
-function resolveBestActivityArtwork(activity) {
-  return (
-    resolveDiscordAssetUrl(activity, "large_image") ||
-    resolveDiscordAssetUrl(activity, "small_image") ||
-    ""
-  );
-}
-
-function resolveActivityUrl(activity) {
-  if (!activity) return null;
-
-  const directCandidates = [
-    activity.url,
-    activity.details_url,
-    activity.state_url,
-    activity.assets?.large_url,
-    activity.assets?.small_url,
-  ];
-
-  for (const candidate of directCandidates) {
-    if (/^https?:\/\//i.test(String(candidate || ""))) return String(candidate);
-  }
-
-  const metadataUrls = Array.isArray(activity?.metadata?.button_urls)
-    ? activity.metadata.button_urls
-    : [];
-
-  for (const url of metadataUrls) {
-    if (/^https?:\/\//i.test(String(url || ""))) return String(url);
-  }
-
-  const buttons = Array.isArray(activity.buttons) ? activity.buttons : [];
-  for (const button of buttons) {
-    if (typeof button === "string" && /^https?:\/\//i.test(button)) return button;
-    if (button && typeof button === "object" && /^https?:\/\//i.test(String(button.url || ""))) {
-      return String(button.url);
-    }
-  }
-
-  return null;
-}
-
-function getDiscordActivityType(activity) {
-  const type = Number(activity?.type);
-  const types = {
-    0: { verb: "Playing", source: "activity" },
-    1: { verb: "Streaming", source: "twitch" },
-    2: { verb: "Listening to", source: "music" },
-    3: { verb: "Watching", source: "activity" },
-    4: { verb: "Status", source: "discord" },
-    5: { verb: "Competing in", source: "activity" },
-  };
-  return types[type] || { verb: "Active on", source: "activity" };
-}
-
-function getUniversalActivityMeta(activity) {
-  const appName = String(activity?.name || "Activity").trim();
-  const known = resolvePremidMeta(appName, activity);
-  const typeMeta = getDiscordActivityType(activity);
-  const knownService = known.key !== "activity";
-
-  let verb = knownService ? getActivityVerb(known.pretty, activity) : typeMeta.verb;
-  let source = knownService ? known.key : typeMeta.source;
-  let pretty = knownService ? known.pretty : appName;
-
-  if (activity?.type === 2 || isMusicActivity(activity)) {
-    verb = "Listening to";
-    if (!knownService) source = "music";
-  }
-
-  return { appName, pretty, verb, source };
-}
-
-function setCardDestination(url, activityName = "media") {
-  const card = $$("spotify-card");
-  currentMediaUrl = /^https?:\/\//i.test(String(url || "")) ? String(url) : null;
-
-  if (!card) return;
-
-  card.classList.toggle("is-clickable", Boolean(currentMediaUrl));
-  card.setAttribute("aria-disabled", currentMediaUrl ? "false" : "true");
-  card.setAttribute(
-    "aria-label",
-    currentMediaUrl ? `Open current ${activityName} activity` : `Current ${activityName} activity`
-  );
 }
 
 const MUSIC_KEYWORDS = [
@@ -1224,73 +1035,16 @@ function isIgnorableActivity(a) {
   return false;
 }
 
-function scoreActivity(activity) {
-  if (isIgnorableActivity(activity)) return -Infinity;
-
-  let score = 0;
-  if (activity.type === 2) score += 70;
-  if (activity.type === 1) score += 60;
-  if (activity.details?.trim()) score += 30;
-  if (activity.state?.trim()) score += 20;
-  if (activity.assets?.large_image) score += 18;
-  if (activity.assets?.small_image) score += 6;
-  if (activity.timestamps?.start) score += 8;
-  if (activity.timestamps?.end) score += 10;
-  if (resolveActivityUrl(activity)) score += 5;
-  if (activity.application_id) score += 4;
-
-  return score;
-}
-
 function pickBestPremidActivity(activities = []) {
-  return (activities || [])
-    .filter(activity => !isIgnorableActivity(activity))
-    .map((activity, index) => ({ activity, index, score: scoreActivity(activity) }))
-    .sort((a, b) => b.score - a.score || a.index - b.index)[0]?.activity || null;
-}
+  const candidates = (activities || []).filter(a => !isIgnorableActivity(a));
 
-function renderUniversalActivity(activity) {
-  slideInCard($$("spotify-card"));
+  const rich = candidates.find(a => (a.details && a.details.trim()) || (a.state && a.state.trim()));
+  if (rich) return rich;
 
-  const meta = getUniversalActivityMeta(activity);
-  const title = String(
-    activity?.details ||
-    activity?.assets?.large_text ||
-    activity?.state ||
-    meta.appName
-  ).trim();
+  const withArt = candidates.find(a => a.assets?.large_image);
+  if (withArt) return withArt;
 
-  const subtitle = String(
-    activity?.state ||
-    activity?.assets?.small_text ||
-    activity?.assets?.large_text ||
-    meta.pretty
-  ).trim();
-
-  const titleEl = $$("live-song-title");
-  const artistEl = $$("live-song-artist");
-  if (titleEl) titleEl.textContent = title || meta.pretty;
-  if (artistEl) artistEl.textContent = subtitle || meta.pretty;
-
-  const coverUrl = resolveBestActivityArtwork(activity);
-  setAlbumCover(coverUrl);
-  updateDynamicColors(coverUrl || null);
-  setCardDestination(resolveActivityUrl(activity), meta.pretty);
-
-  const explicitEl = $$("explicit-badge");
-  if (explicitEl) explicitEl.style.display = "none";
-
-  resetProgress();
-  const hasRealProgress = setupProgressFromActivityTimestamps(activity);
-  if (!hasRealProgress) {
-    const shouldIndeterminate = activity?.type === 2 || isMusicActivity(activity);
-    setProgressVisibility(shouldIndeterminate ? NON_SPOTIFY_PROGRESS_MODE : "hide");
-  }
-
-  return {
-    text: `${meta.verb} ${meta.pretty}`,
-    source: meta.source,
-  };
+  return candidates[0] || null;
 }
 
 async function getDiscord() {
@@ -1298,8 +1052,6 @@ async function getDiscord() {
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
-    setAlbumCover(null);
-    setCardDestination(null);
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
@@ -1326,16 +1078,15 @@ async function getDiscord() {
       $$("live-song-title").textContent  = sp.song   || "Unknown";
       $$("live-song-artist").textContent = sp.artist || "Unknown";
 
-      const coverUrl = String(sp.album_art_url || "").trim();
-      setAlbumCover(coverUrl);
-      updateDynamicColors(coverUrl || null);
+      const coverEl = $$("live-activity-cover");
+      if (coverEl && coverEl.src !== sp.album_art_url) {
+        setImgWithFallback(coverEl, sp.album_art_url, "");
+      }
 
-      setCardDestination(
-        sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null,
-        "Spotify"
-      );
+      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       setupProgress(startMs, endMs);
+      updateDynamicColors(sp.album_art_url);
 
       const explicitEl = $$("explicit-badge");
       if (explicitEl) explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
@@ -1343,18 +1094,66 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    // 2) Any Discord rich presence / PreMiD activity
+    // 2) PreMiD / All activities
     if (SHOW_ALL_PREMID_ACTIVITIES) {
       const act = pickBestPremidActivity(data.activities || []);
-      if (act) return renderUniversalActivity(act);
+      if (act) {
+        slideInCard($$("spotify-card"));
+
+        const appName = act.name || "Activity";
+
+        const n = appName.toLowerCase();
+        const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
+        const isYT  = n.includes("youtube");
+
+        const title = act.details || appName;
+        const sub   = act.state || act?.assets?.large_text || appName;
+
+        $$("live-song-title").textContent  = title;
+        $$("live-song-artist").textContent = sub;
+
+        const coverUrl = resolveDiscordAssetUrl(act);
+        const coverEl = $$("live-activity-cover");
+        if (coverEl && coverUrl && coverEl.src !== coverUrl) {
+          setImgWithFallback(coverEl, coverUrl, "");
+        }
+
+        currentSpotifyUrl = null;
+
+        const explicitEl = $$("explicit-badge");
+        if (explicitEl) explicitEl.style.display = "none";
+
+        resetProgress();
+
+        const hasRealProgress = setupProgressFromActivityTimestamps(act);
+        if (!hasRealProgress) {
+          if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
+            setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+          } else {
+            setProgressVisibility("hide");
+          }
+        }
+
+        updateDynamicColors(coverUrl || null);
+
+        const meta = resolvePremidMeta(appName, act);
+        let prettyApp = meta.pretty;
+        if (isYTM) prettyApp = "YouTube Music";
+        else if (isYT) prettyApp = "YouTube";
+
+        const verb = getActivityVerb(prettyApp, act);
+        let source = meta.key;
+        if (isYTM) source = "youtubemusic";
+        else if (isYT) source = "youtube";
+
+        return { text: `${verb} ${prettyApp}`, source };
+      }
     }
 
     // 3) Nothing else
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
-    setAlbumCover(null);
-    setCardDestination(null);
     updateDynamicColors(null);
 
     const map = {
@@ -1534,13 +1333,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const card = $$("spotify-card");
   if (card) {
     card.addEventListener("click", () => {
-      if (currentMediaUrl) window.open(currentMediaUrl, "_blank", "noopener,noreferrer");
+      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
     });
 
     card.addEventListener("keydown", (e) => {
-      if ((e.key === "Enter" || e.key === " ") && currentMediaUrl) {
+      if ((e.key === "Enter" || e.key === " ") && currentSpotifyUrl) {
         e.preventDefault();
-        window.open(currentMediaUrl, "_blank", "noopener,noreferrer");
+        window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
       }
     });
   }
