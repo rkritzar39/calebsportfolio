@@ -1,1 +1,139 @@
-[REPLACED_WITH_NEW_STYLES_CSS_WITH_THEME_ALIASES_AND_CUSTOM_BG]
+/* Caleb's Portfolio — polished liquid glass styles
+   Replaces earlier placeholder. This stylesheet focuses on:
+   - robust light/dark variable system
+   - polished liquid glass surfaces with fallbacks
+   - icon & logo utilities
+   - custom background overlay
+*/
+:root{
+  --font-size-base:16px;
+  --line-height-base:1.6;
+
+  /* Dark palette */
+  --dark-bg:#0b0b0d;
+  --dark-content-bg:rgba(22,22,26,0.52);
+  --dark-text:#f7f8fb;
+  --dark-secondary:#a9adb7;
+  --dark-border:rgba(255,255,255,0.08);
+  --dark-accent:#4ea8ff;
+  --dark-shadow:rgba(0,0,0,0.6);
+
+  /* Light palette */
+  --light-bg:linear-gradient(120deg,#d9f0ff 0%,#f7fbff 56%,#eef6ff 100%);
+  --light-content-bg:rgba(255,255,255,0.56);
+  --light-text:#0f1112;
+  --light-secondary:#4b5563;
+  --light-border:rgba(0,0,0,0.06);
+  --light-accent:#007aff;
+  --light-shadow:rgba(17,24,39,0.12);
+
+  /* Default (dark) */
+  --bg-color:var(--dark-bg);
+  --content-bg:var(--dark-content-bg);
+  --text-color:var(--dark-text);
+  --secondary-text:var(--dark-secondary);
+  --border-color:var(--dark-border);
+  --accent-color:var(--dark-accent);
+  --shadow-color:var(--dark-shadow);
+  --icon-color:var(--dark-text);
+
+  /* Liquid glass optics */
+  --backdrop-blur:blur(20px) saturate(140%);
+  --glass-top-glow: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.12), transparent 60%);
+  --glass-bottom-depth: radial-gradient(circle at 50% 100%, rgba(0,0,0,0.28), transparent 72%);
+  --glass-border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+
+  --custom-background-image:none;
+}
+
+/* Accept multiple theme class names your JS may apply */
+.light-mode, .light-e, body.light-mode, body.light-e{
+  --bg-color:var(--light-bg);
+  --content-bg:var(--light-content-bg);
+  --text-color:var(--light-text);
+  --secondary-text:var(--light-secondary);
+  --border-color:var(--light-border);
+  --accent-color:var(--light-accent);
+  --shadow-color:var(--light-shadow);
+  --icon-color:var(--light-text);
+}
+
+.dark-mode, .dark-e, body.dark-mode, body.dark-e{
+  --bg-color:var(--dark-bg);
+  --content-bg:var(--dark-content-bg);
+  --text-color:var(--dark-text);
+  --secondary-text:var(--dark-secondary);
+  --border-color:var(--dark-border);
+  --accent-color:var(--dark-accent);
+  --shadow-color:var(--dark-shadow);
+  --icon-color:var(--dark-text);
+}
+
+/* Page base */
+html,body{height:100%;}
+body{
+  margin:0;padding:32px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,sans-serif;
+  background:var(--bg-color);color:var(--text-color);font-size:var(--font-size-base);line-height:var(--line-height-base);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Custom background handled by JS but we ensure overlay & stacking */
+body.custom-background-active{
+  background-image:var(--custom-background-image);
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+}
+body.custom-background-active::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--bg-color) 6%, transparent), rgba(0,0,0,0.06));
+}
+
+/* Liquid glass surface */
+.section, .glass, .profile-section, .biz-panel{
+  position:relative;z-index:1;isolation:isolate;overflow:hidden;border-radius:18px;
+  background:var(--content-bg);
+  border:var(--glass-border);
+  color:var(--text-color);
+  box-shadow:0 20px 50px color-mix(in srgb, var(--shadow-color) 38%, transparent);
+  transition:background .28s ease,box-shadow .28s ease,transform .18s ease;
+  backdrop-filter:var(--backdrop-blur);-webkit-backdrop-filter:var(--backdrop-blur);
+}
+
+.section::before, .glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:var(--glass-top-glow);opacity:.6}
+.section::after, .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:var(--glass-bottom-depth);opacity:.6}
+
+/* Fallback when backdrop-filter unsupported */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))){
+  .section, .glass{background:linear-gradient(180deg,color-mix(in srgb,var(--content-bg) 88%, rgba(255,255,255,0.02)),var(--content-bg));}
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce){
+  .section,.glass{transition:none;background:var(--content-bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+/* Profile picture */
+.profile-pic-wrapper{width:150px;height:150px;margin:0 auto;border-radius:50%;overflow:hidden;border:2px solid color-mix(in srgb,var(--border-color) 82%, transparent);box-shadow:0 10px 28px color-mix(in srgb,var(--shadow-color) 30%, transparent),inset 0 1px 0 rgba(255,255,255,0.04)}
+.profile-pic{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Onyx dock polish */
+.onyx-dock{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;padding:8px 12px;border-radius:14px;display:flex;gap:6px;background:linear-gradient(180deg,color-mix(in srgb,var(--content-bg) 86%, transparent),var(--content-bg));border:var(--glass-border);backdrop-filter:blur(12px) saturate(130%);-webkit-backdrop-filter:blur(12px) saturate(130%);box-shadow:0 14px 40px color-mix(in srgb,var(--shadow-color) 40%, transparent);z-index:999}
+.onyx-dock .dock-item{display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:10px;color:var(--secondary-text);text-decoration:none}
+.onyx-dock .dock-item.active,.onyx-dock .dock-item:hover{color:var(--accent-color);background:linear-gradient(180deg,color-mix(in srgb,var(--accent-color) 8%, transparent),transparent)}
+
+/* Icon utilities */
+.icon, .fa, .fab, .fas, svg.icon-svg{display:inline-block;vertical-align:middle;color:var(--icon-color);width:1.2em;height:1.2em}
+svg.icon-svg{fill:currentColor}
+
+/* Make raster icons adapt to theme if necessary */
+.dark-mode img.icon-raster{filter:invert(100%) brightness(.95) contrast(1.05)}
+
+/* Links and buttons */
+a,button{color:var(--accent-color)}
+button{background:transparent;border:1px solid transparent;padding:8px 12px;border-radius:10px}
+button.primary{background:var(--accent-color);color:var(--accent-text-color,#fff)}
+
+/* Toasts above glass */
+.toast{position:relative}
+
+/* Responsive */
+@media(max-width:600px){body{padding:20px}.onyx-dock{bottom:12px;padding:6px}}
