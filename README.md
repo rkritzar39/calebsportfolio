@@ -6,9 +6,9 @@
 ![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
 ![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)
 ![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-44.4%25-f1e05a)
-![CSS](https://img.shields.io/badge/CSS-37.0%25-663399)
-![HTML](https://img.shields.io/badge/HTML-18.6%25-e34c26)
+![JavaScript](https://img.shields.io/badge/JavaScript-50.8%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-28.0%25-663399)
+![HTML](https://img.shields.io/badge/HTML-21.3%25-e34c26)
 <!-- AUTO:BADGES-END -->
 
 BusArmyDude.org is a responsive personal profile, link-in-bio, live-status, availability, academic portfolio, resume, technology information, accessibility, and content-management website.
@@ -801,9 +801,9 @@ Public profiles and pages should not expose:
 <!-- AUTO:LANGUAGES-START -->
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 44.4% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
-| **CSS** | 37.0% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
-| **HTML** | 18.6% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
+| **JavaScript** | 50.8% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
+| **CSS** | 28.0% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
+| **HTML** | 21.3% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 <!-- AUTO:LANGUAGES-END -->
 
 Language percentages are based on repository analysis and may change as files are added, removed, or reorganized.
