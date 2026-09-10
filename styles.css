@@ -14490,1194 +14490,173 @@ body.dark-mode .tech-search-input:-webkit-autofill {
   }
 }
 
-/* ========================================================= */
-/* LIQUID GLASS / ONYX FOUNDATION - AUTHORITATIVE OVERRIDES  */
-/* Keep this block last so older duplicate :root blocks cannot */
-/* override the active design tokens or page layout.           */
-/* ========================================================= */
+/* ======================================================= */
+/* ONYX THEME SEPARATION - FINAL AUTHORITATIVE OVERRIDES   */
+/* Explicit classes override the operating-system theme.   */
+/* ======================================================= */
 :root {
-  color-scheme: light;
-  --font-size-base: 16px;
-  --line-height-base: 1.65;
-  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-  --page-max-width: 1180px;
-  --page-gutter: clamp(12px, 3vw, 32px);
-
-  --bg-color: linear-gradient(145deg, #eef6ff 0%, #f8fbff 44%, #eaf3ff 100%);
-  --content-bg: rgba(255, 255, 255, 0.62);
-  --text-color: #111114;
-  --secondary-text: rgba(30, 30, 36, 0.72);
-  --border-color: rgba(255, 255, 255, 0.76);
-  --border-color-rgb: 255, 255, 255;
-  --accent-color: #007aff;
-  --accent-color-rgb: 0, 122, 255;
-  --hover-color: #0066d6;
-  --link-color: #006edc;
-  --icon-color: #1d1d1f;
-  --social-icon-text-color: #111114;
-  --shadow-color: rgba(27, 39, 61, 0.16);
-  --glow-color: rgba(255, 255, 255, 0.94);
-
-  --radius-xl: 30px;
-  --radius-lg: 22px;
-  --radius-md: 15px;
-  --radius-pill: 999px;
-  --transition-fast: 180ms ease;
-  --transition-medium: 280ms ease;
-  --transition-slow: 480ms ease;
-
-  --backdrop-blur: blur(28px) saturate(165%);
-  --bubble-gradient:
-    radial-gradient(circle at 18% 4%, rgba(255, 255, 255, 0.92), transparent 42%),
-    radial-gradient(circle at 88% 12%, rgba(205, 232, 255, 0.50), transparent 46%);
-  --liquid-refraction:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.16) 48%, rgba(54, 72, 96, 0.05));
-  --liquid-reflection:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.30) 34%, rgba(255, 255, 255, 0.08) 62%, transparent);
-  --bubble-highlight:
-    inset 0 1px 0 rgba(255, 255, 255, 0.94),
-    inset 0 -1px 0 rgba(42, 52, 68, 0.08),
-    inset 0 0 18px rgba(255, 255, 255, 0.24);
-  --bubble-shadow:
-    0 20px 48px rgba(31, 45, 70, 0.14),
-    0 4px 14px rgba(31, 45, 70, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.78);
-  --glass-surface: var(--bubble-gradient), var(--liquid-refraction), rgba(255, 255, 255, 0.58);
-  --glass-top-glow: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.72), transparent 62%);
-  --glass-bottom-depth: radial-gradient(circle at 50% 100%, rgba(42, 56, 78, 0.12), transparent 72%);
-
-  --a11y-mask-bg: rgba(0, 0, 0, 0.06);
-  --a11y-accent: var(--accent-color);
-  --a11y-text-strong: #111114;
-  --a11y-muted: #5f636d;
+  --onyx-page-bg: linear-gradient(145deg, #dcecff 0%, #f8fbff 48%, #e5f1ff 100%);
+  --onyx-section-bg:
+    radial-gradient(circle at 22% 0%, rgba(255,255,255,.95), transparent 43%),
+    linear-gradient(145deg, rgba(255,255,255,.78), rgba(230,242,255,.64) 58%, rgba(205,225,248,.50));
+  --onyx-card-bg:
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,.82), transparent 44%),
+    linear-gradient(145deg, rgba(255,255,255,.64), rgba(218,234,252,.52) 62%, rgba(191,214,241,.42));
+  --onyx-control-bg: linear-gradient(180deg, rgba(255,255,255,.90), rgba(230,240,252,.72));
+  --onyx-section-border: rgba(255,255,255,.96);
+  --onyx-card-border: rgba(112,143,181,.40);
+  --onyx-control-border: rgba(91,124,164,.46);
+  --onyx-section-shadow: 0 28px 64px rgba(35,57,91,.18), 0 7px 20px rgba(35,57,91,.09), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(61,84,116,.14);
+  --onyx-card-shadow: 0 16px 36px rgba(35,57,91,.14), inset 0 1px 0 rgba(255,255,255,.96), inset 0 -1px 0 rgba(61,84,116,.16);
+  --onyx-control-shadow: 0 8px 18px rgba(35,57,91,.11), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(61,84,116,.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color-scheme: dark;
-    --bg-color:
-      radial-gradient(circle at 18% -8%, rgba(46, 82, 126, 0.22), transparent 34%),
-      radial-gradient(circle at 90% 8%, rgba(104, 72, 143, 0.14), transparent 30%),
-      #050506;
-    --content-bg: rgba(18, 18, 22, 0.72);
-    --text-color: #f7f7fa;
-    --secondary-text: rgba(235, 235, 245, 0.70);
-    --border-color: rgba(255, 255, 255, 0.14);
-    --border-color-rgb: 255, 255, 255;
-    --accent-color: #0a84ff;
-    --accent-color-rgb: 10, 132, 255;
-    --hover-color: #409cff;
-    --link-color: #64a8ff;
-    --icon-color: #f2f2f7;
-    --social-icon-text-color: #f7f7fa;
-    --shadow-color: rgba(0, 0, 0, 0.66);
-    --glow-color: rgba(255, 255, 255, 0.20);
-
-    --bubble-gradient:
-      radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.13), transparent 44%),
-      radial-gradient(circle at 88% 8%, rgba(96, 155, 255, 0.08), transparent 42%);
-    --liquid-refraction:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025) 48%, rgba(0, 0, 0, 0.30));
-    --liquid-reflection:
-      linear-gradient(125deg, rgba(255, 255, 255, 0.27), rgba(255, 255, 255, 0.07) 34%, rgba(255, 255, 255, 0.018) 62%, transparent);
-    --bubble-highlight:
-      inset 0 1px 0 rgba(255, 255, 255, 0.20),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.48),
-      inset 0 0 20px rgba(255, 255, 255, 0.035);
-    --bubble-shadow:
-      0 26px 62px rgba(0, 0, 0, 0.58),
-      0 6px 20px rgba(0, 0, 0, 0.32);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --glass-surface: var(--bubble-gradient), var(--liquid-refraction), rgba(13, 13, 16, 0.76);
-    --glass-top-glow: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.13), transparent 62%);
-    --glass-bottom-depth: radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.48), transparent 72%);
-
-    --a11y-text-strong: #ffffff;
-    --a11y-muted: #b7bbc5;
+    --onyx-page-bg: linear-gradient(145deg, #050506 0%, #0a0b0e 50%, #040405 100%);
+    --onyx-section-bg: radial-gradient(circle at 22% 0%, rgba(255,255,255,.14), transparent 43%), linear-gradient(145deg, rgba(42,43,49,.88), rgba(23,24,29,.86) 58%, rgba(11,12,16,.92));
+    --onyx-card-bg: radial-gradient(circle at 18% 0%, rgba(255,255,255,.09), transparent 44%), linear-gradient(145deg, rgba(31,32,38,.90), rgba(17,18,23,.91) 62%, rgba(8,9,12,.95));
+    --onyx-control-bg: linear-gradient(180deg, rgba(45,46,53,.94), rgba(19,20,25,.95));
+    --onyx-section-border: rgba(255,255,255,.19);
+    --onyx-card-border: rgba(255,255,255,.13);
+    --onyx-control-border: rgba(255,255,255,.18);
+    --onyx-section-shadow: 0 30px 68px rgba(0,0,0,.64), 0 8px 22px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.19), inset 0 -1px 0 rgba(0,0,0,.64);
+    --onyx-card-shadow: 0 18px 40px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.13), inset 0 -1px 0 rgba(0,0,0,.60);
+    --onyx-control-shadow: 0 10px 24px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.15), inset 0 -1px 0 rgba(0,0,0,.64);
   }
 }
 
-/* Explicit preference classes remain supported by settings.js. */
+/* Explicit light mode resets every dark-derived Onyx token. */
 body.light-e,
-body.light-mode {
-  color-scheme: light;
-  --bg-color: linear-gradient(145deg, #eef6ff 0%, #f8fbff 44%, #eaf3ff 100%);
-  --content-bg: rgba(255, 255, 255, 0.62);
-  --text-color: #111114;
-  --secondary-text: rgba(30, 30, 36, 0.72);
-  --border-color: rgba(255, 255, 255, 0.76);
-  --accent-color: #007aff;
-  --shadow-color: rgba(27, 39, 61, 0.16);
-  --glow-color: rgba(255, 255, 255, 0.94);
+body.light-mode,
+html.light-mode body {
+  color-scheme: light !important;
+  --bg-color: #edf6ff !important;
+  --content-bg: rgba(255,255,255,.64) !important;
+  --text-color: #111318 !important;
+  --secondary-text: #525966 !important;
+  --border-color: rgba(116,145,180,.38) !important;
+  --accent-color: #007aff !important;
+  --link-color: #0068d4 !important;
+  --icon-color: #17191e !important;
+  --shadow-color: rgba(34,55,87,.18) !important;
+  --glow-color: rgba(255,255,255,.96) !important;
+  --onyx-page-bg: linear-gradient(145deg, #dcecff 0%, #f8fbff 48%, #e5f1ff 100%) !important;
+  --onyx-section-bg: radial-gradient(circle at 22% 0%, rgba(255,255,255,.95), transparent 43%), linear-gradient(145deg, rgba(255,255,255,.78), rgba(230,242,255,.64) 58%, rgba(205,225,248,.50)) !important;
+  --onyx-card-bg: radial-gradient(circle at 18% 0%, rgba(255,255,255,.82), transparent 44%), linear-gradient(145deg, rgba(255,255,255,.64), rgba(218,234,252,.52) 62%, rgba(191,214,241,.42)) !important;
+  --onyx-control-bg: linear-gradient(180deg, rgba(255,255,255,.90), rgba(230,240,252,.72)) !important;
+  --onyx-section-border: rgba(255,255,255,.96) !important;
+  --onyx-card-border: rgba(112,143,181,.40) !important;
+  --onyx-control-border: rgba(91,124,164,.46) !important;
+  --onyx-section-shadow: 0 28px 64px rgba(35,57,91,.18), 0 7px 20px rgba(35,57,91,.09), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(61,84,116,.14) !important;
+  --onyx-card-shadow: 0 16px 36px rgba(35,57,91,.14), inset 0 1px 0 rgba(255,255,255,.96), inset 0 -1px 0 rgba(61,84,116,.16) !important;
+  --onyx-control-shadow: 0 8px 18px rgba(35,57,91,.11), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(61,84,116,.18) !important;
 }
 
-html.dark-mode body,
-body.dark-mode {
-  color-scheme: dark;
-  --bg-color: #050506;
-  --content-bg: rgba(18, 18, 22, 0.72);
-  --text-color: #f7f7fa;
-  --secondary-text: rgba(235, 235, 245, 0.70);
-  --border-color: rgba(255, 255, 255, 0.14);
-  --accent-color: #0a84ff;
-  --shadow-color: rgba(0, 0, 0, 0.66);
-  --glow-color: rgba(255, 255, 255, 0.20);
+/* Explicit dark mode remains independent of system preference. */
+body.dark-mode,
+html.dark-mode body {
+  color-scheme: dark !important;
+  --bg-color: #050506 !important;
+  --content-bg: rgba(20,21,26,.78) !important;
+  --text-color: #f5f6fa !important;
+  --secondary-text: #b6bac5 !important;
+  --border-color: rgba(255,255,255,.14) !important;
+  --accent-color: #0a84ff !important;
+  --link-color: #64a8ff !important;
+  --icon-color: #f2f2f7 !important;
+  --shadow-color: rgba(0,0,0,.68) !important;
+  --glow-color: rgba(255,255,255,.20) !important;
+  --onyx-page-bg: linear-gradient(145deg, #050506 0%, #0a0b0e 50%, #040405 100%) !important;
+  --onyx-section-bg: radial-gradient(circle at 22% 0%, rgba(255,255,255,.14), transparent 43%), linear-gradient(145deg, rgba(42,43,49,.88), rgba(23,24,29,.86) 58%, rgba(11,12,16,.92)) !important;
+  --onyx-card-bg: radial-gradient(circle at 18% 0%, rgba(255,255,255,.09), transparent 44%), linear-gradient(145deg, rgba(31,32,38,.90), rgba(17,18,23,.91) 62%, rgba(8,9,12,.95)) !important;
+  --onyx-control-bg: linear-gradient(180deg, rgba(45,46,53,.94), rgba(19,20,25,.95)) !important;
+  --onyx-section-border: rgba(255,255,255,.19) !important;
+  --onyx-card-border: rgba(255,255,255,.13) !important;
+  --onyx-control-border: rgba(255,255,255,.18) !important;
 }
 
-/* Layout normalization belongs on elements, never in :root. */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  min-width: 320px;
-  min-height: 100%;
-  background: #f5f7fb;
-  scroll-behavior: smooth;
-}
-
-body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
-  padding: var(--page-gutter);
-  overflow-x: clip;
-  background: var(--bg-color);
-  background-attachment: fixed;
-  color: var(--text-color);
-  font-family: var(--font-system);
-}
-
-.container {
-  width: min(100%, var(--page-max-width));
-  margin-inline: auto;
-  padding: 0;
-}
-
-#rearrangeable-container,
-#main-content-wrapper {
-  width: 100%;
-  min-width: 0;
-}
-
-/* Shared physical glass edge for main shells and cards. */
-.section,
-.profile-section,
-.social-links-section,
-.shoutouts-section,
-.tech-section,
-.useful-links-section,
-.disabilities-section,
-.countdown-section,
-#business-section,
-#version-info-section,
-#legal-section,
-footer,
-.onyx-dock,
-.glass,
-.glass-panel {
-  border: 1px solid var(--glass-border);
-  background-color: var(--content-bg);
-  box-shadow:
-    var(--bubble-highlight),
-    var(--bubble-shadow);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  backdrop-filter: var(--backdrop-blur);
-}
-
-/* Text inputs remain readable because transparency is on the surface, not the element. */
-input,
-select,
-textarea,
-button {
-  font: inherit;
-}
-
-input,
-select,
-textarea {
-  color: var(--text-color);
-  caret-color: var(--accent-color);
-}
-
-::placeholder {
-  color: var(--secondary-text);
-  opacity: 0.78;
-}
-
-/* Restore selectable text and form controls. Copy protection must not break usability. */
-p,
-li,
-span,
-strong,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-input,
-textarea,
-select,
-code,
-pre {
-  -webkit-user-select: text;
-  user-select: text;
-}
-
-button,
-a,
-[role="button"] {
-  -webkit-tap-highlight-color: transparent;
-}
-
-@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
-  :root {
-    --content-bg: rgba(250, 252, 255, 0.97);
-    --glass-surface: #f7f9fc;
-  }
-
-  .section,
-  .profile-section,
-  .social-links-section,
-  .shoutouts-section,
-  .tech-section,
-  .useful-links-section,
-  .disabilities-section,
-  .countdown-section,
-  #business-section,
-  #version-info-section,
-  #legal-section,
-  footer,
-  .onyx-dock,
-  .glass,
-  .glass-panel {
-    background: var(--content-bg);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --content-bg: rgba(18, 18, 22, 0.98);
-      --glass-surface: #121216;
-    }
-  }
-}
-
-@media (max-width: 600px) {
-  body {
-    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) calc(104px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
-  }
-
-  .section,
-  .profile-section,
-  .social-links-section,
-  .shoutouts-section,
-  .tech-section,
-  .useful-links-section,
-  .disabilities-section,
-  .countdown-section,
-  #business-section,
-  #version-info-section,
-  #legal-section {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-/* ======================================================= */
-/* PLATFORM VISIT BUTTONS - ONYX GLASS FIX                 */
-/* ASCII-only generated content prevents mojibake.         */
-/* ======================================================= */
-.platform-visit-button {
-  --platform-accent: var(--accent-color);
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  min-width: min(100%, 230px);
-  min-height: 52px;
-  padding: 13px 48px 13px 22px;
-  border: 1px solid color-mix(in srgb, var(--platform-accent) 38%, var(--glass-border));
-  border-radius: 999px;
-  color: var(--text-color) !important;
-  background:
-    radial-gradient(circle at 24% 0%, color-mix(in srgb, white 68%, transparent), transparent 50%),
-    linear-gradient(145deg, color-mix(in srgb, var(--platform-accent) 18%, var(--content-bg)), color-mix(in srgb, var(--content-bg) 82%, transparent) 58%, color-mix(in srgb, var(--platform-accent) 9%, var(--content-bg)));
-  -webkit-backdrop-filter: blur(26px) saturate(175%);
-  backdrop-filter: blur(26px) saturate(175%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 82%, transparent),
-    inset 0 -1px 0 color-mix(in srgb, var(--platform-accent) 18%, rgba(0, 0, 0, 0.12)),
-    inset 0 0 18px color-mix(in srgb, white 16%, transparent),
-    0 12px 28px color-mix(in srgb, var(--shadow-color) 42%, transparent),
-    0 0 0 1px color-mix(in srgb, white 12%, transparent);
-  text-shadow: none;
-}
-
-.platform-visit-button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 44%),
-    var(--liquid-reflection);
-  opacity: 0.56;
-  mix-blend-mode: soft-light;
-}
-
-.platform-visit-button::after {
-  content: "\2192";
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: currentColor;
-  font-family: Arial, sans-serif;
-  font-size: 1.08rem;
-  font-weight: 700;
-  line-height: 1;
-  opacity: 0.70;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
-}
-
-.tiktok-visit-button {
-  --platform-accent: #fe2c55;
-  color: var(--text-color) !important;
-  background:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.34), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, #fe2c55 20%, var(--content-bg)), color-mix(in srgb, var(--content-bg) 84%, transparent) 58%, color-mix(in srgb, #25f4ee 8%, var(--content-bg))) !important;
-}
-
-.instagram-visit-button {
-  --platform-accent: #d62976;
-  color: var(--text-color) !important;
-  background:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.36), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, #833ab4 15%, var(--content-bg)), color-mix(in srgb, #fd1d1d 10%, var(--content-bg)) 56%, color-mix(in srgb, #fcb045 12%, var(--content-bg))) !important;
-}
-
-.youtube-visit-button {
-  --platform-accent: #ff0033;
-  color: var(--text-color) !important;
-  background:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.32), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, #ff0033 13%, var(--content-bg)), color-mix(in srgb, var(--content-bg) 88%, transparent) 58%, color-mix(in srgb, #ff0033 7%, var(--content-bg))) !important;
-}
-
-.platform-visit-button:hover,
-.platform-visit-button:focus-visible {
-  color: var(--text-color) !important;
-  transform: translateY(-2px);
-  filter: none;
-  border-color: color-mix(in srgb, var(--platform-accent) 56%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 -1px 0 color-mix(in srgb, var(--platform-accent) 22%, rgba(0, 0, 0, 0.12)),
-    inset 0 0 22px rgba(255, 255, 255, 0.18),
-    0 16px 34px color-mix(in srgb, var(--shadow-color) 46%, transparent),
-    0 0 18px color-mix(in srgb, var(--platform-accent) 16%, transparent);
-}
-
-.platform-visit-button:hover::after,
-.platform-visit-button:focus-visible::after {
-  transform: translate(3px, -50%);
-  opacity: 1;
-}
-
-.platform-visit-button i {
-  color: color-mix(in srgb, var(--platform-accent) 82%, var(--text-color) 18%);
-  filter: none;
-}
-
-/* Light mode uses deeper edge contrast and layered reflection. */
-body.light-e .platform-visit-button,
-body.light-mode .platform-visit-button {
-  border-color: color-mix(in srgb, var(--platform-accent) 34%, rgba(156, 175, 201, 0.72));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -2px 0 color-mix(in srgb, var(--platform-accent) 16%, rgba(44, 59, 82, 0.12)),
-    inset 0 0 24px rgba(255, 255, 255, 0.27),
-    0 16px 36px rgba(35, 53, 84, 0.14),
-    0 4px 12px rgba(35, 53, 84, 0.08);
-}
-
-@media (prefers-color-scheme: light) {
-  body:not(.dark-mode) .platform-visit-button {
-    border-color: color-mix(in srgb, var(--platform-accent) 34%, rgba(156, 175, 201, 0.72));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.98),
-      inset 0 -2px 0 color-mix(in srgb, var(--platform-accent) 16%, rgba(44, 59, 82, 0.12)),
-      inset 0 0 24px rgba(255, 255, 255, 0.27),
-      0 16px 36px rgba(35, 53, 84, 0.14),
-      0 4px 12px rgba(35, 53, 84, 0.08);
-  }
-}
-
-html.dark-mode body .platform-visit-button,
-body.dark-mode .platform-visit-button {
-  color: #f7f7fa !important;
-  border-color: color-mix(in srgb, var(--platform-accent) 34%, rgba(255, 255, 255, 0.16));
-  background:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.13), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, var(--platform-accent) 14%, rgba(24, 24, 28, 0.82)), rgba(14, 14, 17, 0.78) 62%, rgba(5, 5, 6, 0.84)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
-    inset 0 0 20px rgba(255, 255, 255, 0.035),
-    0 16px 36px rgba(0, 0, 0, 0.46),
-    0 0 16px color-mix(in srgb, var(--platform-accent) 10%, transparent);
-}
-
-@media (max-width: 520px) {
-  .platform-visit-button {
-    width: 100%;
-    min-width: 0;
-    padding-right: 46px;
-  }
-}
-
-/* ======================================================= */
-/* ONYX UNIVERSAL SURFACE SYSTEM - FINAL OVERRIDES         */
-/* Every visible section and control uses one shared system. */
-/* ======================================================= */
-:root {
-  --onyx-surface:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.88), transparent 42%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.62), rgba(231, 243, 255, 0.38) 56%, rgba(199, 221, 246, 0.24));
-  --onyx-surface-subtle:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.70), transparent 45%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.48), rgba(230, 242, 255, 0.28));
-  --onyx-edge: rgba(255, 255, 255, 0.82);
-  --onyx-inner-edge: rgba(57, 76, 103, 0.10);
-  --onyx-shadow:
-    0 24px 56px rgba(35, 53, 84, 0.15),
-    0 6px 18px rgba(35, 53, 84, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -1px 0 var(--onyx-inner-edge),
-    inset 0 0 22px rgba(255, 255, 255, 0.20);
-  --onyx-control-shadow:
-    0 9px 22px rgba(35, 53, 84, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 -1px 0 rgba(57, 76, 103, 0.10);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --onyx-surface:
-      radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.13), transparent 44%),
-      linear-gradient(145deg, rgba(37, 37, 43, 0.78), rgba(16, 16, 20, 0.72) 58%, rgba(7, 7, 9, 0.82));
-    --onyx-surface-subtle:
-      radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.09), transparent 46%),
-      linear-gradient(145deg, rgba(34, 34, 39, 0.70), rgba(12, 12, 15, 0.72));
-    --onyx-edge: rgba(255, 255, 255, 0.16);
-    --onyx-inner-edge: rgba(0, 0, 0, 0.52);
-    --onyx-shadow:
-      0 28px 64px rgba(0, 0, 0, 0.58),
-      0 7px 20px rgba(0, 0, 0, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.56),
-      inset 0 0 20px rgba(255, 255, 255, 0.035);
-    --onyx-control-shadow:
-      0 10px 26px rgba(0, 0, 0, 0.38),
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.50);
-  }
-}
-
-html.dark-mode body,
-body.dark-mode {
-  --onyx-surface:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.13), transparent 44%),
-    linear-gradient(145deg, rgba(37, 37, 43, 0.78), rgba(16, 16, 20, 0.72) 58%, rgba(7, 7, 9, 0.82));
-  --onyx-surface-subtle:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.09), transparent 46%),
-    linear-gradient(145deg, rgba(34, 34, 39, 0.70), rgba(12, 12, 15, 0.72));
-  --onyx-edge: rgba(255, 255, 255, 0.16);
-  --onyx-inner-edge: rgba(0, 0, 0, 0.52);
-  --onyx-shadow:
-    0 28px 64px rgba(0, 0, 0, 0.58),
-    0 7px 20px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.56),
-    inset 0 0 20px rgba(255, 255, 255, 0.035);
-  --onyx-control-shadow:
-    0 10px 26px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.50);
-}
-
-/* Primary Onyx shells */
-.section,
-.profile-section,
-.social-links-section,
-.shoutouts-section,
-.tech-section,
-.useful-links-section,
-.disabilities-section,
-.countdown-section,
-#quote-section,
-#daily-quote-section,
-#business-section,
-.business-info-section,
-#version-info-section,
-#legal-section,
-.legal-section,
-footer {
-  background: var(--onyx-surface) !important;
-  border: 1px solid var(--onyx-edge) !important;
-  box-shadow: var(--onyx-shadow) !important;
-  -webkit-backdrop-filter: blur(30px) saturate(175%) !important;
-  backdrop-filter: blur(30px) saturate(175%) !important;
-}
-
-/* Nested cards and information rows */
-.tech-item,
-.creator-card,
-.instagram-creator-card,
-.youtube-creator-card,
-.tiktok-profile-card,
-.instagram-profile-card,
-.youtube-channel-card,
-.biz-panel,
-.biz-meta__row,
-.biz-today-timeline,
-.biz-details,
-.regular-hours-list li,
-.special-hours-display li,
-.school-day,
-.version-list li,
-.copy-protection-message,
-.legal-protection-message,
-.live-activity,
-.music-progress-time,
-.la-updated,
-#live-activity-updated,
-.datetime-section,
-#daily-focus {
-  background: var(--onyx-surface-subtle) !important;
-  border: 1px solid color-mix(in srgb, var(--onyx-edge) 78%, var(--border-color)) !important;
-  box-shadow: var(--onyx-control-shadow) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(165%) !important;
-  backdrop-filter: blur(22px) saturate(165%) !important;
-}
-
-/* Interactive controls */
-.search-container.unified,
-.creator-search,
-.sort-inline-select,
-.tech-sort-select,
-.tech-chip,
-.link-button,
-.social-button,
-.disabilities-section a,
-.biz-action,
-.biz-segmented-time,
-.biz-segmented-time__option.is-active,
-.contact-info a,
-.visit-profile,
-.instagram-visit-profile,
-.youtube-visit-profile,
-.platform-visit-button,
-#quote-controls select,
-#quote-controls input,
-#quote-controls button,
-.scroll-to-top {
-  border-color: color-mix(in srgb, var(--onyx-edge) 76%, var(--border-color)) !important;
-  box-shadow: var(--onyx-control-shadow) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(170%) !important;
-  backdrop-filter: blur(22px) saturate(170%) !important;
-}
-
-/* Improve readability throughout all Onyx surfaces. */
-.section h1,
-.section h2,
-.section h3,
-.section h4,
-.profile-section h1,
-.social-links-section h2,
-.shoutouts-section h2,
-.tech-section h2,
-.useful-links-section h2,
-.disabilities-section h2,
-.countdown-section h2,
-#version-info-section .version-header,
-#legal-section .legal-header {
-  color: var(--text-color) !important;
-  text-shadow: none !important;
-}
-
-.section p,
-.section li,
-.section span,
-.section label,
-.profile-bio,
-.creator-bio,
-.instagram-creator-bio,
-.youtube-creator-bio,
-.youtube-channel-description,
-.tiktok-subtitle,
-.instagram-bio-block {
-  color: color-mix(in srgb, var(--secondary-text) 76%, var(--text-color) 24%) !important;
-}
-
-/* Keep status, accent, and branded text from being neutralized. */
-.status-open,
-.status-closed,
-.status-unavailable,
-.follower-count,
-.instagram-follower-count,
-.youtube-subscriber-count,
-.countdown-number,
-.version-value,
-a {
-  color: var(--accent-color);
-}
-
-/* Better keyboard visibility on glass. */
-body:not(.focus-outline-disabled) :focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent-color) 78%, white 22%) !important;
-  outline-offset: 3px !important;
-  box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--accent-color) 18%, transparent),
-    var(--onyx-control-shadow) !important;
-}
-
-/* Hover stays physical rather than glowing excessively. */
-@media (hover: hover) and (pointer: fine) {
-  .social-button:hover,
-  .link-button:hover,
-  .disabilities-section a:hover,
-  .platform-visit-button:hover,
-  .biz-action:hover,
-  .contact-info a:hover,
-  .tech-item:hover,
-  .creator-card:hover,
-  .instagram-creator-card:hover,
-  .youtube-creator-card:hover {
-    transform: translateY(-2px);
-    border-color: color-mix(in srgb, var(--accent-color) 36%, var(--onyx-edge)) !important;
-    box-shadow:
-      0 18px 38px color-mix(in srgb, var(--shadow-color) 34%, transparent),
-      inset 0 1px 0 color-mix(in srgb, var(--glow-color) 72%, transparent),
-      inset 0 -1px 0 var(--onyx-inner-edge) !important;
-    filter: none !important;
-  }
-}
-
-/* Keep form text and native menus legible. */
-input,
-select,
-textarea,
-button {
-  color: var(--text-color);
-}
-
-select option {
-  color: var(--text-color);
-  background: color-mix(in srgb, var(--content-bg) 96%, var(--bg-color) 4%);
-}
-
-@media (max-width: 600px) {
-  .section,
-  .profile-section,
-  .social-links-section,
-  .shoutouts-section,
-  .tech-section,
-  .useful-links-section,
-  .disabilities-section,
-  .countdown-section,
-  #business-section,
-  #version-info-section,
-  #legal-section {
-    border-radius: 24px !important;
-  }
-}
-
-
-/* ======================================================= */
-/* ENCODING-SAFE ICONS AND CHEVRONS - FINAL FIX            */
-/* Uses ASCII CSS escapes and drawn shapes only.           */
-/* ======================================================= */
-
-/* Remove mojibake-producing text glyphs from generated UI. */
-.version-header::before,
-.legal-header::before,
-.copy-protection-message::before,
-.legal-protection-message::before {
-  content: "" !important;
-  font-family: inherit !important;
-  text-shadow: none !important;
-}
-
-/* Version icon: compact bar chart drawn with gradients. */
-.version-header::before {
-  display: inline-block;
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
-  background:
-    linear-gradient(to top, var(--accent-color) 0 70%, transparent 70%) 4px 11px / 4px 9px no-repeat,
-    linear-gradient(to top, var(--accent-color) 0 100%, transparent 100%) 10px 6px / 4px 14px no-repeat,
-    linear-gradient(to top, var(--accent-color) 0 48%, transparent 48%) 16px 13px / 4px 7px no-repeat,
-    color-mix(in srgb, var(--content-bg) 78%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
-  box-shadow: var(--onyx-control-shadow);
-}
-
-/* Legal icon: stable shield shape without an emoji font. */
-.legal-header::before {
-  display: inline-block;
-  flex: 0 0 auto;
-  width: 24px;
-  height: 26px;
-  border-radius: 12px 12px 14px 14px;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--accent-color) 88%, white 12%), color-mix(in srgb, var(--accent-color) 68%, black 32%));
-  clip-path: polygon(50% 0, 92% 16%, 84% 68%, 50% 100%, 16% 68%, 8% 16%);
-  box-shadow: 0 7px 16px color-mix(in srgb, var(--accent-color) 20%, transparent);
-}
-
-/* Legal notice icons: exclamation mark drawn by pseudo-elements. */
-.copy-protection-message::before,
-.legal-protection-message::before {
-  display: inline-block !important;
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  border-radius: 50% !important;
-  background:
-    linear-gradient(currentColor, currentColor) center 8px / 3px 12px no-repeat,
-    radial-gradient(circle, currentColor 0 2px, transparent 2.5px) center 24px / 6px 6px no-repeat,
-    var(--onyx-surface-subtle) !important;
-  border: 1px solid currentColor !important;
-  box-shadow: var(--onyx-control-shadow) !important;
-}
-
-.copy-protection-message::before {
-  color: #ff5b62 !important;
-}
-
-.legal-protection-message::before {
-  color: #ffb020 !important;
-}
-
-/* Visit-button arrow: draw a right arrow instead of rendering text. */
-.platform-visit-button::after {
-  content: "" !important;
-  width: 14px !important;
-  height: 10px !important;
-  right: 20px !important;
-  border: 0 !important;
-  background:
-    linear-gradient(currentColor, currentColor) left center / 11px 2px no-repeat !important;
-  opacity: 0.76 !important;
-  transform: translateY(-50%) !important;
-  clip-path: none !important;
-}
-
-.platform-visit-button::before {
-  pointer-events: none;
-}
-
-.platform-visit-button .button-arrow,
-.platform-visit-button .visit-arrow {
-  display: none !important;
-}
-
-.platform-visit-button::after {
-  box-shadow: 4px -4px 0 -2px currentColor, 4px 4px 0 -2px currentColor;
-}
-
-.platform-visit-button:hover::after,
-.platform-visit-button:focus-visible::after {
-  transform: translate(3px, -50%) !important;
-  opacity: 1 !important;
-}
-
-/* Existing chevrons remain shape-based and cannot become mojibake. */
-.link-button::after,
-.social-button .social-chevron,
-.social-button:not(:has(.social-chevron)) span::after {
-  content: "" !important;
-  font-family: inherit !important;
-}
-
-/* Legal layout stays readable at narrow widths. */
-.legal-header {
-  min-width: 0;
-}
-
-.copy-protection-message,
-.legal-protection-message {
-  grid-template-columns: 34px minmax(0, 1fr) !important;
-  overflow: hidden;
-}
-
-.copy-protection-message > *,
-.legal-protection-message > * {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-@media (max-width: 400px) {
-  .copy-protection-message,
-  .legal-protection-message {
-    grid-template-columns: 30px minmax(0, 1fr) !important;
-    align-items: start;
-  }
-
-  .copy-protection-message::before,
-  .legal-protection-message::before {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    background:
-      linear-gradient(currentColor, currentColor) center 7px / 3px 10px no-repeat,
-      radial-gradient(circle, currentColor 0 2px, transparent 2.5px) center 21px / 6px 6px no-repeat,
-      var(--onyx-surface-subtle) !important;
-  }
-}
-
-/* ======================================================= */
-/* ONYX CONTRAST SYSTEM V3 - FINAL AUTHORITATIVE LAYER     */
-/* Keeps page, section, card, and control depths distinct. */
-/* ======================================================= */
-:root {
-  --onyx-page:
-    radial-gradient(circle at 12% -4%, rgba(255, 255, 255, 0.98), transparent 31%),
-    radial-gradient(circle at 88% 5%, rgba(116, 188, 255, 0.23), transparent 28%),
-    linear-gradient(145deg, #dcecff 0%, #f7fbff 48%, #e4f1ff 100%);
-  --onyx-section:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.92), transparent 42%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(231, 242, 255, 0.58) 58%, rgba(207, 226, 248, 0.46));
-  --onyx-card:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.82), transparent 44%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.62), rgba(220, 235, 252, 0.48) 62%, rgba(194, 216, 242, 0.38));
-  --onyx-control:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(235, 243, 253, 0.66));
-  --onyx-section-border: rgba(255, 255, 255, 0.92);
-  --onyx-card-border: rgba(129, 157, 191, 0.38);
-  --onyx-control-border: rgba(109, 137, 171, 0.44);
-  --onyx-section-shadow:
-    0 28px 64px rgba(38, 60, 92, 0.18),
-    0 7px 20px rgba(38, 60, 92, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(69, 91, 121, 0.13);
-  --onyx-card-shadow:
-    0 16px 36px rgba(38, 60, 92, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94),
-    inset 0 -1px 0 rgba(69, 91, 121, 0.14);
-  --onyx-control-shadow:
-    0 8px 18px rgba(38, 60, 92, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -1px 0 rgba(69, 91, 121, 0.16);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --onyx-page:
-      radial-gradient(circle at 14% -6%, rgba(52, 94, 148, 0.22), transparent 30%),
-      radial-gradient(circle at 88% 4%, rgba(102, 73, 148, 0.13), transparent 27%),
-      linear-gradient(145deg, #050506 0%, #090a0d 48%, #040405 100%);
-    --onyx-section:
-      radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.13), transparent 42%),
-      linear-gradient(145deg, rgba(40, 41, 47, 0.84), rgba(22, 23, 28, 0.82) 58%, rgba(12, 13, 17, 0.88));
-    --onyx-card:
-      radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.09), transparent 44%),
-      linear-gradient(145deg, rgba(31, 32, 38, 0.86), rgba(17, 18, 23, 0.88) 62%, rgba(9, 10, 13, 0.92));
-    --onyx-control:
-      linear-gradient(180deg, rgba(43, 44, 51, 0.92), rgba(20, 21, 26, 0.92));
-    --onyx-section-border: rgba(255, 255, 255, 0.18);
-    --onyx-card-border: rgba(255, 255, 255, 0.13);
-    --onyx-control-border: rgba(255, 255, 255, 0.17);
-    --onyx-section-shadow:
-      0 30px 68px rgba(0, 0, 0, 0.62),
-      0 8px 22px rgba(0, 0, 0, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.62);
-    --onyx-card-shadow:
-      0 18px 40px rgba(0, 0, 0, 0.48),
-      inset 0 1px 0 rgba(255, 255, 255, 0.13),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.58);
-    --onyx-control-shadow:
-      0 10px 24px rgba(0, 0, 0, 0.38),
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.62);
-  }
-}
-
-body.light-e,
-body.light-mode {
-  --onyx-page:
-    radial-gradient(circle at 12% -4%, rgba(255, 255, 255, 0.98), transparent 31%),
-    radial-gradient(circle at 88% 5%, rgba(116, 188, 255, 0.23), transparent 28%),
-    linear-gradient(145deg, #dcecff 0%, #f7fbff 48%, #e4f1ff 100%);
-  --onyx-section:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.92), transparent 42%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(231, 242, 255, 0.58) 58%, rgba(207, 226, 248, 0.46));
-  --onyx-card:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.82), transparent 44%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.62), rgba(220, 235, 252, 0.48) 62%, rgba(194, 216, 242, 0.38));
-  --onyx-control: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(235, 243, 253, 0.66));
-  --onyx-section-border: rgba(255, 255, 255, 0.92);
-  --onyx-card-border: rgba(129, 157, 191, 0.38);
-  --onyx-control-border: rgba(109, 137, 171, 0.44);
-}
-
-html.dark-mode body,
-body.dark-mode {
-  --onyx-page:
-    radial-gradient(circle at 14% -6%, rgba(52, 94, 148, 0.22), transparent 30%),
-    radial-gradient(circle at 88% 4%, rgba(102, 73, 148, 0.13), transparent 27%),
-    linear-gradient(145deg, #050506 0%, #090a0d 48%, #040405 100%);
-  --onyx-section:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.13), transparent 42%),
-    linear-gradient(145deg, rgba(40, 41, 47, 0.84), rgba(22, 23, 28, 0.82) 58%, rgba(12, 13, 17, 0.88));
-  --onyx-card:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.09), transparent 44%),
-    linear-gradient(145deg, rgba(31, 32, 38, 0.86), rgba(17, 18, 23, 0.88) 62%, rgba(9, 10, 13, 0.92));
-  --onyx-control: linear-gradient(180deg, rgba(43, 44, 51, 0.92), rgba(20, 21, 26, 0.92));
-  --onyx-section-border: rgba(255, 255, 255, 0.18);
-  --onyx-card-border: rgba(255, 255, 255, 0.13);
-  --onyx-control-border: rgba(255, 255, 255, 0.17);
-}
-
-body {
-  background: var(--onyx-page) !important;
-  background-attachment: fixed !important;
-}
-
-/* Level 1: outer sections */
-.section,
-.profile-section,
-.social-links-section,
-.shoutouts-section,
-.tech-section,
-.useful-links-section,
-.disabilities-section,
-.countdown-section,
-#daily-quote-section,
-#business-section,
-.business-info-section,
-#version-info-section,
-#legal-section,
-footer {
-  background: var(--onyx-section) !important;
-  border-color: var(--onyx-section-border) !important;
+body { background: var(--onyx-page-bg) fixed !important; }
+
+/* Surface levels */
+.section, .profile-section, .social-links-section, .shoutouts-section, .tech-section, .useful-links-section, .disabilities-section, .countdown-section, #daily-quote-section, #business-section, .business-info-section, #version-info-section, #legal-section, footer {
+  background: var(--onyx-section-bg) !important;
+  border: 1px solid var(--onyx-section-border) !important;
   box-shadow: var(--onyx-section-shadow) !important;
+  backdrop-filter: blur(30px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(170%) !important;
 }
 
-/* Level 2: cards inside sections */
-.live-activity,
-.tech-item,
-.creator-card,
-.instagram-creator-card,
-.youtube-creator-card,
-.tiktok-profile-card,
-.instagram-profile-card,
-.youtube-channel-card,
-.biz-panel,
-.biz-meta__row,
-.biz-today-timeline,
-.biz-details,
-.regular-hours-list li,
-.special-hours-display li,
-.school-day,
-.version-list li,
-.copy-protection-message,
-.legal-protection-message,
-.datetime-section,
-#daily-focus {
-  background: var(--onyx-card) !important;
-  border-color: var(--onyx-card-border) !important;
+.live-activity, .tech-item, .creator-card, .instagram-creator-card, .youtube-creator-card, .tiktok-profile-card, .instagram-profile-card, .youtube-channel-card, .biz-panel, .biz-meta__row, .biz-today-timeline, .biz-details, .regular-hours-list li, .special-hours-display li, .school-day, .version-list li, .copy-protection-message, .legal-protection-message {
+  background: var(--onyx-card-bg) !important;
+  border: 1px solid var(--onyx-card-border) !important;
   box-shadow: var(--onyx-card-shadow) !important;
 }
 
-/* Level 3: controls and rows */
-.search-container.unified,
-.social-button,
-.link-button,
-.disabilities-section a,
-.platform-visit-button,
-.visit-profile,
-.instagram-visit-profile,
-.youtube-visit-profile,
-.biz-action,
-.biz-segmented-time,
-.contact-info a,
-.music-progress-time,
-.la-updated,
-#live-activity-updated,
-#live-time,
-#weather-widget,
-#battery-widget,
-.scroll-to-top {
-  background: var(--onyx-control) !important;
-  border-color: var(--onyx-control-border) !important;
+.search-container.unified, .social-button, .link-button, .disabilities-section a, .platform-visit-button, .biz-action, .biz-segmented-time, .contact-info a, .music-progress-time, .la-updated, #live-activity-updated {
+  background: var(--onyx-control-bg) !important;
+  border: 1px solid var(--onyx-control-border) !important;
   box-shadow: var(--onyx-control-shadow) !important;
 }
 
-/* Live Activity must never inherit a near-black card in light mode. */
-body.light-e .live-activity,
-body.light-mode .live-activity {
-  color: #111114 !important;
-  background:
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--dynamic-accent) 15%, rgba(255, 255, 255, 0.78)), transparent 54%),
-    var(--onyx-card) !important;
-  border-color: color-mix(in srgb, var(--dynamic-accent) 22%, var(--onyx-card-border)) !important;
+/* Light-mode Live Activity readability */
+body.light-e .live-activity, body.light-mode .live-activity, html.light-mode body .live-activity {
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--dynamic-accent) 14%, white), transparent 55%), var(--onyx-card-bg) !important;
+  color: #111318 !important;
+}
+body.light-e .live-song-title, body.light-e .status-line, body.light-e .music-progress-time span, body.light-e #live-activity-updated,
+body.light-mode .live-song-title, body.light-mode .status-line, body.light-mode .music-progress-time span, body.light-mode #live-activity-updated,
+html.light-mode body .live-song-title, html.light-mode body .status-line, html.light-mode body .music-progress-time span, html.light-mode body #live-activity-updated { color: #20242b !important; }
+body.light-e .live-artist, body.light-e .la-updated, body.light-mode .live-artist, body.light-mode .la-updated, html.light-mode body .live-artist, html.light-mode body .la-updated { color: #565e6b !important; }
+
+/* ======================================================= */
+/* CLEAN CSS-DRAWN ARROWS                                  */
+/* ======================================================= */
+.platform-visit-button { padding-right: 52px !important; }
+.platform-visit-button::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 22px !important;
+  width: 10px !important;
+  height: 10px !important;
+  border: 0 !important;
+  border-top: 2px solid currentColor !important;
+  border-right: 2px solid currentColor !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateY(-50%) rotate(45deg) !important;
+  opacity: .72 !important;
+  transition: transform .2s ease, opacity .2s ease !important;
+}
+.platform-visit-button:hover::after, .platform-visit-button:focus-visible::after {
+  transform: translate(3px,-50%) rotate(45deg) !important;
+  opacity: 1 !important;
 }
 
-@media (prefers-color-scheme: light) {
-  body:not(.dark-mode) .live-activity {
-    color: #111114 !important;
-    background:
-      radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--dynamic-accent) 15%, rgba(255, 255, 255, 0.78)), transparent 54%),
-      var(--onyx-card) !important;
-    border-color: color-mix(in srgb, var(--dynamic-accent) 22%, var(--onyx-card-border)) !important;
-  }
-
-  body:not(.dark-mode) .live-song-title,
-  body:not(.dark-mode) .status-line,
-  body:not(.dark-mode) .music-progress-time span,
-  body:not(.dark-mode) #live-activity-updated {
-    color: #202127 !important;
-  }
-
-  body:not(.dark-mode) .live-artist,
-  body:not(.dark-mode) .music-progress-time,
-  body:not(.dark-mode) .la-updated {
-    color: #505663 !important;
-  }
-}
-
-body.light-e .live-song-title,
-body.light-e .status-line,
-body.light-e .music-progress-time span,
-body.light-e #live-activity-updated,
-body.light-mode .live-song-title,
-body.light-mode .status-line,
-body.light-mode .music-progress-time span,
-body.light-mode #live-activity-updated {
-  color: #202127 !important;
-}
-
-body.light-e .live-artist,
-body.light-e .la-updated,
-body.light-mode .live-artist,
-body.light-mode .la-updated {
-  color: #505663 !important;
-}
-
-html.dark-mode body .live-song-title,
-html.dark-mode body .status-line,
-html.dark-mode body .music-progress-time span,
-html.dark-mode body #live-activity-updated,
-body.dark-mode .live-song-title,
-body.dark-mode .status-line,
-body.dark-mode .music-progress-time span,
-body.dark-mode #live-activity-updated {
-  color: #f5f5f7 !important;
-}
-
-html.dark-mode body .live-artist,
-html.dark-mode body .la-updated,
-body.dark-mode .live-artist,
-body.dark-mode .la-updated {
-  color: #b8bbc5 !important;
-}
-
-/* Social rows use alternating light direction for visible separation. */
-.social-links-container .social-button:nth-child(even) {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glow-color) 34%, transparent), transparent 54%),
-    linear-gradient(105deg, color-mix(in srgb, var(--content-bg) 76%, transparent), color-mix(in srgb, var(--accent-color) 5%, var(--content-bg))) !important;
-}
-
-.social-links-container .social-button:nth-child(odd) {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glow-color) 30%, transparent), transparent 54%),
-    linear-gradient(255deg, color-mix(in srgb, var(--content-bg) 76%, transparent), color-mix(in srgb, var(--accent-color) 4%, var(--content-bg))) !important;
-}
-
-.social-button span,
-.link-button,
-.disabilities-section a,
-.platform-visit-button {
-  color: var(--text-color) !important;
-}
-
-/* Search bars sit above their parent surface instead of disappearing into it. */
-.search-container.unified {
-  overflow: visible;
-}
-
-.creator-search {
-  color: var(--text-color) !important;
+.link-button::after, .disabilities-section a::after {
+  content: "" !important;
+  width: 9px !important;
+  height: 9px !important;
+  border-top: 2px solid currentColor !important;
+  border-right: 2px solid currentColor !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-.creator-search::placeholder {
-  color: color-mix(in srgb, var(--secondary-text) 84%, var(--text-color) 16%) !important;
-  opacity: 1 !important;
+.scroll-to-top .arrow-icon {
+  background-image: none !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-top: 3px solid currentColor !important;
+  border-left: 3px solid currentColor !important;
+  border-radius: 2px 0 0 0 !important;
+  color: var(--text-color) !important;
+  filter: none !important;
 }
+.scroll-to-top.scroll-up .arrow-icon { transform: translate(-50%,-35%) rotate(45deg) !important; }
+.scroll-to-top.scroll-down .arrow-icon { transform: translate(-50%,-65%) rotate(225deg) !important; }
 
-/* Progress track and timing capsule need clear internal contrast. */
-.music-progress-container {
-  background: color-mix(in srgb, var(--content-bg) 58%, var(--bg-color) 42%) !important;
-  border-color: var(--onyx-control-border) !important;
-  box-shadow:
-    inset 0 2px 4px color-mix(in srgb, var(--shadow-color) 30%, transparent),
-    0 1px 0 color-mix(in srgb, var(--glow-color) 48%, transparent) !important;
-}
-
-/* Dock remains separate from page cards. */
-.onyx-dock {
-  background:
-    radial-gradient(ellipse 70% 55% at 18% 0%, color-mix(in srgb, var(--glow-color) 62%, transparent), transparent 68%),
-    color-mix(in srgb, var(--content-bg) 76%, transparent) !important;
-  border-color: color-mix(in srgb, var(--onyx-section-border) 72%, var(--border-color)) !important;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 82%, transparent),
-    inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 28%, transparent),
-    0 18px 42px color-mix(in srgb, var(--shadow-color) 48%, transparent) !important;
-}
-
-.dock-active-lens {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glow-color) 38%, transparent), transparent 58%),
-    color-mix(in srgb, var(--accent-color) 10%, var(--content-bg)) !important;
-  border-color: color-mix(in srgb, var(--accent-color) 34%, var(--onyx-control-border)) !important;
-}
-
-/* Accessibility exceptions remain stronger than visual styling. */
-body.high-contrast,
-body.high-contrast .section,
-body.high-contrast .live-activity,
-body.high-contrast .social-button {
-  background: #000 !important;
-}
-
-@media (max-width: 600px) {
-  .section,
-  .profile-section,
-  .social-links-section,
-  .shoutouts-section,
-  .tech-section,
-  .useful-links-section,
-  .disabilities-section,
-  .countdown-section,
-  #business-section,
-  #version-info-section,
-  #legal-section {
-    box-shadow:
-      0 18px 42px color-mix(in srgb, var(--shadow-color) 34%, transparent),
-      inset 0 1px 0 color-mix(in srgb, var(--glow-color) 74%, transparent),
-      inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 22%, transparent) !important;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .platform-visit-button::after { transition: none !important; }
 }
