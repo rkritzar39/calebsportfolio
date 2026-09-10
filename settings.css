@@ -3913,3 +3913,101 @@ body {
     background: color-mix(in srgb, var(--content-bg) 96%, white 4%);
   }
 }
+
+/* ======================================================= */
+/* SETTINGS PAGE - UNIVERSAL ONYX FINAL OVERRIDES          */
+/* ======================================================= */
+body.settings-page .settings-header,
+body.settings-page .settings-subsection,
+body.settings-page .settings-footer,
+body.settings-page #cookie-consent-banner {
+  background: var(--onyx-surface, var(--glass-bg-light)) !important;
+  border: 1px solid var(--onyx-edge, var(--border-color)) !important;
+  box-shadow: var(--onyx-shadow, var(--glass-highlight-light), var(--glass-shadow-light)) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(175%) !important;
+  backdrop-filter: blur(30px) saturate(175%) !important;
+}
+
+body.settings-page .setting-card {
+  background: transparent;
+  border-bottom-color: color-mix(in srgb, var(--border-color) 52%, transparent);
+}
+
+body.settings-page .setting-card:hover {
+  background:
+    radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--glow-color) 38%, transparent), transparent 44%),
+    color-mix(in srgb, var(--content-bg) 76%, var(--accent-color) 5%);
+}
+
+body.settings-page .setting-title {
+  color: var(--text-color);
+  font-weight: 650;
+}
+
+body.settings-page .setting-description,
+body.settings-page .subsection-title,
+body.settings-page .version,
+body.settings-page .file-name,
+body.settings-page .layout-hint {
+  color: color-mix(in srgb, var(--secondary-text) 78%, var(--text-color) 22%) !important;
+}
+
+body.settings-page select,
+body.settings-page input:not([type="checkbox"]):not([type="range"]):not([type="color"]),
+body.settings-page textarea,
+body.settings-page .segmented-control,
+body.settings-page .custom-bg-label,
+body.settings-page #removeCustomBg,
+body.settings-page .button,
+body.settings-page .layout-reset-btn {
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--glow-color) 52%, transparent), transparent 48%),
+    color-mix(in srgb, var(--content-bg) 78%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--onyx-edge, var(--border-color)) 76%, var(--border-color)) !important;
+  box-shadow: var(--onyx-control-shadow, var(--shadow-elevation-1)) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(170%) !important;
+  backdrop-filter: blur(22px) saturate(170%) !important;
+  color: var(--text-color) !important;
+}
+
+body.settings-page .button-prominent,
+body.settings-page .layout-reset-btn {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, white 22%, transparent), transparent 52%),
+    color-mix(in srgb, var(--accent-color) 86%, var(--content-bg) 14%) !important;
+  color: #ffffff !important;
+}
+
+body.settings-page .setting-icon-container {
+  border: 1px solid color-mix(in srgb, white 24%, var(--accent-color));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.40),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.20),
+    0 8px 18px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+body.settings-page .md-switch .track {
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent);
+}
+
+body.settings-page .md-switch .thumb {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 5px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Maintain accessibility modes as authoritative exceptions. */
+body.high-contrast.settings-page .settings-header,
+body.high-contrast.settings-page .settings-subsection,
+body.high-contrast.settings-page .settings-footer,
+body.high-contrast.settings-page #cookie-consent-banner,
+body.ultra-minimal.settings-page .settings-header,
+body.ultra-minimal.settings-page .settings-subsection,
+body.ultra-minimal.settings-page .settings-footer {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
