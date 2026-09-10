@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "last_updated": "2026-09-04",
+  "last_updated": "2026-09-09",
 
-  "ios": "26.6.1",
-  "ipados": "26.6.1",
+  "ios": "26.6.2",
+  "ipados": "26.6.2",
   "macos": "26.6.2",
   "watchos": "26.6",
   "tvos": "26.6",
@@ -16,8 +16,8 @@
   "coloros": "16",
   "realmeui": "7",
   "hyperos": "3",
-  "harmonyos": "5",
-  "nothingos": "4",
+  "harmonyos": "7",
+  "nothingos": "5",
 
   "windows": "11",
   "windowsserver": "2025",
@@ -38,8 +38,8 @@
   "tizen": "10",
 
   "production_stable": {
-    "ios": "26.6.1",
-    "ipados": "26.6.1",
+    "ios": "26.6.2",
+    "ipados": "26.6.2",
     "macos": "26.6.2",
     "watchos": "26.6",
     "tvos": "26.6",
@@ -52,8 +52,8 @@
     "coloros": "16",
     "realmeui": "7",
     "hyperos": "3",
-    "harmonyos": "5",
-    "nothingos": "4",
+    "harmonyos": "7",
+    "nothingos": "5",
 
     "windows": "11",
     "windowsserver": "2025",
@@ -75,12 +75,12 @@
   },
 
   "public_beta": {
-    "ios": "iOS 27 Public Beta 6",
-    "ipados": "iPadOS 27 Public Beta 6",
-    "macos": "macOS 27 Public Beta 6",
-    "watchos": "watchOS 27 Public Beta 6",
-    "tvos": "tvOS 27 Public Beta 6",
-    "visionos": "visionOS 27 Public Beta 6",
+    "ios": "iOS 27 Release Candidate",
+    "ipados": "iPadOS 27 Release Candidate",
+    "macos": "macOS 27 Release Candidate",
+    "watchos": "watchOS 27 Release Candidate",
+    "tvos": "tvOS 27 Release Candidate",
+    "visionos": "visionOS 27 Release Candidate",
 
     "android": "Android 17 QPR2 Beta 4",
     "pixelui": "Android 17 QPR2 Beta 4",
@@ -89,10 +89,10 @@
     "coloros": "ColorOS 17 Beta",
     "realmeui": null,
     "hyperos": null,
-    "harmonyos": null,
+    "harmonyos": "HarmonyOS 7 Public Beta",
     "nothingos": "Nothing OS 5.0 Open Beta",
 
-    "windows": "Windows 11 Beta (26H1) Build 28020.2818",
+    "windows": "Windows 11 Beta (26H1) Build 28020.2904",
     "windowsserver": null,
     "chromeos": "16765.38.0",
     "ubuntu": null,
@@ -112,12 +112,12 @@
   },
 
   "developer_tester": {
-    "ios": "iOS 27 Beta 8",
-    "ipados": "iPadOS 27 Beta 8",
-    "macos": "macOS 27 Beta 8",
-    "watchos": "watchOS 27 Beta 8",
-    "tvos": "tvOS 27 Beta 8",
-    "visionos": "visionOS 27 Beta 8",
+    "ios": "iOS 27 Release Candidate",
+    "ipados": "iPadOS 27 Release Candidate",
+    "macos": "macOS 27 Release Candidate",
+    "watchos": "watchOS 27 Release Candidate",
+    "tvos": "tvOS 27 Release Candidate",
+    "visionos": "visionOS 27 Release Candidate",
 
     "android": "Android 17 QPR2 Beta 4",
     "pixelui": "Android 17 QPR2 Beta 4",
@@ -126,10 +126,10 @@
     "coloros": "ColorOS 17 Developer Preview",
     "realmeui": null,
     "hyperos": null,
-    "harmonyos": "HarmonyOS 6 Developer Preview Beta",
+    "harmonyos": null,
     "nothingos": "Nothing OS 5.0 Open Beta",
 
-    "windows": "Windows 11 Experimental (Future Platforms) Build 29648.1000",
+    "windows": "Windows 11 Experimental (Future Platforms) Build 29661.1000",
     "windowsserver": null,
     "chromeos": null,
     "ubuntu": null,
@@ -149,12 +149,12 @@
   },
 
   "release_candidate": {
-    "ios": null,
-    "ipados": null,
-    "macos": null,
-    "watchos": null,
-    "tvos": null,
-    "visionos": null,
+    "ios": "iOS 27 Release Candidate",
+    "ipados": "iPadOS 27 Release Candidate",
+    "macos": "macOS 27 Release Candidate",
+    "watchos": "watchOS 27 Release Candidate",
+    "tvos": "tvOS 27 Release Candidate",
+    "visionos": "visionOS 27 Release Candidate",
 
     "android": null,
     "pixelui": null,
