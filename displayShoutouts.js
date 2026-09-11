@@ -1,3 +1,10 @@
+
+/* ======================================================= */
+/* Privacy Guard                                           */
+/* Sensitive medical, disability, and device inventory     */
+/* content is intentionally disabled on the public site.   */
+/* ======================================================= */
+const PUBLIC_SENSITIVE_SECTIONS_DISABLED = true;
 // displayShoutouts.js
 
 // Use the same Firebase config as in admin.js (Ensure this is correct)
@@ -179,7 +186,7 @@ async function initializePushNotifications() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (firebaseAppInitialized && db) {
-    setupSmartRealtimeNotifications();
+    // Smart notification initialization disabled.
   }
 });
 
@@ -318,7 +325,7 @@ function setupSmartRealtimeNotifications() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (firebaseAppInitialized && db) {
-    setupSmartRealtimeNotifications();
+    // Smart notification initialization disabled.
     watchAcademicAvailability();
   }
 });
@@ -4662,7 +4669,7 @@ function setupTechSearchControls() {
 // ======================
 // TECH ITEMS FIRESTORE LOADER
 // ======================
-async function loadAndDisplayTechItems() {
+async function disabled_loadAndDisplayTechItems() {
     const techItemsListContainer = document.getElementById("tech-items-list-dynamic");
 
     if (!techItemsListContainer) {
@@ -8457,11 +8464,6 @@ async function initializeHomepageContent() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (firebaseAppInitialized && db) {
-    setupRealtimeNotifications();
-  }
-});
+
 
 // --- Call the main initialization function when the DOM is ready ---
-document.addEventListener('DOMContentLoaded', initializeHomepageContent);
