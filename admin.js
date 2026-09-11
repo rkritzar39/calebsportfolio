@@ -1,3 +1,5 @@
+/* Sensitive device inventory and disability-management interfaces were removed.
+   Existing database records must also be deleted separately from Firestore. */
 // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
@@ -102,27 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
     await clearManualStatus();
   });
 
-  // Prefill the form from Firestore
-  loadManualStatusToForm();
+  // Manual status is loaded after Firebase Auth confirms an authorized admin.
 
-  // Optional: realtime UI reflection if manual doc updated elsewhere
-  (async () => {
-    try {
-      // dynamic import to avoid initial bundle dependency if not needed:
-      const { onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js");
-      onSnapshot(MANUAL_DOC, (snap) => {
-        if (!snap.exists()) return;
-        const data = snap.data();
-        // If another admin updates the manual status, reflect in the UI
-        $("manual-status-text").value = data.text || "";
-        $("manual-status-icon").value = data.icon || "manual";
-        $("manual-status-enabled").checked = !!data.enabled;
-      });
-    } catch (e) {
-      // not fatal — form still works
-      console.warn("Realtime watch for manual status not enabled:", e);
-    }
-  })();
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -3892,6 +3875,7 @@ onAuthStateChanged(auth, async user => {
             
             try {
                 if (typeof loadProfileData === 'function') loadProfileData();
+                if (typeof loadManualStatusToForm === 'function') loadManualStatusToForm();
                 if (typeof loadBusinessInfoData === 'function') loadBusinessInfoData();
                 if (typeof setupBusinessInfoListeners === 'function') setupBusinessInfoListeners();
                 if (typeof loadShoutoutsAdmin === 'function') {
@@ -3901,8 +3885,8 @@ onAuthStateChanged(auth, async user => {
                 }
                 if (typeof loadUsefulLinksAdmin === 'function') loadUsefulLinksAdmin();
                 if (typeof loadSocialLinksAdmin === 'function') loadSocialLinksAdmin();
-                if (typeof loadDisabilitiesAdmin === 'function') loadDisabilitiesAdmin();
-                if (typeof loadTechItemsAdmin === 'function') loadTechItemsAdmin();
+                
+                
                 if (typeof loadLegislationAdmin === 'function') loadLegislationAdmin();
 
                 const addClassBtn = document.getElementById("add-academic-class-btn");
@@ -4014,8 +3998,8 @@ onAuthStateChanged(auth, async user => {
     
 document.addEventListener("DOMContentLoaded", () => {
     const activeLoginForm = document.getElementById('login-form') || (typeof loginForm !== 'undefined' ? loginForm : null);
-    const activeEmailInput = document.getElementById('email-input') || (typeof emailInput !== 'undefined' ? emailInput : null);
-    const activePasswordInput = document.getElementById('password-input') || (typeof passwordInput !== 'undefined' ? passwordInput : null);
+    const activeEmailInput = document.getElementById('email') || (typeof emailInput !== 'undefined' ? emailInput : null);
+    const activePasswordInput = document.getElementById('password') || (typeof passwordInput !== 'undefined' ? passwordInput : null);
     const activeAuthStatus = document.getElementById('auth-status') || (typeof authStatus !== 'undefined' ? authStatus : null);
 
     if (activeLoginForm) { 
@@ -4460,13 +4444,13 @@ function renderUsefulLinkAdminListItem(container, docId, label, url, order, dele
     itemDiv.innerHTML = `
         <div class="item-content">
              <div class="item-details">
-                <strong>${label || 'N/A'}</strong>
-                <span>(${url || 'N/A'})</span>
-                <small>Order: ${order ?? 'N/A'}</small>
+                <strong>${escapeAdminHTML(label || 'N/A')}</strong>
+                <span>(${escapeAdminHTML(url || 'N/A')})</span>
+                <small>Order: ${escapeAdminHTML(order ?? 'N/A')}</small>
              </div>
         </div>
         <div class="item-actions">
-            <a href="${url || '#'}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Link">
+            <a href="${escapeAdminHTML(url || '#')}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Link">
                  <i class="fas fa-external-link-alt"></i> Visit
             </a>
             <button type="button" class="edit-button small-button">Edit</button>
@@ -4704,7 +4688,7 @@ function closeEditUsefulLinkModal() { //
 
        itemDiv.innerHTML = `
            <div class="item-content"><div class="item-details">
-               <strong>${label || 'N/A'}</strong><span>(${displayUrl})</span><small>Order: ${order ?? 'N/A'}</small>
+               <strong>${escapeAdminHTML(label || 'N/A')}</strong><span>(${displayUrl})</span><small>Order: ${escapeAdminHTML(order ?? 'N/A')}</small>
            </div></div>
            <div class="item-actions">
                <a href="${visitUrl}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Link" ${visitUrl === '#' ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
@@ -5242,27 +5226,6 @@ async function handleDeleteLegislation(docId) {
         showAdminStatus(`Error: ${error.message}`, true);
     }
 }
-
-    // Add Shoutout Forms
-    if (addShoutoutTiktokForm) { //
-        addShoutoutTiktokForm.addEventListener('submit', (e) => { //
-            e.preventDefault(); // Prevent default submission
-            handleAddShoutout('tiktok', addShoutoutTiktokForm); // Call handler
-        });
-    }
-    if (addShoutoutInstagramForm) { //
-        addShoutoutInstagramForm.addEventListener('submit', (e) => { //
-            e.preventDefault(); //
-            handleAddShoutout('instagram', addShoutoutInstagramForm); //
-        });
-    }
-    if (addShoutoutYoutubeForm) { //
-        addShoutoutYoutubeForm.addEventListener('submit', (e) => { //
-            e.preventDefault(); //
-            handleAddShoutout('youtube', addShoutoutYoutubeForm); //
-        });
-    }
-
     // Profile Save Form
     if (profileForm && !profileForm.__profileSaveListenerAttached) {
         profileForm.addEventListener('submit', saveProfileData);
@@ -5281,24 +5244,11 @@ async function handleDeleteLegislation(docId) {
     }
 
     // Maintenance Mode Toggle Listener (with defensive removal)
-if (maintenanceModeToggle) {
-    console.log("DEBUG: Preparing maintenance mode listener for:", maintenanceModeToggle);
-
-    // Define the handler function separately so we can refer to it
-    const handleMaintenanceToggle = (e) => {
-        // console.log(`DEBUG: Maintenance 'change' event fired! Checked: ${e.target.checked}`); // You can remove this debug line later
-        saveMaintenanceModeStatus(e.target.checked);
-    };
-
-    // Remove any potentially existing listener first to prevent duplicates
-    maintenanceModeToggle.removeEventListener('change', handleMaintenanceToggle);
-
-    // Add the listener using the named handler function
-    maintenanceModeToggle.addEventListener('change', handleMaintenanceToggle);
-    console.log("DEBUG: Added/Re-added maintenance mode listener."); // You can remove this debug line later
-
-} else {
-    console.log("DEBUG: Maintenance toggle element not found.");
+if (maintenanceModeToggle && maintenanceModeToggle.dataset.listenerAttached !== "true") {
+    maintenanceModeToggle.dataset.listenerAttached = "true";
+    maintenanceModeToggle.addEventListener("change", (event) => {
+        saveMaintenanceModeStatus(event.target.checked);
+    });
 }
 
     // *** Search Input Event Listeners ***
