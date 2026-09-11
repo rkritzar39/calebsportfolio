@@ -1,399 +1,221 @@
 import { db } from "./firebase-init.js";
-import {
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
 
+function setStatus(message, isError = false) {
+  const node = $("resume-loading-status");
+  if (!node) return;
+  node.textContent = message;
+  node.classList.toggle("error", isError);
+  node.hidden = !message;
+}
+
 function setText(id, value = "") {
   const node = $(id);
-  if (node) node.textContent = value || "";
+  if (node && String(value || "").trim()) node.textContent = String(value).trim();
+}
+
+function safeUrl(value = "") {
+  const input = String(value || "").trim();
+  if (!input) return "";
+  try {
+    const url = new URL(/^https?:\/\//i.test(input) ? input : `https://${input}`);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
 }
 
 function setLinkOrText(id, text = "", href = "", external = false) {
   const node = $(id);
   if (!node) return;
-
-  const cleanText = String(text || "").trim();
-  node.textContent = cleanText;
-
-  if ("href" in node) {
-    node.href = cleanText ? href : "#";
-
-    if (external) {
-      node.target = "_blank";
-      node.rel = "noopener noreferrer";
-    }
+  const label = String(text || "").trim();
+  if (!label) return;
+  node.textContent = label;
+  if (!("href" in node) || !href) return;
+  node.href = href;
+  if (external) {
+    node.target = "_blank";
+    node.rel = "noopener noreferrer";
   }
 }
 
 function normalizeArray(value) {
   if (Array.isArray(value)) return value;
-
-  if (typeof value === "string" && value.trim()) {
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
+  if (typeof value !== "string" || !value.trim()) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   }
-
-  return [];
 }
 
 function normalizeStringArray(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item).trim()).filter(Boolean);
-  }
-
-  if (typeof value === "string") {
-    return value
-      .split(/\r?\n/)
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  return [];
+  return normalizeArray(value).map((item) => String(item).trim()).filter(Boolean);
 }
 
-function normalizeUrl(url = "") {
-  const clean = String(url || "").trim();
-  if (!clean) return "";
-
-  if (/^https?:\/\//i.test(clean)) return clean;
-  if (/^\/\//.test(clean)) return `https:${clean}`;
-
-  return `https://${clean}`;
-}
-
-function normalizePhoneHref(phone = "") {
-  const clean = String(phone || "").trim();
-  if (!clean) return "";
-
-  const digits = clean.replace(/[^\d+]/g, "");
-  return digits ? `tel:${digits}` : "";
+function phoneHref(value = "") {
+  const cleaned = String(value).replace(/[^\d+]/g, "");
+  return cleaned ? `tel:${cleaned}` : "";
 }
 
 function buildContactLine(data = {}) {
-  const directContact = (data.contact || "").trim();
-  if (directContact) return directContact;
-
-  return [
-    data.location || data.city || "",
-    data.phone || "",
-    data.website || "",
-    data.linkedin || ""
-  ]
+  return [data.location || data.city, data.phone, data.website, data.linkedin]
     .filter(Boolean)
     .join(" • ");
 }
 
-function renderTagList(containerId, items = []) {
+function renderTagList(containerId, items) {
   const container = $(containerId);
   if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeStringArray(items).forEach((item) => {
+  const values = normalizeStringArray(items);
+  if (!values.length) return;
+  container.replaceChildren(...values.map((value) => {
     const span = document.createElement("span");
-    span.textContent = item;
-    container.appendChild(span);
-  });
+    span.textContent = value;
+    return span;
+  }));
 }
 
-function renderSimpleList(containerId, items = []) {
+function renderSimpleList(containerId, items) {
   const container = $(containerId);
   if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
+  const nodes = normalizeArray(items).map((item) => {
     const li = document.createElement("li");
-
-    if (typeof item === "string") {
-      li.textContent = item;
-    } else if (item && typeof item === "object") {
-      const parts = [
-        item.name || item.title || "",
-        item.issuer || item.organization || "",
-        item.date || ""
-      ].filter(Boolean);
-
-      li.textContent = parts.join(" — ");
+    if (typeof item === "string") li.textContent = item;
+    else if (item && typeof item === "object") {
+      li.textContent = [item.name || item.title, item.issuer || item.organization, item.date]
+        .filter(Boolean).join(" — ");
     }
-
-    if (li.textContent.trim()) {
-      container.appendChild(li);
-    }
-  });
+    return li;
+  }).filter((node) => node.textContent.trim());
+  if (nodes.length) container.replaceChildren(...nodes);
 }
 
-function renderExperience(items = []) {
+function renderExperience(items) {
   const container = $("experience-list");
   if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
-    if (!item || typeof item !== "object") return;
-
-    const job = document.createElement("article");
-    job.className = "job";
-
-    const header = document.createElement("div");
-    header.className = "job-header";
-
-    const left = document.createElement("div");
-    left.className = "job-left";
-
-    const right = document.createElement("div");
-    right.className = "job-right";
-
-    const title = document.createElement("h3");
-    title.textContent = item.title || "";
-
-    const companyLine = document.createElement("p");
-    companyLine.className = "job-company";
-    companyLine.textContent = [item.company || item.employer || "", item.location || item.city || ""]
-      .filter(Boolean)
-      .join(" • ");
-
-    const dates = document.createElement("p");
-    dates.className = "job-dates";
-    dates.textContent = item.dates || item.date || "";
-
-    if (title.textContent.trim()) left.appendChild(title);
-    if (companyLine.textContent.trim()) left.appendChild(companyLine);
-    if (dates.textContent.trim()) right.appendChild(dates);
-
-    if (left.children.length || right.children.length) {
-      header.appendChild(left);
-      header.appendChild(right);
-      job.appendChild(header);
-    }
-
-    const details = Array.isArray(item.details)
-      ? item.details
-      : Array.isArray(item.bullets)
-      ? item.bullets
-      : [];
-
+  const nodes = normalizeArray(items).filter((item) => item && typeof item === "object").map((item) => {
+    const article = document.createElement("article");
+    article.className = "job";
+    const heading = document.createElement("h3");
+    heading.textContent = item.title || "";
+    const meta = document.createElement("p");
+    meta.className = "job-company";
+    meta.textContent = [item.company || item.employer, item.location || item.city, item.dates || item.date]
+      .filter(Boolean).join(" • ");
+    if (heading.textContent) article.appendChild(heading);
+    if (meta.textContent) article.appendChild(meta);
+    const details = normalizeStringArray(item.details || item.bullets);
     if (details.length) {
-      const ul = document.createElement("ul");
-
-      details
-        .map((detail) => String(detail).trim())
-        .filter(Boolean)
-        .forEach((detail) => {
-          const li = document.createElement("li");
-          li.textContent = detail;
-          ul.appendChild(li);
-        });
-
-      if (ul.children.length) {
-        job.appendChild(ul);
-      }
-    }
-
-    if (job.children.length) {
-      container.appendChild(job);
-    }
-  });
-}
-
-function renderEducation(items = []) {
-  const container = $("education-list");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
-    if (!item || typeof item !== "object") return;
-
-    const edu = document.createElement("article");
-    edu.className = "education-item";
-
-    const header = document.createElement("div");
-    header.className = "education-header";
-
-    const left = document.createElement("div");
-    left.className = "education-left";
-
-    const right = document.createElement("div");
-    right.className = "education-right";
-
-    const school = document.createElement("h3");
-    school.textContent = item.school || item.institution || "";
-
-    const degreeLine = document.createElement("p");
-    degreeLine.className = "education-degree";
-
-    const degreeParts = [
-      item.type || "",
-      item.degree || item.program || item.field || "",
-      item.location || ""
-    ].filter(Boolean);
-
-    degreeLine.textContent = degreeParts.join(" • ");
-
-    const dates = document.createElement("p");
-    dates.className = "education-dates";
-    dates.textContent = item.dates || item.date || "";
-
-    if (school.textContent.trim()) left.appendChild(school);
-    if (degreeLine.textContent.trim()) left.appendChild(degreeLine);
-    if (dates.textContent.trim()) right.appendChild(dates);
-
-    if (left.children.length || right.children.length) {
-      header.appendChild(left);
-      header.appendChild(right);
-      edu.appendChild(header);
-    }
-
-    if (item.gpa) {
-      const gpa = document.createElement("p");
-      gpa.className = "education-gpa";
-      gpa.textContent = `GPA: ${item.gpa}`;
-      edu.appendChild(gpa);
-    }
-
-    const extraDetails = [
-      ...normalizeStringArray(item.details),
-      ...normalizeStringArray(item.notes)
-    ];
-
-    if (extraDetails.length) {
-      const ul = document.createElement("ul");
-
-      extraDetails.forEach((detail) => {
+      const list = document.createElement("ul");
+      details.forEach((detail) => {
         const li = document.createElement("li");
         li.textContent = detail;
-        ul.appendChild(li);
+        list.appendChild(li);
       });
-
-      if (ul.children.length) {
-        edu.appendChild(ul);
-      }
+      article.appendChild(list);
     }
-
-    if (edu.children.length) {
-      container.appendChild(edu);
-    }
-  });
+    return article;
+  }).filter((node) => node.children.length);
+  if (nodes.length) container.replaceChildren(...nodes);
 }
 
-function renderProjects(items = []) {
+function renderEducation(items) {
+  const container = $("education-list");
+  if (!container) return;
+  const nodes = normalizeArray(items).filter((item) => item && typeof item === "object").map((item) => {
+    const article = document.createElement("article");
+    article.className = "education-item";
+    const heading = document.createElement("h3");
+    heading.textContent = item.school || item.institution || "";
+    const meta = document.createElement("p");
+    meta.className = "education-degree";
+    meta.textContent = [item.type, item.degree || item.program || item.field, item.location, item.dates || item.date]
+      .filter(Boolean).join(" • ");
+    if (heading.textContent) article.appendChild(heading);
+    if (meta.textContent) article.appendChild(meta);
+    const details = [...normalizeStringArray(item.details), ...normalizeStringArray(item.notes)];
+    if (details.length) {
+      const list = document.createElement("ul");
+      details.forEach((detail) => {
+        const li = document.createElement("li");
+        li.textContent = detail;
+        list.appendChild(li);
+      });
+      article.appendChild(list);
+    }
+    return article;
+  }).filter((node) => node.children.length);
+  if (nodes.length) container.replaceChildren(...nodes);
+}
+
+function renderProjects(items) {
   const container = $("projects-list");
   if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
+  const nodes = normalizeArray(items).map((item) => {
     const li = document.createElement("li");
-
     if (typeof item === "string") {
       li.textContent = item;
-    } else if (item && typeof item === "object") {
-      const name = item.name || item.title || "";
-      const description = item.description || "";
-      const stack = item.stack || item.tech || "";
-      const url = normalizeUrl(item.link || item.url || item.website || "");
-
-      if (url) {
-        const link = document.createElement("a");
-        link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = name || url;
-        li.appendChild(link);
-
-        const extras = [];
-        if (stack) extras.push(`Tech: ${stack}`);
-        if (description) extras.push(description);
-
-        if (extras.length) {
-          li.appendChild(document.createTextNode(` — ${extras.join(" • ")}`));
-        }
-      } else {
-        const parts = [name];
-        if (stack) parts.push(`Tech: ${stack}`);
-        if (description) parts.push(description);
-
-        li.textContent = parts.filter(Boolean).join(" — ");
-      }
+      return li;
     }
-
-    if (li.textContent.trim() || li.querySelector("a")) {
-      container.appendChild(li);
+    if (!item || typeof item !== "object") return li;
+    const name = item.name || item.title || "";
+    const url = safeUrl(item.link || item.url || item.website);
+    if (url) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = name || url;
+      li.appendChild(link);
+    } else {
+      li.textContent = name;
     }
-  });
-}
-
-function renderCertifications(items = []) {
-  const container = $("certifications-list");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
-    const li = document.createElement("li");
-
-    if (typeof item === "string") {
-      li.textContent = item;
-    } else if (item && typeof item === "object") {
-      const parts = [
-        item.name || item.title || "",
-        item.issuer || item.organization || "",
-        item.date || ""
-      ].filter(Boolean);
-
-      li.textContent = parts.join(" — ");
-    }
-
-    if (li.textContent.trim()) {
-      container.appendChild(li);
-    }
-  });
+    const extras = [item.stack || item.tech ? `Tech: ${item.stack || item.tech}` : "", item.description]
+      .filter(Boolean);
+    if (extras.length) li.appendChild(document.createTextNode(` — ${extras.join(" • ")}`));
+    return li;
+  }).filter((node) => node.textContent.trim());
+  if (nodes.length) container.replaceChildren(...nodes);
 }
 
 async function loadResume() {
+  setStatus("Loading résumé details…");
   try {
-    const snap = await getDoc(doc(db, "site_config", "mainProfile"));
-
-    if (!snap.exists()) {
-      console.warn("Resume document not found: site_config/mainProfile");
+    const snapshot = await getDoc(doc(db, "site_config", "mainProfile"));
+    if (!snapshot.exists()) {
+      setStatus("Résumé details are temporarily unavailable. Please use the PDF résumé link.", true);
       return;
     }
-
-    const data = snap.data() || {};
-
-    setText("name", data.name || "");
-    setText("title", data.title || "");
-    setText("professional-title", data.title || "");
-    setText("contact", buildContactLine(data));
-    setText("location", data.location || data.city || "");
-    setText("summary", data.summary || "");
-
-    setLinkOrText("email", data.email || "", data.email ? `mailto:${data.email}` : "");
-    setLinkOrText("phone", data.phone || "", normalizePhoneHref(data.phone || ""));
-    setLinkOrText("website", data.website || "", normalizeUrl(data.website || ""), true);
-    setLinkOrText("linkedin", data.linkedin || "", normalizeUrl(data.linkedin || ""), true);
-
-    renderTagList("skills-list", data.skills || []);
-    renderTagList("languages-list", data.languages || []);
-    renderExperience(data.experience || []);
-    renderEducation(data.education || []);
-    renderCertifications(data.certifications || []);
-    renderProjects(data.projects || []);
+    const data = snapshot.data() || {};
+    setText("name", data.name);
+    setText("title", data.title);
+    setText("professional-title", data.title);
+    setText("contact", data.contact || buildContactLine(data));
+    setText("location", data.location || data.city);
+    setText("summary", data.summary);
+    setLinkOrText("email", data.email, data.email ? `mailto:${data.email}` : "");
+    setLinkOrText("phone", data.phone, phoneHref(data.phone));
+    setLinkOrText("website", data.website, safeUrl(data.website), true);
+    setLinkOrText("linkedin", data.linkedin, safeUrl(data.linkedin), true);
+    renderTagList("skills-list", data.skills);
+    renderTagList("languages-list", data.languages);
+    renderExperience(data.experience);
+    renderEducation(data.education);
+    renderSimpleList("certifications-list", data.certifications);
+    renderProjects(data.projects);
+    setStatus("");
   } catch (error) {
     console.error("Error loading resume:", error);
+    setStatus("Résumé details could not be loaded. Please use the PDF résumé link.", true);
   }
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", loadResume);
+  document.addEventListener("DOMContentLoaded", loadResume, { once: true });
 } else {
   loadResume();
 }
