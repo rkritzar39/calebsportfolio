@@ -6,8 +6,8 @@
 ![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
 ![Current Stable](https://img.shields.io/badge/current%20stable-v26.5-green)
 ![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-44.0%25-f1e05a)
-![CSS](https://img.shields.io/badge/CSS-37.0%25-663399)
+![JavaScript](https://img.shields.io/badge/JavaScript-43.9%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-37.1%25-663399)
 ![HTML](https://img.shields.io/badge/HTML-19.0%25-e34c26)
 <!-- AUTO:BADGES-END -->
 
@@ -109,7 +109,7 @@ The website is designed for phones, foldables, tablets, laptops, desktops, large
 <!-- AUTO:PROJECT-AGE-START -->
 Development began on **January 2, 2025**.
 
-The project has been under development for **1 year, 8 months, and 8 days**.
+The project has been under development for **1 year, 8 months, and 9 days**.
 <!-- AUTO:PROJECT-AGE-END -->
 
 The project has grown from a link-in-bio website into a broader digital identity and portfolio system with:
@@ -801,8 +801,8 @@ Public profiles and pages should not expose:
 <!-- AUTO:LANGUAGES-START -->
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 44.0% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
-| **CSS** | 37.0% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
+| **JavaScript** | 43.9% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
+| **CSS** | 37.1% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
 | **HTML** | 19.0% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 <!-- AUTO:LANGUAGES-END -->
 
