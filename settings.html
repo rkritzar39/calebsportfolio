@@ -1,17 +1,16 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Customize your experience. Toggle dark mode, accessibility features, and more." />
-  <title>Settings - Caleb's Profile</title>
-
-  <!-- Load global styles first, then settings-specific styles -->
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="settings.css" />
-
-  <!-- Prevent theme flicker before full JS loads -->
-  <script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Customize your experience. Toggle dark mode, accessibility features, and more." name="description"/>
+<title>Settings - Caleb's Profile</title>
+<!-- Load global styles first, then settings-specific styles -->
+<link href="styles.css" rel="stylesheet"/>
+<link href="settings.css" rel="stylesheet"/>
+<!-- Prevent theme flicker before full JS loads -->
+<script>
     (function() {
       try {
         const storedSettings = localStorage.getItem('websiteSettings');
@@ -48,990 +47,748 @@
       }
     })();
   </script>
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/site.webmanifest" rel="manifest"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 </head>
-
 <body class="settings-page">
-  <main class="container" id="main-content">
-    <div class="settings-section">
-      <div class="settings-header">
-        <h1>Settings</h1>
-          <span class="version">v27.0 RC 2</span>
-      </div>
-
-      <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Appearance</h2>
-
-        <div class="setting-card" id="appearanceModeRow">
-          <div class="setting-icon-container" style="background-color: #8e8e93;">
-            <i class="fa-solid fa-circle-half-stroke"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Appearance Mode</strong>
-            <p class="setting-description">Choose light, dark, or follow your device setting.</p>
-          </div>
-
-          <div class="segmented-control" id="appearanceModeControl" role="group" aria-label="Appearance Mode">
-            <div class="seg-bg"></div>
-            <button type="button" data-value="device">Device</button>
-            <button type="button" data-value="light">Light</button>
-            <button type="button" data-value="dark">Dark</button>
-          </div>
-        </div>
-
-        <div class="setting-card custom-background">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-image"></i>
-          </div>
-
-          <div class="custom-bg-left">
-            <div class="setting-label">
-              <strong class="setting-title">Custom Background</strong>
-              <p class="setting-description">Upload your own image to use as the background.</p>
-            </div>
-
-            <div class="custom-bg-controls">
-              <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-              <input type="file" id="customBgUpload" accept="image/*" />
-              <span id="fileNameDisplay" class="file-name">No file chosen</span>
-              <button id="removeCustomBg" class="button" type="button" style="display:none;">Remove</button>
-            </div>
-          </div>
-
-          <div class="custom-bg-separator" id="customBgSeparator"></div>
-
-          <div class="custom-bg-right">
-            <div id="customBgPreviewContainer">
-              <img id="customBgPreview" alt="Background preview" draggable="false" oncontextmenu="return false" />
-            </div>
-          </div>
-        </div>
-
-        <div class="setting-card" id="wallpaperBlurCard">
-          <div class="setting-icon-container" style="background-color: #5ac8fa;">
-            <i class="fa-solid fa-droplet"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Wallpaper Blur</strong>
-            <p class="setting-description">Adjust the background blur strength.</p>
-          </div>
-
-          <div class="blur-slider-control">
-            <span id="blurValue" class="font-size-badge">15px</span>
-            <input type="range" id="blur-slider" min="0" max="40" step="1" value="15" aria-label="Adjust wallpaper blur" />
-          </div>
-        </div>
-
-        <div class="setting-card accent-color-card">
-          <div class="setting-icon-container" style="background-color: #ff9500;">
-            <i class="fa-solid fa-palette"></i>
-          </div>
-
-          <label for="accentColorPicker" class="setting-label">
-            <strong class="setting-title">Accent Color</strong>
-            <p class="setting-description">Pick a custom highlight color.</p>
-          </label>
-
-          <div class="accent-picker-container">
-            <input type="color" id="accentColorPicker" value="#007AFF" aria-label="Choose accent color" />
-            <div id="accentColorPreview" class="accent-color-preview"></div>
-          </div>
-
-          <div id="whiteAccentWarning" class="color-warning" style="display:none;">
+<main class="container" id="main-content">
+<div class="settings-section">
+<div class="settings-header">
+<h1>Settings</h1>
+<span class="version">v27.0 RC 2</span>
+</div>
+<div class="settings-subsection animate-slide-in">
+<h2 class="subsection-title">Appearance</h2>
+<div class="setting-card" id="appearanceModeRow">
+<div class="setting-icon-container" style="background-color: #8e8e93;">
+<i class="fa-solid fa-circle-half-stroke"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Appearance Mode</strong>
+<p class="setting-description">Choose light, dark, or follow your device setting.</p>
+</div>
+<div aria-label="Appearance Mode" class="segmented-control" id="appearanceModeControl" role="group">
+<div class="seg-bg"></div>
+<button data-value="device" type="button">Device</button>
+<button data-value="light" type="button">Light</button>
+<button data-value="dark" type="button">Dark</button>
+</div>
+</div>
+<div class="setting-card custom-background">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-image"></i>
+</div>
+<div class="custom-bg-left">
+<div class="setting-label">
+<strong class="setting-title">Custom Background</strong>
+<p class="setting-description">Upload your own image to use as the background.</p>
+</div>
+<div class="custom-bg-controls">
+<label class="custom-bg-label" for="customBgUpload">Choose File</label>
+<input accept="image/*" id="customBgUpload" type="file"/>
+<span class="file-name" id="fileNameDisplay">No file chosen</span>
+<button class="button" id="removeCustomBg" style="display:none;" type="button">Remove</button>
+</div>
+</div>
+<div class="custom-bg-separator" id="customBgSeparator"></div>
+<div class="custom-bg-right">
+<div id="customBgPreviewContainer">
+<img alt="Background preview" draggable="false" id="customBgPreview" oncontextmenu="return false"/>
+</div>
+</div>
+</div>
+<div class="setting-card" id="wallpaperBlurCard">
+<div class="setting-icon-container" style="background-color: #5ac8fa;">
+<i class="fa-solid fa-droplet"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Wallpaper Blur</strong>
+<p class="setting-description">Adjust the background blur strength.</p>
+</div>
+<div class="blur-slider-control">
+<span class="font-size-badge" id="blurValue">15px</span>
+<input aria-label="Adjust wallpaper blur" id="blur-slider" max="40" min="0" step="1" type="range" value="15"/>
+</div>
+</div>
+<div class="setting-card accent-color-card">
+<div class="setting-icon-container" style="background-color: #ff9500;">
+<i class="fa-solid fa-palette"></i>
+</div>
+<label class="setting-label" for="accentColorPicker">
+<strong class="setting-title">Accent Color</strong>
+<p class="setting-description">Pick a custom highlight color.</p>
+</label>
+<div class="accent-picker-container">
+<input aria-label="Choose accent color" id="accentColorPicker" type="color" value="#007AFF"/>
+<div class="accent-color-preview" id="accentColorPreview"></div>
+</div>
+<div class="color-warning" id="whiteAccentWarning" style="display:none;">
             Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
           </div>
-        </div>
-
-        <label class="setting-card" for="matchSongAccentToggle">
-          <div class="setting-icon-container" style="background-color: #34c759;">
-            <i class="fa-solid fa-music"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Match Song Accent</strong>
-            <p class="setting-description">Automatically change your accent color to match the current song’s album art.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="matchSongAccentToggle" role="switch" checked />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-      </div>
-
-      <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Dark Mode Scheduler</h2>
-
-        <div class="setting-card">
-          <div class="setting-icon-container" style="background-color: #5856d6;">
-            <i class="fa-solid fa-clock"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Automatic Theme Switching</strong>
-            <p class="setting-description">Automatically switch between light and dark modes.</p>
-          </div>
-
-          <select id="darkModeScheduler" aria-label="Dark mode schedule">
-            <option value="off">Off</option>
-            <option value="custom">Custom Schedule</option>
-            <option value="sunset_to_sunrise">Sunset → Sunrise</option>
-            <option value="sunrise_to_sunset">Sunrise → Sunset</option>
-          </select>
-        </div>
-
-        <div class="setting-card" id="darkModeStatusCard">
-          <div class="setting-icon-container" style="background-color: #34c759;">
-            <i class="fa-solid fa-circle-info"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Schedule Status</strong>
-            <p class="setting-description" id="darkModeStatusText">—</p>
-          </div>
-
-          <button id="setLocationBtn" class="button" type="button" style="display:none;">Use My Location</button>
-        </div>
-
-        <div class="schedule-group" id="customScheduleGroup">
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color: #ff9500;">
-              <i class="fa-solid fa-sun"></i>
-            </div>
-
-            <div class="setting-label">
-              <strong class="setting-title">Start Time</strong>
-              <p class="setting-description">Time when dark mode activates.</p>
-            </div>
-
-            <input type="time" id="darkModeStart" value="20:00" />
-          </div>
-
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color: #5856d6;">
-              <i class="fa-solid fa-moon"></i>
-            </div>
-
-            <div class="setting-label">
-              <strong class="setting-title">End Time</strong>
-              <p class="setting-description">Time when light mode reactivates.</p>
-            </div>
-
-            <input type="time" id="darkModeEnd" value="06:00" />
-          </div>
-        </div>
-
-        <label class="setting-card" for="darkModePerDayToggle">
-          <div class="setting-icon-container" style="background-color: #5856d6;">
-            <i class="fa-solid fa-calendar-days"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Per-Day Scheduling</strong>
-            <p class="setting-description">Use different rules for weekdays, weekends, and holidays.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="darkModePerDayToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <div id="perDaySchedulePanel" style="display:none;">
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color:#8e8e93;">
-              <i class="fa-solid fa-layer-group"></i>
-            </div>
-
-            <div class="setting-label">
-              <strong class="setting-title">Edit Schedule Group</strong>
-              <p class="setting-description">Choose a group to configure.</p>
-            </div>
-
-            <select id="perDayGroupSelect" aria-label="Per-day group">
-              <option value="weekdays">Weekdays (Mon–Fri)</option>
-              <option value="weekends">Weekends (Sat–Sun)</option>
-              <option value="holidays">Holidays</option>
-            </select>
-          </div>
-
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color:#34c759;">
-              <i class="fa-solid fa-sliders"></i>
-            </div>
-
-            <div class="setting-label">
-              <strong class="setting-title">Group Mode</strong>
-              <p class="setting-description">How this group controls theme.</p>
-            </div>
-
-            <select id="perDayModeSelect" aria-label="Per-day mode">
-              <option value="off">Off</option>
-              <option value="custom">Custom Schedule</option>
-              <option value="sunset_to_sunrise">Sunset → Sunrise</option>
-              <option value="sunrise_to_sunset">Sunrise → Sunset</option>
-              <option value="always_dark">Always Dark</option>
-              <option value="always_light">Always Light</option>
-            </select>
-          </div>
-
-          <div class="schedule-group" id="perDayCustomTimes" style="display:none;">
-            <div class="setting-card">
-              <div class="setting-icon-container" style="background-color:#ff9500;">
-                <i class="fa-solid fa-sun"></i>
-              </div>
-
-              <div class="setting-label">
-                <strong class="setting-title">Start Time</strong>
-                <p class="setting-description">When dark mode activates.</p>
-              </div>
-
-              <input type="time" id="perDayStartTime" value="20:00" />
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-icon-container" style="background-color:#5856d6;">
-                <i class="fa-solid fa-moon"></i>
-              </div>
-
-              <div class="setting-label">
-                <strong class="setting-title">End Time</strong>
-                <p class="setting-description">When light mode returns.</p>
-              </div>
-
-              <input type="time" id="perDayEndTime" value="06:00" />
-            </div>
-          </div>
-
-          <div class="setting-card" id="holidayDatesCard">
-            <div class="setting-icon-container" style="background-color:#ff2d55;">
-              <i class="fa-solid fa-calendar-plus"></i>
-            </div>
-
-            <div class="setting-label">
-              <strong class="setting-title">Holiday Dates</strong>
-              <p class="setting-description">Add dates that should use the “Holidays” rules.</p>
-            </div>
-
-            <div style="display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
-              <input type="date" id="holidayDateInput" />
-              <button class="button" id="addHolidayDateBtn" type="button">Add</button>
-            </div>
-          </div>
-
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color:#8e8e93;">
-              <i class="fa-solid fa-list"></i>
-            </div>
-
-            <div class="setting-label">
-              <strong class="setting-title">Saved Holidays</strong>
-              <p class="setting-description" id="holidayListText">None</p>
-            </div>
-
-            <button class="button reset-button" id="clearHolidayDatesBtn" type="button">Clear</button>
-          </div>
-        </div>
-
-        <label class="setting-card" for="autoRecommendSchedulerToggle">
-          <div class="setting-icon-container" style="background-color:#ff9500;">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Auto-Recommend Scheduler</strong>
-            <p class="setting-description">Suggest a schedule if you regularly switch around the same time.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="autoRecommendSchedulerToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <div class="setting-card" id="scheduleRecommendationCard" style="display:none;">
-          <div class="setting-icon-container" style="background-color:#ff9500;">
-            <i class="fa-solid fa-lightbulb"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Suggested Schedule</strong>
-            <p class="setting-description" id="scheduleRecommendationText">—</p>
-          </div>
-
-          <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
-            <button class="button" id="applyScheduleRecommendationBtn" type="button">Apply</button>
-            <button class="button reset-button" id="dismissScheduleRecommendationBtn" type="button">Dismiss</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Homepage Sections</h2>
-
-        <label class="setting-card" for="showSocialLinksToggle">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-share-alt"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Social Links</strong>
-            <p class="setting-description">Show or hide the Social Links section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showSocialLinksToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="rearrangingEnabledToggle">
-          <div class="setting-icon-container" style="background-color: #8e8e93;">
-            <i class="fa-solid fa-grip-vertical"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Rearrange Homepage Sections</strong>
-            <p class="setting-description">Allow drag-and-drop reordering on the homepage.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="rearrangingEnabledToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <section class="setting-card layout-reset-card" id="layoutSettingsCard">
-          <div class="setting-icon-container layout-reset-icon">
-            <i class="fa-solid fa-layer-group"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Layout</strong>
-            <p class="setting-description">
+</div>
+<label class="setting-card" for="matchSongAccentToggle">
+<div class="setting-icon-container" style="background-color: #34c759;">
+<i class="fa-solid fa-music"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Match Song Accent</strong>
+<p class="setting-description">Automatically change your accent color to match the current song’s album art.</p>
+</div>
+<div class="md-switch">
+<input checked="" id="matchSongAccentToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+</div>
+<div class="settings-subsection animate-slide-in">
+<h2 class="subsection-title">Dark Mode Scheduler</h2>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color: #5856d6;">
+<i class="fa-solid fa-clock"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Automatic Theme Switching</strong>
+<p class="setting-description">Automatically switch between light and dark modes.</p>
+</div>
+<select aria-label="Dark mode schedule" id="darkModeScheduler">
+<option value="off">Off</option>
+<option value="custom">Custom Schedule</option>
+<option value="sunset_to_sunrise">Sunset → Sunrise</option>
+<option value="sunrise_to_sunset">Sunrise → Sunset</option>
+</select>
+</div>
+<div class="setting-card" id="darkModeStatusCard">
+<div class="setting-icon-container" style="background-color: #34c759;">
+<i class="fa-solid fa-circle-info"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Schedule Status</strong>
+<p class="setting-description" id="darkModeStatusText">—</p>
+</div>
+<button class="button" id="setLocationBtn" style="display:none;" type="button">Use My Location</button>
+</div>
+<div class="schedule-group" id="customScheduleGroup">
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color: #ff9500;">
+<i class="fa-solid fa-sun"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Start Time</strong>
+<p class="setting-description">Time when dark mode activates.</p>
+</div>
+<input id="darkModeStart" type="time" value="20:00"/>
+</div>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color: #5856d6;">
+<i class="fa-solid fa-moon"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">End Time</strong>
+<p class="setting-description">Time when light mode reactivates.</p>
+</div>
+<input id="darkModeEnd" type="time" value="06:00"/>
+</div>
+</div>
+<label class="setting-card" for="darkModePerDayToggle">
+<div class="setting-icon-container" style="background-color: #5856d6;">
+<i class="fa-solid fa-calendar-days"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Per-Day Scheduling</strong>
+<p class="setting-description">Use different rules for weekdays, weekends, and holidays.</p>
+</div>
+<div class="md-switch">
+<input id="darkModePerDayToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<div id="perDaySchedulePanel" style="display:none;">
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color:#8e8e93;">
+<i class="fa-solid fa-layer-group"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Edit Schedule Group</strong>
+<p class="setting-description">Choose a group to configure.</p>
+</div>
+<select aria-label="Per-day group" id="perDayGroupSelect">
+<option value="weekdays">Weekdays (Mon–Fri)</option>
+<option value="weekends">Weekends (Sat–Sun)</option>
+<option value="holidays">Holidays</option>
+</select>
+</div>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color:#34c759;">
+<i class="fa-solid fa-sliders"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Group Mode</strong>
+<p class="setting-description">How this group controls theme.</p>
+</div>
+<select aria-label="Per-day mode" id="perDayModeSelect">
+<option value="off">Off</option>
+<option value="custom">Custom Schedule</option>
+<option value="sunset_to_sunrise">Sunset → Sunrise</option>
+<option value="sunrise_to_sunset">Sunrise → Sunset</option>
+<option value="always_dark">Always Dark</option>
+<option value="always_light">Always Light</option>
+</select>
+</div>
+<div class="schedule-group" id="perDayCustomTimes" style="display:none;">
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color:#ff9500;">
+<i class="fa-solid fa-sun"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Start Time</strong>
+<p class="setting-description">When dark mode activates.</p>
+</div>
+<input id="perDayStartTime" type="time" value="20:00"/>
+</div>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color:#5856d6;">
+<i class="fa-solid fa-moon"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">End Time</strong>
+<p class="setting-description">When light mode returns.</p>
+</div>
+<input id="perDayEndTime" type="time" value="06:00"/>
+</div>
+</div>
+<div class="setting-card" id="holidayDatesCard">
+<div class="setting-icon-container" style="background-color:#ff2d55;">
+<i class="fa-solid fa-calendar-plus"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Holiday Dates</strong>
+<p class="setting-description">Add dates that should use the “Holidays” rules.</p>
+</div>
+<div style="display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+<input id="holidayDateInput" type="date"/>
+<button class="button" id="addHolidayDateBtn" type="button">Add</button>
+</div>
+</div>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color:#8e8e93;">
+<i class="fa-solid fa-list"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Saved Holidays</strong>
+<p class="setting-description" id="holidayListText">None</p>
+</div>
+<button class="button reset-button" id="clearHolidayDatesBtn" type="button">Clear</button>
+</div>
+</div>
+<label class="setting-card" for="autoRecommendSchedulerToggle">
+<div class="setting-icon-container" style="background-color:#ff9500;">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Auto-Recommend Scheduler</strong>
+<p class="setting-description">Suggest a schedule if you regularly switch around the same time.</p>
+</div>
+<div class="md-switch">
+<input id="autoRecommendSchedulerToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<div class="setting-card" id="scheduleRecommendationCard" style="display:none;">
+<div class="setting-icon-container" style="background-color:#ff9500;">
+<i class="fa-solid fa-lightbulb"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Suggested Schedule</strong>
+<p class="setting-description" id="scheduleRecommendationText">—</p>
+</div>
+<div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
+<button class="button" id="applyScheduleRecommendationBtn" type="button">Apply</button>
+<button class="button reset-button" id="dismissScheduleRecommendationBtn" type="button">Dismiss</button>
+</div>
+</div>
+</div>
+<div class="settings-subsection animate-slide-in">
+<h2 class="subsection-title">Homepage Sections</h2>
+<label class="setting-card" for="showSocialLinksToggle">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-share-alt"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Social Links</strong>
+<p class="setting-description">Show or hide the Social Links section.</p>
+</div>
+<div class="md-switch">
+<input id="showSocialLinksToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="rearrangingEnabledToggle">
+<div class="setting-icon-container" style="background-color: #8e8e93;">
+<i class="fa-solid fa-grip-vertical"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Rearrange Homepage Sections</strong>
+<p class="setting-description">Allow drag-and-drop reordering on the homepage.</p>
+</div>
+<div class="md-switch">
+<input id="rearrangingEnabledToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<section class="setting-card layout-reset-card" id="layoutSettingsCard">
+<div class="setting-icon-container layout-reset-icon">
+<i class="fa-solid fa-layer-group"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Layout</strong>
+<p class="setting-description">
               Reset your homepage section order back to the default layout.
             </p>
-
-            <div class="layout-meta">
-              <span class="pill"><i class="fa-solid fa-grip-vertical"></i> Section order</span>
-              <span class="pill subtle"><i class="fa-solid fa-database"></i> Clears <code>sectionOrder</code></span>
-            </div>
-          </div>
-
-          <div class="layout-actions">
-            <button class="button layout-reset-btn" id="resetLayoutBtn" type="button">
-              <i class="fa-solid fa-arrow-rotate-left"></i>
+<div class="layout-meta">
+<span class="pill"><i class="fa-solid fa-grip-vertical"></i> Section order</span>
+<span class="pill subtle"><i class="fa-solid fa-database"></i> Clears <code>sectionOrder</code></span>
+</div>
+</div>
+<div class="layout-actions">
+<button class="button layout-reset-btn" id="resetLayoutBtn" type="button">
+<i class="fa-solid fa-arrow-rotate-left"></i>
               Reset Layout
             </button>
-            <div class="layout-hint">Takes effect on refresh / Home page load</div>
-          </div>
-        </section>
+<div class="layout-hint">Takes effect on refresh / Home page load</div>
+</div>
+</section>
+<label class="setting-card" for="showTiktokShoutoutsToggle">
+<div class="setting-icon-container" style="background-color: #000000;">
+<i class="fa-brands fa-tiktok"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">TikTok Shoutouts</strong>
+<p class="setting-description">Show or hide the TikTok Shoutouts section.</p>
+</div>
+<div class="md-switch">
+<input id="showTiktokShoutoutsToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
 
-        <label class="setting-card" for="showTiktokShoutoutsToggle">
-          <div class="setting-icon-container" style="background-color: #000000;">
-            <i class="fa-brands fa-tiktok"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">TikTok Shoutouts</strong>
-            <p class="setting-description">Show or hide the TikTok Shoutouts section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showTiktokShoutoutsToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showQuoteSectionToggle">
-          <div class="setting-icon-container" style="background-color: #ff9f43;">
-            <i class="fa-solid fa-brain"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Daily Quotes</strong>
-            <p class="setting-description">Show daily ADHD and Autism motivational quotes.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showQuoteSectionToggle" role="switch" checked />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showInstagramShoutoutsToggle">
-          <div class="setting-icon-container accent-icon instagram-icon">
-            <i class="fa-brands fa-instagram"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Instagram Shoutouts</strong>
-            <p class="setting-description">Show or hide the Instagram Shoutouts section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showInstagramShoutoutsToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showYoutubeShoutoutsToggle">
-          <div class="setting-icon-container" style="background-color: #ff0000;">
-            <i class="fa-brands fa-youtube"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">YouTube Shoutouts</strong>
-            <p class="setting-description">Show or hide the YouTube Shoutouts section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showYoutubeShoutoutsToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showUsefulLinksToggle">
-          <div class="setting-icon-container" style="background-color: #34c759;">
-            <i class="fa-solid fa-link"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Useful Links</strong>
-            <p class="setting-description">Show or hide the Useful Links section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showUsefulLinksToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showCountdownToggle">
-          <div class="setting-icon-container" style="background-color: #ff9500;">
-            <i class="fa-solid fa-stopwatch"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Countdown</strong>
-            <p class="setting-description">Show or hide the event Countdown section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showCountdownToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showBusinessSectionToggle">
-          <div class="setting-icon-container" style="background-color: #5ac8fa;">
-            <i class="fa-solid fa-briefcase"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Business Section</strong>
-            <p class="setting-description">Show or hide the Business Section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showBusinessSectionToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showTechInformationToggle">
-          <div class="setting-icon-container" style="background-color: #8e8e93;">
-            <i class="fa-solid fa-microchip"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Tech Information</strong>
-            <p class="setting-description">Show or hide the Tech Information section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showTechInformationToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showDisabilitiesSectionToggle">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-universal-access"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Disabilities Section</strong>
-            <p class="setting-description">Show or hide the Disabilities Section.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showDisabilitiesSectionToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="showLiveActivityToggle">
-          <div class="setting-icon-container" style="background-color: #ff2d55;">
-            <i class="fa-solid fa-satellite-dish"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Live Activity</strong>
-            <p class="setting-description">Show or hide the Live Activity capsule on your profile.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="showLiveActivityToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <div class="setting-card">
-          <div class="setting-icon-container" style="background-color: #8e8e93;">
-            <i class="fa-solid fa-eye"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Reset Visible Sections</strong>
-            <p class="setting-description">Make all homepage sections visible again.</p>
-          </div>
-
-          <button id="resetSectionsBtn" class="button reset-button" type="button">Reset</button>
-        </div>
-      </div>
-
-      <div class="settings-subsection animate-slide-in notifications-disabled-section">
-  <h2 class="subsection-title">Notifications</h2>
-
-  <!-- Coming Soon Hero -->
-  <div class="notification-coming-soon-hero">
-    <div class="coming-soon-icon-wrap">
-      <i class="fa-solid fa-bell-slash"></i>
-    </div>
-
-    <div class="coming-soon-content">
-      <div class="coming-soon-title-row">
-        <strong class="coming-soon-title">Notifications Coming Soon</strong>
-
-        <button
-          class="delay-info-button"
-          type="button"
-          aria-label="Why are notifications delayed?"
-          aria-expanded="false"
-          data-tooltip="Push notifications are currently disabled because the notification system is malfunctioning. The feature is planned to return once it is rebuilt and stabilized, likely around 2027 or 2028.">
-          <i class="fa-solid fa-circle-info"></i>
-        </button>
-      </div>
-
-      <p class="coming-soon-description">
+<label class="setting-card" for="showInstagramShoutoutsToggle">
+<div class="setting-icon-container accent-icon instagram-icon">
+<i class="fa-brands fa-instagram"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Instagram Shoutouts</strong>
+<p class="setting-description">Show or hide the Instagram Shoutouts section.</p>
+</div>
+<div class="md-switch">
+<input id="showInstagramShoutoutsToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="showYoutubeShoutoutsToggle">
+<div class="setting-icon-container" style="background-color: #ff0000;">
+<i class="fa-brands fa-youtube"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">YouTube Shoutouts</strong>
+<p class="setting-description">Show or hide the YouTube Shoutouts section.</p>
+</div>
+<div class="md-switch">
+<input id="showYoutubeShoutoutsToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="showUsefulLinksToggle">
+<div class="setting-icon-container" style="background-color: #34c759;">
+<i class="fa-solid fa-link"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Useful Links</strong>
+<p class="setting-description">Show or hide the Useful Links section.</p>
+</div>
+<div class="md-switch">
+<input id="showUsefulLinksToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="showCountdownToggle">
+<div class="setting-icon-container" style="background-color: #ff9500;">
+<i class="fa-solid fa-stopwatch"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Countdown</strong>
+<p class="setting-description">Show or hide the event Countdown section.</p>
+</div>
+<div class="md-switch">
+<input id="showCountdownToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="showBusinessSectionToggle">
+<div class="setting-icon-container" style="background-color: #5ac8fa;">
+<i class="fa-solid fa-briefcase"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Business Section</strong>
+<p class="setting-description">Show or hide the Business Section.</p>
+</div>
+<div class="md-switch">
+<input id="showBusinessSectionToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color: #8e8e93;">
+<i class="fa-solid fa-eye"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Reset Visible Sections</strong>
+<p class="setting-description">Make all homepage sections visible again.</p>
+</div>
+<button class="button reset-button" id="resetSectionsBtn" type="button">Reset</button>
+</div>
+</div>
+<div class="settings-subsection animate-slide-in notifications-disabled-section">
+<h2 class="subsection-title">Notifications</h2>
+<!-- Coming Soon Hero -->
+<div class="notification-coming-soon-hero">
+<div class="coming-soon-icon-wrap">
+<i class="fa-solid fa-bell-slash"></i>
+</div>
+<div class="coming-soon-content">
+<div class="coming-soon-title-row">
+<strong class="coming-soon-title">Notifications Coming Soon</strong>
+<button aria-expanded="false" aria-label="Why are notifications delayed?" class="delay-info-button" data-tooltip="Push notifications are currently disabled because the notification system is malfunctioning. The feature is planned to return once it is rebuilt and stabilized, likely around 2027 or 2028." type="button">
+<i class="fa-solid fa-circle-info"></i>
+</button>
+</div>
+<p class="coming-soon-description">
         Push notifications and topic subscriptions are temporarily unavailable while the feature is being fixed and rebuilt.
       </p>
-
-      <div class="coming-soon-meta">
-        <span>
-          <i class="fa-solid fa-wrench"></i>
+<div class="coming-soon-meta">
+<span>
+<i class="fa-solid fa-wrench"></i>
           Malfunctioning
         </span>
-
-        <span>
-          <i class="fa-solid fa-calendar-days"></i>
+<span>
+<i class="fa-solid fa-calendar-days"></i>
           Expected 2027–2028
         </span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Push Notifications -->
-  <label class="setting-card disabled-setting" for="enableNotificationsToggle">
-    <div class="setting-icon-container disabled-icon">
-      <i class="fa-solid fa-bell"></i>
-    </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+</div>
+</div>
+</div>
+<!-- Push Notifications -->
+<label class="setting-card disabled-setting" for="enableNotificationsToggle">
+<div class="setting-icon-container disabled-icon">
+<i class="fa-solid fa-bell"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">
         Push Notifications
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-
-      <p class="setting-description">
+</strong>
+<p class="setting-description">
         Receive website updates on Android, iPhone, Windows and Mac.
       </p>
-
-      <p class="setting-description disabled-reason">
+<p class="setting-description disabled-reason">
         Disabled because notification support is currently malfunctioning.
       </p>
-    </div>
-
-    <div class="md-switch disabled-switch">
-      <input
-        type="checkbox"
-        id="enableNotificationsToggle"
-        role="switch"
-        disabled>
-      <div class="track">
-        <div class="thumb"></div>
-      </div>
-    </div>
-  </label>
-
-  <!-- Notification Topics Header -->
-  <div class="setting-card disabled-setting no-switch-card">
-    <div class="setting-icon-container disabled-icon">
-      <i class="fa-solid fa-layer-group"></i>
-    </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+</div>
+<div class="md-switch disabled-switch">
+<input disabled="" id="enableNotificationsToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<!-- Notification Topics Header -->
+<div class="setting-card disabled-setting no-switch-card">
+<div class="setting-icon-container disabled-icon">
+<i class="fa-solid fa-layer-group"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">
         Notification Topics
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-
-      <p class="setting-description">
+</strong>
+<p class="setting-description">
         Choose which notifications you'd like to receive.
       </p>
-
-      <p class="setting-description disabled-reason">
+<p class="setting-description disabled-reason">
         Topic selection will return when notifications are fixed.
       </p>
-    </div>
-  </div>
-
-  <!-- Website Updates -->
-  <label class="setting-card disabled-setting" for="topicWebsite">
-    <div class="setting-icon-container disabled-emoji-icon">
+</div>
+</div>
+<!-- Website Updates -->
+<label class="setting-card disabled-setting" for="topicWebsite">
+<div class="setting-icon-container disabled-emoji-icon">
       🌐
     </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+<div class="setting-label">
+<strong class="setting-title">
         Website Updates
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-    </div>
-
-    <div class="md-switch disabled-switch">
-      <input type="checkbox" id="topicWebsite" disabled>
-      <div class="track">
-        <div class="thumb"></div>
-      </div>
-    </div>
-  </label>
-
-  <!-- Instagram -->
-  <label class="setting-card disabled-setting" for="topicInstagram">
-    <div class="setting-icon-container disabled-emoji-icon">
+</strong>
+</div>
+<div class="md-switch disabled-switch">
+<input disabled="" id="topicWebsite" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<!-- Instagram -->
+<label class="setting-card disabled-setting" for="topicInstagram">
+<div class="setting-icon-container disabled-emoji-icon">
       📷
     </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+<div class="setting-label">
+<strong class="setting-title">
         Instagram
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-    </div>
-
-    <div class="md-switch disabled-switch">
-      <input type="checkbox" id="topicInstagram" disabled>
-      <div class="track">
-        <div class="thumb"></div>
-      </div>
-    </div>
-  </label>
-
-  <!-- TikTok -->
-  <label class="setting-card disabled-setting" for="topicTikTok">
-    <div class="setting-icon-container disabled-emoji-icon">
+</strong>
+</div>
+<div class="md-switch disabled-switch">
+<input disabled="" id="topicInstagram" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<!-- TikTok -->
+<label class="setting-card disabled-setting" for="topicTikTok">
+<div class="setting-icon-container disabled-emoji-icon">
       🎶
     </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+<div class="setting-label">
+<strong class="setting-title">
         TikTok
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-    </div>
-
-    <div class="md-switch disabled-switch">
-      <input type="checkbox" id="topicTikTok" disabled>
-      <div class="track">
-        <div class="thumb"></div>
-      </div>
-    </div>
-  </label>
-
-  <!-- YouTube -->
-  <label class="setting-card disabled-setting" for="topicYoutube">
-    <div class="setting-icon-container disabled-emoji-icon">
+</strong>
+</div>
+<div class="md-switch disabled-switch">
+<input disabled="" id="topicTikTok" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<!-- YouTube -->
+<label class="setting-card disabled-setting" for="topicYoutube">
+<div class="setting-icon-container disabled-emoji-icon">
       ▶️
     </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+<div class="setting-label">
+<strong class="setting-title">
         YouTube
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-    </div>
-
-    <div class="md-switch disabled-switch">
-      <input type="checkbox" id="topicYoutube" disabled>
-      <div class="track">
-        <div class="thumb"></div>
-      </div>
-    </div>
-  </label>
-
-  <!-- Discord -->
-  <label class="setting-card disabled-setting" for="topicDiscord">
-    <div class="setting-icon-container disabled-emoji-icon">
+</strong>
+</div>
+<div class="md-switch disabled-switch">
+<input disabled="" id="topicYoutube" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<!-- Discord -->
+<label class="setting-card disabled-setting" for="topicDiscord">
+<div class="setting-icon-container disabled-emoji-icon">
       💬
     </div>
-
-    <div class="setting-label">
-      <strong class="setting-title">
+<div class="setting-label">
+<strong class="setting-title">
         Discord
         <span class="coming-soon-badge">Coming Soon</span>
-      </strong>
-    </div>
-
-    <div class="md-switch disabled-switch">
-      <input type="checkbox" id="topicDiscord" disabled>
-      <div class="track">
-        <div class="thumb"></div>
-      </div>
-    </div>
-  </label>
+</strong>
 </div>
-
-
-      <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Accessibility</h2>
-
-        <div class="setting-card">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-text-height"></i>
-          </div>
-
-          <label for="text-size-slider" class="setting-label">
-            <strong class="setting-title">Text Size</strong>
-            <p class="setting-description">Adjust the text size for better readability.</p>
-          </label>
-
-          <div class="text-size-control">
-            <span id="textSizeValue" class="font-size-badge">17px</span>
-            <input type="range" id="text-size-slider" min="12" max="24" value="17" step="1" />
-          </div>
-        </div>
-
-        <label class="setting-card" for="focusOutlineToggle">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-highlighter"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Focus Outline</strong>
-            <p class="setting-description">Toggle the focus outline for accessibility.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="focusOutlineToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="highContrastToggle">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-circle-half-stroke"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">High Contrast Mode</strong>
-            <p class="setting-description">Increase contrast for easier readability.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="highContrastToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="dyslexiaFontToggle">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-font"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Dyslexia-Friendly Font</strong>
-            <p class="setting-description">Enable a more readable font for dyslexic users.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="dyslexiaFontToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-
-        <label class="setting-card" for="underlineLinksToggle">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-underline"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Underline Links</strong>
-            <p class="setting-description">Always underline links to improve visibility.</p>
-          </div>
-
-          <div class="md-switch">
-            <input type="checkbox" id="underlineLinksToggle" role="switch" />
-            <div class="track">
-              <div class="thumb"></div>
-            </div>
-          </div>
-        </label>
-      </div>
-
-      <div class="settings-subsection danger-zone animate-slide-in">
-        <h2 class="subsection-title">Danger Zone</h2>
-
-        <div class="setting-card">
-          <div class="setting-icon-container" style="background-color: #ff3b30;">
-            <i class="fa-solid fa-trash-can"></i>
-          </div>
-
-          <div class="setting-label">
-            <strong class="setting-title">Reset to Factory Settings</strong>
-            <p class="setting-description">Restore all settings to their default values.</p>
-          </div>
-
-          <button id="resetSettings" class="button reset-button" type="button">Reset</button>
-        </div>
-      </div>
-
-      <div class="back-link-container">
-        <a href="/" class="back-link">
-          <span class="back-icon">←</span>
-          <span>Back to Profile</span>
-        </a>
-      </div>
-    </div>
-  </main>
-
-  <div id="toast-container"></div>
-  <div id="mouse-trail"></div>
-
-  <footer class="settings-footer">
-    <div class="footer-content">
-      <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
-      <div class="footer-links">
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="terms-of-service.html">Terms of Service</a>
-        <a href="accessibility-statement.html">Accessibility Statement</a>
-      </div>
-    </div>
-  </footer>
-
-<nav class="onyx-dock" aria-label="Primary navigation">
-  <span class="dock-active-lens" aria-hidden="true"></span>
-
-  <a href="/" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
-        <path d="M3 10.75 12 3l9 7.75v9.5a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1-.75-.75V15a2 2 0 0 0-4 0v5.25a.75.75 0 0 1-.75.75h-5.5A.75.75 0 0 1 3 20.25v-9.5Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Home</span>
-  </a>
-
-  <a href="/beta" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
-        <path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Beta</span>
-  </a>
-
-
-  <a href="/education" class="dock-item" data-education-link>
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Education</span>
-  </a>
-  <a href="/resume" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
-        <path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Resume</span>
-  </a>
-
-  <a href="/settings" class="dock-item">
-    <span class="dock-icon dock-icon-settings" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.36 2.54A1.68 1.68 0 0 1 12 1.25c.78 0 1.46.53 1.64 1.29l.24.98c.08.34.32.61.64.75.32.13.69.11.99-.07l.86-.52a1.69 1.69 0 0 1 2.07.26l1.62 1.62c.55.55.66 1.41.26 2.07l-.52.86c-.18.3-.2.67-.07.99.14.32.41.56.75.64l.98.24A1.68 1.68 0 0 1 22.75 12c0 .78-.53 1.46-1.29 1.64l-.98.24c-.34.08-.61.32-.75.64-.13.32-.11.69.07.99l.52.86c.4.66.29 1.52-.26 2.07l-1.62 1.62c-.55.55-1.41.66-2.07.26l-.86-.52c-.3-.18-.67-.2-.99-.07-.32.14-.56.41-.64.75l-.24.98A1.68 1.68 0 0 1 12 22.75c-.78 0-1.46-.53-1.64-1.29l-.24-.98a1.13 1.13 0 0 0-.64-.75 1.13 1.13 0 0 0-.99.07l-.86.52c-.66.4-1.52.29-2.07-.26l-1.62-1.62a1.69 1.69 0 0 1-.26-2.07l.52-.86c.18-.3.2-.67.07-.99a1.13 1.13 0 0 0-.75-.64l-.98-.24A1.68 1.68 0 0 1 1.25 12c0-.78.53-1.46 1.29-1.64l.98-.24c.34-.08.61-.32.75-.64.13-.32.11-.69-.07-.99l-.52-.86a1.69 1.69 0 0 1 .26-2.07l1.62-1.62a1.69 1.69 0 0 1 2.07-.26l.86.52c.3.18.67.2.99.07.32-.14.56-.41.64-.75l.24-.98ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.75a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Settings</span>
-  </a>
+<div class="md-switch disabled-switch">
+<input disabled="" id="topicDiscord" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+</div>
+<div class="settings-subsection animate-slide-in">
+<h2 class="subsection-title">Accessibility</h2>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-text-height"></i>
+</div>
+<label class="setting-label" for="text-size-slider">
+<strong class="setting-title">Text Size</strong>
+<p class="setting-description">Adjust the text size for better readability.</p>
+</label>
+<div class="text-size-control">
+<span class="font-size-badge" id="textSizeValue">17px</span>
+<input id="text-size-slider" max="24" min="12" step="1" type="range" value="17"/>
+</div>
+</div>
+<label class="setting-card" for="focusOutlineToggle">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-highlighter"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Focus Outline</strong>
+<p class="setting-description">Toggle the focus outline for accessibility.</p>
+</div>
+<div class="md-switch">
+<input id="focusOutlineToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="highContrastToggle">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-circle-half-stroke"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">High Contrast Mode</strong>
+<p class="setting-description">Increase contrast for easier readability.</p>
+</div>
+<div class="md-switch">
+<input id="highContrastToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="dyslexiaFontToggle">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-font"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Dyslexia-Friendly Font</strong>
+<p class="setting-description">Enable a more readable font for dyslexic users.</p>
+</div>
+<div class="md-switch">
+<input id="dyslexiaFontToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+<label class="setting-card" for="underlineLinksToggle">
+<div class="setting-icon-container" style="background-color: #007aff;">
+<i class="fa-solid fa-underline"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Underline Links</strong>
+<p class="setting-description">Always underline links to improve visibility.</p>
+</div>
+<div class="md-switch">
+<input id="underlineLinksToggle" role="switch" type="checkbox"/>
+<div class="track">
+<div class="thumb"></div>
+</div>
+</div>
+</label>
+</div>
+<div class="settings-subsection danger-zone animate-slide-in">
+<h2 class="subsection-title">Danger Zone</h2>
+<div class="setting-card">
+<div class="setting-icon-container" style="background-color: #ff3b30;">
+<i class="fa-solid fa-trash-can"></i>
+</div>
+<div class="setting-label">
+<strong class="setting-title">Reset to Factory Settings</strong>
+<p class="setting-description">Restore all settings to their default values.</p>
+</div>
+<button class="button reset-button" id="resetSettings" type="button">Reset</button>
+</div>
+</div>
+<div class="back-link-container">
+<a class="back-link" href="/">
+<span class="back-icon">←</span>
+<span>Back to Profile</span>
+</a>
+</div>
+</div>
+</main>
+<div id="toast-container"></div>
+<div id="mouse-trail"></div>
+<footer class="settings-footer">
+<div class="footer-content">
+<p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
+<div class="footer-links">
+<a href="privacy-policy.html">Privacy Policy</a>
+<a href="terms-of-service.html">Terms of Service</a>
+<a href="accessibility-statement.html">Accessibility Statement</a>
+</div>
+</div>
+</footer>
+<nav aria-label="Primary navigation" class="onyx-dock">
+<span aria-hidden="true" class="dock-active-lens"></span>
+<a class="dock-item" href="/">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24">
+<path d="M3 10.75 12 3l9 7.75v9.5a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1-.75-.75V15a2 2 0 0 0-4 0v5.25a.75.75 0 0 1-.75.75h-5.5A.75.75 0 0 1 3 20.25v-9.5Z"></path>
+</svg>
+</span>
+<span class="dock-label">Home</span>
+</a>
+<a class="dock-item" href="/beta">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24">
+<path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
+</svg>
+</span>
+<span class="dock-label">Beta</span>
+</a>
+<a class="dock-item" data-education-link="" href="/education">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
+</svg>
+</span>
+<span class="dock-label">Education</span>
+</a>
+<a class="dock-item" href="/resume">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24">
+<path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
+</svg>
+</span>
+<span class="dock-label">Resume</span>
+</a>
+<a class="dock-item" href="/settings">
+<span aria-hidden="true" class="dock-icon dock-icon-settings">
+<svg focusable="false" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10.36 2.54A1.68 1.68 0 0 1 12 1.25c.78 0 1.46.53 1.64 1.29l.24.98c.08.34.32.61.64.75.32.13.69.11.99-.07l.86-.52a1.69 1.69 0 0 1 2.07.26l1.62 1.62c.55.55.66 1.41.26 2.07l-.52.86c-.18.3-.2.67-.07.99.14.32.41.56.75.64l.98.24A1.68 1.68 0 0 1 22.75 12c0 .78-.53 1.46-1.29 1.64l-.98.24c-.34.08-.61.32-.75.64-.13.32-.11.69.07.99l.52.86c.4.66.29 1.52-.26 2.07l-1.62 1.62c-.55.55-1.41.66-2.07.26l-.86-.52c-.3-.18-.67-.2-.99-.07-.32.14-.56.41-.64.75l-.24.98A1.68 1.68 0 0 1 12 22.75c-.78 0-1.46-.53-1.64-1.29l-.24-.98a1.13 1.13 0 0 0-.64-.75 1.13 1.13 0 0 0-.99.07l-.86.52c-.66.4-1.52.29-2.07-.26l-1.62-1.62a1.69 1.69 0 0 1-.26-2.07l.52-.86c.18-.3.2-.67.07-.99a1.13 1.13 0 0 0-.75-.64l-.98-.24A1.68 1.68 0 0 1 1.25 12c0-.78.53-1.46 1.29-1.64l.98-.24c.34-.08.61-.32.75-.64.13-.32.11-.69-.07-.99l-.52-.86a1.69 1.69 0 0 1 .26-2.07l1.62-1.62a1.69 1.69 0 0 1 2.07-.26l.86.52c.3.18.67.2.99.07.32-.14.56-.41.64-.75l.24-.98ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.75a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" fill-rule="evenodd"></path>
+</svg>
+</span>
+<span class="dock-label">Settings</span>
+</a>
 </nav>
-
 <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-<script type="module" src="firebase-init.js"></script>
-<script type="module" src="notifications.js"></script>
 <script src="settings.js"></script>
 <script src="script.js"></script>
-
 <script>
   (() => {
     function initializeOnyxDock() {
@@ -1687,8 +1444,7 @@
     }
   })();
 </script>
-
-<script data-education-link-settings>
+<script data-education-link-settings="">
 (() => {
   const syncEducationLinks = () => {
     try {
@@ -1704,6 +1460,5 @@
   });
 })();
 </script>
-
 </body>
 </html>
