@@ -1,1035 +1,456 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="8Z9aIwfUPs4hH7zGtkp0-jnHUEAQngGhOLfWm1mMEzc" />
-  <meta name="msvalidate.01" content="DF604B6A866AD7AE606EBAF19A20D042" />
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <meta name="description" content="Welcome to my official link-in-bio page. Explore my merch, settings, and policies all in one place." />
-  <meta name="keywords" content="bus army dude, merch, link in bio, accessibility, privacy policy" />
-  <meta name="author" content="Caleb Kritzar" />
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Caleb" />
-
-  <link rel="apple-touch-icon" href="/favicon-512x512.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#3ddc84" />
-
-  <title>Home - Caleb's Profile</title>
-
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="settings.css" />
-
-  <!-- Font Awesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    referrerpolicy="no-referrer"
-  />
-
-  <!-- SortableJS MUST load before rearrange.js -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
-  <!-- Cronitor RUM -->
-  <script async src="https://rum.cronitor.io/script.js"></script>
-  <script>
+<meta content="8Z9aIwfUPs4hH7zGtkp0-jnHUEAQngGhOLfWm1mMEzc" name="google-site-verification"/>
+<meta content="DF604B6A866AD7AE606EBAF19A20D042" name="msvalidate.01"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Welcome to my official link-in-bio page. Explore my merch, settings, and policies all in one place." name="description"/>
+<meta content="bus army dude, merch, link in bio, accessibility, privacy policy" name="keywords"/>
+<meta content="Caleb Kritzar" name="author"/>
+<meta content="upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Caleb" name="apple-mobile-web-app-title"/>
+<link href="/favicon-512x512.png" rel="apple-touch-icon"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/site.webmanifest" rel="manifest"/>
+<meta content="#3ddc84" name="theme-color"/>
+<title>Home - Caleb's Profile</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="settings.css" rel="stylesheet"/>
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" rel="stylesheet"/>
+<!-- SortableJS MUST load before rearrange.js -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<!-- Cronitor RUM -->
+<script async="" src="https://rum.cronitor.io/script.js"></script>
+<script>
     window.cronitor = window.cronitor || function() {
       (window.cronitor.q = window.cronitor.q || []).push(arguments);
     };
     cronitor('config', { clientKey: 'ede74f89a46ec32946fc8ca895b29227' });
   </script>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0RSQS1MS7"></script>
-  <script>
+<!-- Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-E0RSQS1MS7"></script>
+<script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-E0RSQS1MS7');
   </script>
 </head>
-
 <body class="dark-mode">
-  <div class="container">
-
-    <div id="maintenanceLoadingOverlay" class="maintenance-overlay" style="display:none;">
-      <div class="maintenance-content">
-        <div class="maintenance-loader"></div>
-        <h1>Site Under Maintenance</h1>
-        <p>We are currently performing scheduled maintenance...</p>
-
-        <div class="maintenance-socials">
-          <p>Stay Updated:</p>
-          <a href="https://calebswebsitestatus.statuspage.io" target="_blank" rel="noopener noreferrer">
-            <i class="fas fa-chart-line"></i> Status Page
+<div class="container">
+<div class="maintenance-overlay" hidden="" id="maintenanceLoadingOverlay">
+<div class="maintenance-content">
+<div class="maintenance-loader"></div>
+<h2>Site Under Maintenance</h2>
+<p>We are currently performing scheduled maintenance...</p>
+<div class="maintenance-socials">
+<p>Stay Updated:</p>
+<a href="https://calebswebsitestatus.statuspage.io" rel="noopener noreferrer" target="_blank">
+<i class="fas fa-chart-line"></i> Status Page
           </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- If you actually use this wrapper, keep it. If not, it can be removed. -->
-    <div id="main-content-wrapper"></div>
-
-    <!-- REQUIRED for rearrange.js -->
-    <div id="rearrangeable-container">
-
+</div>
+</div>
+</div>
+<!-- If you actually use this wrapper, keep it. If not, it can be removed. -->
+<div id="main-content-wrapper"></div>
+<!-- REQUIRED for rearrange.js -->
+<div id="rearrangeable-container">
 <!-- ======================================================= -->
 <!-- LOCKED PROFILE                                          -->
 <!-- ======================================================= -->
-
-<div
-  class="profile-section section no-rearrange"
-  id="profile-section"
-  aria-labelledby="profile-username-main"
->
-  <!-- ======================================================= -->
-  <!-- PROFILE PICTURE                                        -->
-  <!-- ======================================================= -->
-
-  <div class="profile-pic-wrapper">
-    <img
-      src="path/to/default-profile.jpg"
-      alt="Profile picture"
-      class="profile-pic"
-      id="profile-pic-main"
-    />
-
-    <div
-      class="profile-status-container status-online"
-      id="profile-status-main-container"
-      aria-hidden="true"
-    ></div>
-  </div>
-
-  <!-- ======================================================= -->
-  <!-- PROFILE NAME AND STATUS                                -->
-  <!-- ======================================================= -->
-
-  <div class="username-checkmark">
-    <div class="profile-name-row">
-      <h1 id="profile-username-main">
+<div aria-labelledby="profile-username-main" class="profile-section section no-rearrange" id="profile-section">
+<!-- ======================================================= -->
+<!-- PROFILE PICTURE                                        -->
+<!-- ======================================================= -->
+<div class="profile-pic-wrapper">
+<img alt="Profile picture" class="profile-pic" id="profile-pic-main" src="/images/default-profile.jpg"/>
+<div aria-hidden="true" class="profile-status-container status-online" id="profile-status-main-container"></div>
+</div>
+<!-- ======================================================= -->
+<!-- PROFILE NAME AND STATUS                                -->
+<!-- ======================================================= -->
+<div class="username-checkmark">
+<div class="profile-name-row">
+<h1 id="profile-username-main">
         Caleb Kritzar
       </h1>
-
-      <img
-        src="check.png"
-        alt="Verified profile"
-        class="verified"
-        id="profile-verified"
-      />
-    </div>
-
-    <p
-      class="profile-status-text status-online"
-      id="profile-status-text-main"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
+<img alt="Verified profile" class="verified" id="profile-verified" src="check.png"/>
+</div>
+<p aria-atomic="true" aria-live="polite" class="profile-status-text status-online" id="profile-status-text-main" role="status">
       Active
     </p>
-  </div>
-
-  <!-- ======================================================= -->
-  <!-- PROFILE BIOGRAPHY                                      -->
-  <!-- ======================================================= -->
-
-  <p
-    class="profile-bio"
-    id="profile-bio-main"
-  >
-    Hello, my name is Caleb, and I am 20 years old. I am autistic
-    and have a strong interest in technology and coding websites.
-  </p>
-
+</div>
+<!-- ======================================================= -->
+<!-- PROFILE BIOGRAPHY                                      -->
+<!-- ======================================================= -->
+<p class="profile-bio" id="profile-bio-main">Technology student focused on web development, accessibility, and building practical digital experiences.</p>
 <!-- ======================================================= -->
 <!-- LIVE ACTIVITY SYSTEM                                    -->
 <!-- ======================================================= -->
-
-<div
-  class="live-activity hidden"
-  id="live-activity"
-  aria-label="Current activity"
->
-  <!-- Current Status -->
-
-  <div
-    class="status-line"
-    id="status-line"
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-  >
-    <img
-      id="status-icon"
-      class="status-icon"
-      src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
-      alt=""
-      aria-hidden="true"
-      decoding="async"
-    />
-
-    <span id="status-line-text">
-      Loading status…
-    </span>
-  </div>
-
-  <!-- Media Activity Card -->
-
-  <div
-    class="spotify-card hidden"
-    id="spotify-card"
-    role="button"
-    tabindex="0"
-    aria-label="Open current media activity"
-    aria-disabled="true"
-  >
-    <!-- Activity Artwork -->
-
-    <div class="live-album-art">
-      <img
-        id="live-activity-cover"
-        class="live-album-image"
-        src="path/to/default-cover.png"
-        alt="Current activity artwork"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-
-    <!-- Media Information -->
-
-    <div class="live-info">
-      <div class="live-song-title-wrapper">
-        <span
-          class="live-song-title"
-          id="live-song-title"
-        >
-          —
-        </span>
-
-        <span
-          class="explicit-badge hidden"
-          id="explicit-badge"
-          aria-label="Explicit content"
-          title="Explicit"
-        >
-          E
-        </span>
-      </div>
-
-      <div
-        class="live-artist"
-        id="live-song-artist"
-      >
-        —
-      </div>
-
-      <!-- Activity Progress -->
-
-      <div
-        class="music-progress-container"
-        role="progressbar"
-        aria-label="Activity progress"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow="0"
-      >
-        <div
-          id="music-progress-bar"
-          class="music-progress-bar"
-        ></div>
-      </div>
-
-      <!-- Activity Times -->
-
-      <div
-        class="music-progress-time"
-        aria-label="Activity playback times"
-      >
-        <span
-          id="elapsed-time"
-          aria-label="Elapsed time"
-        >
-          0:00
-        </span>
-
-        <span
-          id="remaining-time"
-          aria-label="Remaining time"
-        >
-          -0:00
-        </span>
-
-        <span
-          id="total-time"
-          aria-label="Total duration"
-        >
-          0:00
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Last Activity Update -->
-
-  <div
-    class="la-updated"
-    id="live-activity-updated"
-    aria-live="off"
-  >
-    Updated just now
-  </div>
-</div>
 
 <!-- ======================================================= -->
 <!-- END LIVE ACTIVITY                                       -->
 <!-- ======================================================= -->
 </div>
-      <!-- Toast Notifications -->
-      <div id="toast-container"></div>
-
-      <div class="social-links-section section" id="social-links-section" data-section-id="social-links">
-        <h2>Follow Me</h2>
-
-        <div class="search-container unified">
-          <span class="search-icon"></span>
-          <input
-            type="text"
-            class="creator-search"
-            placeholder="Search social links..."
-            data-target="social-links-container"
-          />
-        </div>
-
-        <p class="no-results" id="no-results-social" style="display:none;">No results found.</p>
-
-        <div id="social-links-container" class="social-links-container">
-          <p>Loading social links...</p>
-        </div>
-      </div>
-
-            <div class="shoutouts-section section" id="tiktok-shoutouts-section" data-section-id="tiktok-shoutouts">
-        <div id="tiktok-shoutouts">
-          <h2>TikTok Creator Shoutouts</h2>
-          <p id="tiktok-last-updated-timestamp">Last Updated: Loading...</p>
-
-          <div class="search-container unified">
-            <span class="search-icon" aria-hidden="true"></span>
-            <input
-              type="search"
-              id="tiktok-search"
-              class="creator-search"
-              placeholder="Search TikTok creators"
-              aria-label="Search TikTok creators"
-            />
-            <select id="tiktok-sort" class="sort-inline-select" aria-label="Sort TikTok creators">
-              <option value="followers_desc" selected>Followers — High → Low</option>
-              <option value="followers_asc">Followers — Low → High</option>
-              <option value="abc_asc">A → Z</option>
-              <option value="abc_desc">Z → A</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="creator-grid"></div>
-        <div class="unavailable-message" style="display:none;"></div>
-      </div>
-
-      <div class="shoutouts-section section" id="instagram-shoutouts-section" data-section-id="instagram-shoutouts">
-        <div id="instagram-shoutouts">
-          <h2>Instagram Creator Shoutouts</h2>
-          <p id="instagram-last-updated-timestamp">Last Updated: Loading...</p>
-
-          <div class="search-container unified">
-            <span class="search-icon" aria-hidden="true"></span>
-            <input
-              type="search"
-              id="instagram-search"
-              class="creator-search"
-              placeholder="Search Instagram creators"
-              aria-label="Search Instagram creators"
-            />
-            <select id="instagram-sort" class="sort-inline-select" aria-label="Sort Instagram creators">
-              <option value="followers_desc" selected>Followers — High → Low</option>
-              <option value="followers_asc">Followers — Low → High</option>
-              <option value="abc_asc">A → Z</option>
-              <option value="abc_desc">Z → A</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="instagram-creator-grid"></div>
-      </div>
-
-      <div class="shoutouts-section section" id="youtube-shoutouts-section" data-section-id="youtube-shoutouts">
-        <div id="youtube-shoutouts">
-          <h2>YouTube Creator Shoutouts</h2>
-          <p id="youtube-last-updated-timestamp">Last Updated: Loading...</p>
-
-          <div class="search-container unified">
-            <span class="search-icon" aria-hidden="true"></span>
-            <input
-              type="search"
-              id="youtube-search"
-              class="creator-search"
-              placeholder="Search YouTube creators"
-              aria-label="Search YouTube creators"
-            />
-            <select id="youtube-sort" class="sort-inline-select" aria-label="Sort YouTube creators">
-              <option value="followers_desc" selected>Subscribers — High → Low</option>
-              <option value="followers_asc">Subscribers — Low → High</option>
-              <option value="abc_asc">A → Z</option>
-              <option value="abc_desc">Z → A</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="youtube-creator-grid"></div>
-      </div>
-      
-      <section class="quote-section section" id="daily-quote-section" data-section-id="daily-quote">
-        <div class="quote-controls">
-          <span id="daily-quote-tag" class="quote-tag">Neurodiversity</span>
-
-          <button id="copy-quote-btn" class="copy-btn" title="Copy Quote" type="button">
-            <i class="fa-solid fa-copy"></i>
-          </button>
-        </div>
-
-        <div class="quote-content">
-          <i class="fa-solid fa-quote-left quote-icon"></i>
-          <p id="daily-quote-text">Inspiration loading...</p>
-          <span id="daily-quote-author"></span>
-        </div>
-      </section>
-
-      <div class="section countdown-section" id="countdown-section" data-section-id="countdown">
-        <h2 class="countdown-title">Countdown</h2>
-
-        <div class="countdown-container">
-          <div class="countdown-item">
-            <svg class="countdown-svg" viewBox="0 0 120 120">
-              <circle r="54" cx="60" cy="60"></circle>
-              <circle r="54" cx="60" cy="60" id="years-circle"></circle>
-            </svg>
-            <div class="countdown-text">
-              <div id="countdown-years" class="countdown-number">0</div>
-              <div class="countdown-label">Years</div>
-            </div>
-          </div>
-
-          <div class="countdown-item">
-            <svg class="countdown-svg" viewBox="0 0 120 120">
-              <circle r="54" cx="60" cy="60"></circle>
-              <circle r="54" cx="60" cy="60" id="months-circle"></circle>
-            </svg>
-            <div class="countdown-text">
-              <div id="countdown-months" class="countdown-number">0</div>
-              <div class="countdown-label">Months</div>
-            </div>
-          </div>
-
-          <div class="countdown-item">
-            <svg class="countdown-svg" viewBox="0 0 120 120">
-              <circle r="54" cx="60" cy="60"></circle>
-              <circle r="54" cx="60" cy="60" id="days-circle"></circle>
-            </svg>
-            <div class="countdown-text">
-              <div id="countdown-days" class="countdown-number">0</div>
-              <div class="countdown-label">Days</div>
-            </div>
-          </div>
-
-          <div class="countdown-item">
-            <svg class="countdown-svg" viewBox="0 0 120 120">
-              <circle r="54" cx="60" cy="60"></circle>
-              <circle r="54" cx="60" cy="60" id="hours-circle"></circle>
-            </svg>
-            <div class="countdown-text">
-              <div id="countdown-hours" class="countdown-number">0</div>
-              <div class="countdown-label">Hours</div>
-            </div>
-          </div>
-
-          <div class="countdown-item">
-            <svg class="countdown-svg" viewBox="0 0 120 120">
-              <circle r="54" cx="60" cy="60"></circle>
-              <circle r="54" cx="60" cy="60" id="minutes-circle"></circle>
-            </svg>
-            <div class="countdown-text">
-              <div id="countdown-minutes" class="countdown-number">0</div>
-              <div class="countdown-label">Minutes</div>
-            </div>
-          </div>
-
-          <div class="countdown-item">
-            <svg class="countdown-svg" viewBox="0 0 120 120">
-              <circle r="54" cx="60" cy="60"></circle>
-              <circle r="54" cx="60" cy="60" id="seconds-circle"></circle>
-            </svg>
-            <div class="countdown-text">
-              <div id="countdown-seconds" class="countdown-number">0</div>
-              <div class="countdown-label">Seconds</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="countdown-info">
-          <div id="local-time-display" class="local-time-display"></div>
-          <div class="countdown-status">
-            <span id="status-message">Preparing countdown…</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Luxon MUST load before your business script -->
+<!-- Toast Notifications -->
+<div id="toast-container"></div>
+<div class="social-links-section section" data-section-id="social-links" id="social-links-section">
+<h2>Follow Me</h2>
+<div class="search-container unified">
+<span class="search-icon"></span>
+<label class="sr-only" for="social-links-search">Search social links</label>
+<input class="creator-search" data-target="social-links-container" id="social-links-search" placeholder="Search social links..." type="search"/>
+</div>
+<p class="no-results" id="no-results-social" style="display:none;">No results found.</p>
+<div class="social-links-container" id="social-links-container">
+<p>Loading social links...</p>
+</div>
+</div>
+<div class="shoutouts-section section" data-section-id="tiktok-shoutouts" id="tiktok-shoutouts-section">
+<div id="tiktok-shoutouts">
+<h2>TikTok Creator Shoutouts</h2>
+<p id="tiktok-last-updated-timestamp">Last Updated: Loading...</p>
+<div class="search-container unified">
+<span aria-hidden="true" class="search-icon"></span>
+<input aria-label="Search TikTok creators" class="creator-search" id="tiktok-search" placeholder="Search TikTok creators" type="search"/>
+<select aria-label="Sort TikTok creators" class="sort-inline-select" id="tiktok-sort">
+<option selected="" value="followers_desc">Followers — High → Low</option>
+<option value="followers_asc">Followers — Low → High</option>
+<option value="abc_asc">A → Z</option>
+<option value="abc_desc">Z → A</option>
+</select>
+</div>
+</div>
+<div class="creator-grid"></div>
+<div class="unavailable-message" style="display:none;"></div>
+</div>
+<div class="shoutouts-section section" data-section-id="instagram-shoutouts" id="instagram-shoutouts-section">
+<div id="instagram-shoutouts">
+<h2>Instagram Creator Shoutouts</h2>
+<p id="instagram-last-updated-timestamp">Last Updated: Loading...</p>
+<div class="search-container unified">
+<span aria-hidden="true" class="search-icon"></span>
+<input aria-label="Search Instagram creators" class="creator-search" id="instagram-search" placeholder="Search Instagram creators" type="search"/>
+<select aria-label="Sort Instagram creators" class="sort-inline-select" id="instagram-sort">
+<option selected="" value="followers_desc">Followers — High → Low</option>
+<option value="followers_asc">Followers — Low → High</option>
+<option value="abc_asc">A → Z</option>
+<option value="abc_desc">Z → A</option>
+</select>
+</div>
+</div>
+<div class="instagram-creator-grid"></div>
+</div>
+<div class="shoutouts-section section" data-section-id="youtube-shoutouts" id="youtube-shoutouts-section">
+<div id="youtube-shoutouts">
+<h2>YouTube Creator Shoutouts</h2>
+<p id="youtube-last-updated-timestamp">Last Updated: Loading...</p>
+<div class="search-container unified">
+<span aria-hidden="true" class="search-icon"></span>
+<input aria-label="Search YouTube creators" class="creator-search" id="youtube-search" placeholder="Search YouTube creators" type="search"/>
+<select aria-label="Sort YouTube creators" class="sort-inline-select" id="youtube-sort">
+<option selected="" value="followers_desc">Subscribers — High → Low</option>
+<option value="followers_asc">Subscribers — Low → High</option>
+<option value="abc_asc">A → Z</option>
+<option value="abc_desc">Z → A</option>
+</select>
+</div>
+</div>
+<div class="youtube-creator-grid"></div>
+</div>
+<section class="quote-section section" data-section-id="daily-quote" id="daily-quote-section">
+<div class="quote-controls">
+<span class="quote-tag" id="daily-quote-tag">Neurodiversity</span>
+<button class="copy-btn" id="copy-quote-btn" title="Copy Quote" type="button">
+<i class="fa-solid fa-copy"></i>
+</button>
+</div>
+<div class="quote-content">
+<i class="fa-solid fa-quote-left quote-icon"></i>
+<p id="daily-quote-text">Inspiration loading...</p>
+<span id="daily-quote-author"></span>
+</div>
+</section>
+<div class="section countdown-section" data-section-id="countdown" id="countdown-section">
+<h2 class="countdown-title">Countdown</h2>
+<div class="countdown-container">
+<div class="countdown-item">
+<svg class="countdown-svg" viewbox="0 0 120 120">
+<circle cx="60" cy="60" r="54"></circle>
+<circle cx="60" cy="60" id="years-circle" r="54"></circle>
+</svg>
+<div class="countdown-text">
+<div class="countdown-number" id="countdown-years">0</div>
+<div class="countdown-label">Years</div>
+</div>
+</div>
+<div class="countdown-item">
+<svg class="countdown-svg" viewbox="0 0 120 120">
+<circle cx="60" cy="60" r="54"></circle>
+<circle cx="60" cy="60" id="months-circle" r="54"></circle>
+</svg>
+<div class="countdown-text">
+<div class="countdown-number" id="countdown-months">0</div>
+<div class="countdown-label">Months</div>
+</div>
+</div>
+<div class="countdown-item">
+<svg class="countdown-svg" viewbox="0 0 120 120">
+<circle cx="60" cy="60" r="54"></circle>
+<circle cx="60" cy="60" id="days-circle" r="54"></circle>
+</svg>
+<div class="countdown-text">
+<div class="countdown-number" id="countdown-days">0</div>
+<div class="countdown-label">Days</div>
+</div>
+</div>
+<div class="countdown-item">
+<svg class="countdown-svg" viewbox="0 0 120 120">
+<circle cx="60" cy="60" r="54"></circle>
+<circle cx="60" cy="60" id="hours-circle" r="54"></circle>
+</svg>
+<div class="countdown-text">
+<div class="countdown-number" id="countdown-hours">0</div>
+<div class="countdown-label">Hours</div>
+</div>
+</div>
+<div class="countdown-item">
+<svg class="countdown-svg" viewbox="0 0 120 120">
+<circle cx="60" cy="60" r="54"></circle>
+<circle cx="60" cy="60" id="minutes-circle" r="54"></circle>
+</svg>
+<div class="countdown-text">
+<div class="countdown-number" id="countdown-minutes">0</div>
+<div class="countdown-label">Minutes</div>
+</div>
+</div>
+<div class="countdown-item">
+<svg class="countdown-svg" viewbox="0 0 120 120">
+<circle cx="60" cy="60" r="54"></circle>
+<circle cx="60" cy="60" id="seconds-circle" r="54"></circle>
+</svg>
+<div class="countdown-text">
+<div class="countdown-number" id="countdown-seconds">0</div>
+<div class="countdown-label">Seconds</div>
+</div>
+</div>
+</div>
+<div class="countdown-info">
+<div class="local-time-display" id="local-time-display"></div>
+<div class="countdown-status">
+<span id="status-message">Preparing countdown…</span>
+</div>
+</div>
+</div>
+<!-- Luxon MUST load before your business script -->
 <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-
 <script>
   window.assumedBusinessTimezone = "America/New_York";
 </script>
-
-<section class="section business-info-section"
-         id="business-section"
-         data-section-id="business-info">
-
-  <!-- ============================ -->
-  <!-- BUSINESS HEADER              -->
-  <!-- ============================ -->
-  <div class="business-head">
-    <div class="business-head-left">
-      <h2>Business Status & Hours</h2>
-      <p class="business-subtitle">
+<section class="section business-info-section" data-section-id="business-info" id="business-section">
+<!-- ============================ -->
+<!-- BUSINESS HEADER              -->
+<!-- ============================ -->
+<div class="business-head">
+<div class="business-head-left">
+<h2>Business Status &amp; Hours</h2>
+<p class="business-subtitle">
         Hours shown in your local timezone.
         Store timezone: <strong>America/New_York</strong>.
       </p>
-    </div>
-
-    <div class="business-head-right">
-      <button class="biz-action" type="button" id="copyTodayBtn">
+</div>
+<div class="business-head-right">
+<button class="biz-action" id="copyTodayBtn" type="button">
         Copy Today
       </button>
-
-      <button
-        class="biz-action biz-action-ghost"
-        type="button"
-        id="toggleHoursBtn"
-        aria-expanded="true"
-        aria-controls="hoursPanel"
-      >
+<button aria-controls="hoursPanel" aria-expanded="true" class="biz-action biz-action-ghost" id="toggleHoursBtn" type="button">
         Hide Full Hours
       </button>
-
-      <div
-        class="biz-segmented-time"
-        id="bizTimeFormatSegment"
-        role="group"
-        aria-label="Time format"
-      >
-        <button
-          type="button"
-          class="biz-segmented-time__option is-active"
-          id="bizTime12Btn"
-          aria-pressed="true"
-        >
+<div aria-label="Time format" class="biz-segmented-time" id="bizTimeFormatSegment" role="group">
+<button aria-pressed="true" class="biz-segmented-time__option is-active" id="bizTime12Btn" type="button">
           12h
         </button>
-
-        <button
-          type="button"
-          class="biz-segmented-time__option"
-          id="bizTime24Btn"
-          aria-pressed="false"
-        >
+<button aria-pressed="false" class="biz-segmented-time__option" id="bizTime24Btn" type="button">
           24h
         </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="business-grid">
-
-    <!-- ============================ -->
-    <!-- LEFT PANEL — LIVE STATUS     -->
-    <!-- ============================ -->
-    <div class="biz-panel">
-      <div class="biz-panel-title">
-        <div class="biz-signal" aria-hidden="true">
-          <span
-            class="biz-signal__light biz-signal__light--red"
-            id="bizLightRed"
-          ></span>
-
-          <span
-            class="biz-signal__light biz-signal__light--yellow"
-            id="bizLightYellow"
-          ></span>
-
-          <span
-            class="biz-signal__light biz-signal__light--green"
-            id="bizLightGreen"
-          ></span>
-        </div>
-
-        <h3>Live Status</h3>
-        <span class="biz-chip" id="bizChip">AUTO</span>
-      </div>
-
-      <div id="business-status-display" class="business-status">
-        <span class="status-main-text status-unavailable">Loading…</span>
-        <span class="status-countdown-text"></span>
-        <div class="status-reason-text"></div>
-      </div>
-
-      <div class="biz-status-hint" id="bizStatusHint"></div>
-
-      <!-- ============================ -->
-      <!-- ACADEMIC STATUS BANNER       -->
-      <!-- ============================ -->
-      <div
-        id="academic-status-banner"
-        class="biz-academic-banner"
-        hidden
-        role="status"
-        aria-live="polite"
-      >
-        <strong id="academic-status-title"></strong>
-        <span id="academic-status-detail"></span>
-      </div>
-
-      <div class="biz-meta">
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Your timezone</span>
-          <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
-        </div>
-
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Store time</span>
-          <span class="biz-meta__value" id="bizStoreTime">Loading…</span>
-        </div>
-
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Today</span>
-          <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
-        </div>
-
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Next open</span>
-          <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
-        </div>
-      </div>
-
-      <div
-        class="biz-today-timeline"
-        id="bizTodayTimeline"
-        aria-label="Today's schedule timeline"
-      >
-        <div class="biz-today-timeline__bar">
-          <span
-            class="biz-today-timeline__fill"
-            id="bizTodayTimelineFill"
-          ></span>
-
-          <span
-            class="biz-today-timeline__now"
-            id="bizTodayTimelineNow"
-          ></span>
-        </div>
-
-        <div class="biz-today-timeline__labels">
-          <span id="bizTimelineStart">—</span>
-          <span id="bizTimelineNowLabel">Now</span>
-          <span id="bizTimelineEnd">—</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================ -->
-    <!-- RIGHT PANEL — HOURS          -->
-    <!-- ============================ -->
-    <div class="biz-panel" id="hoursPanel">
-      <div class="biz-panel-title biz-panel-title--split">
-        <h3>Weekly Hours</h3>
-        <span class="biz-muted" id="bizLocalTime">Local time: …</span>
-      </div>
-
-      <!-- ============================ -->
-      <!-- REGULAR WEEKLY HOURS         -->
-      <!-- ============================ -->
-      <div id="business-hours-display" class="hours-wrap"></div>
-
-      <!-- ============================ -->
-      <!-- TEMPORARY HOURS              -->
-      <!-- ============================ -->
-      <details class="biz-details" id="temporaryDetails" open>
-        <summary>Temporary Hours</summary>
-        <div id="temporary-hours-display" class="hours-wrap"></div>
-      </details>
-
-      <!-- ============================ -->
-      <!-- HOLIDAY HOURS                -->
-      <!-- ============================ -->
-      <details class="biz-details" id="holidayDetails">
-        <summary>Holiday Hours</summary>
-        <div id="holiday-hours-display" class="hours-wrap"></div>
-      </details>
-
-      <!-- ============================ -->
-      <!-- ACADEMIC SCHEDULE            -->
-      <!-- ============================ -->
-      <details class="biz-details" id="academicDetails" hidden>
-        <summary>Academic Schedule</summary>
-        <div id="academic-hours-display" class="hours-wrap">
-          <p class="biz-muted">
+</div>
+</div>
+</div>
+<div class="business-grid">
+<!-- ============================ -->
+<!-- LEFT PANEL — LIVE STATUS     -->
+<!-- ============================ -->
+<div class="biz-panel">
+<div class="biz-panel-title">
+<div aria-hidden="true" class="biz-signal">
+<span class="biz-signal__light biz-signal__light--red" id="bizLightRed"></span>
+<span class="biz-signal__light biz-signal__light--yellow" id="bizLightYellow"></span>
+<span class="biz-signal__light biz-signal__light--green" id="bizLightGreen"></span>
+</div>
+<h3>Live Status</h3>
+<span class="biz-chip" id="bizChip">AUTO</span>
+</div>
+<div class="business-status" id="business-status-display">
+<span class="status-main-text status-unavailable">Loading…</span>
+<span class="status-countdown-text"></span>
+<div class="status-reason-text"></div>
+</div>
+<div class="biz-status-hint" id="bizStatusHint"></div>
+<!-- ============================ -->
+<!-- ACADEMIC STATUS BANNER       -->
+<!-- ============================ -->
+<div aria-live="polite" class="biz-academic-banner" hidden="" id="academic-status-banner" role="status">
+<strong id="academic-status-title"></strong>
+<span id="academic-status-detail"></span>
+</div>
+<div class="biz-meta">
+<div class="biz-meta__row">
+<span class="biz-meta__label">Your timezone</span>
+<span class="biz-meta__value" id="bizUserTz">Detecting…</span>
+</div>
+<div class="biz-meta__row">
+<span class="biz-meta__label">Store time</span>
+<span class="biz-meta__value" id="bizStoreTime">Loading…</span>
+</div>
+<div class="biz-meta__row">
+<span class="biz-meta__label">Today</span>
+<span class="biz-meta__value" id="bizTodayHours">Loading…</span>
+</div>
+<div class="biz-meta__row">
+<span class="biz-meta__label">Next open</span>
+<span class="biz-meta__value" id="bizNextOpen">Loading…</span>
+</div>
+</div>
+<div aria-label="Today's schedule timeline" class="biz-today-timeline" id="bizTodayTimeline">
+<div class="biz-today-timeline__bar">
+<span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
+<span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
+</div>
+<div class="biz-today-timeline__labels">
+<span id="bizTimelineStart">—</span>
+<span id="bizTimelineNowLabel">Now</span>
+<span id="bizTimelineEnd">—</span>
+</div>
+</div>
+</div>
+<!-- ============================ -->
+<!-- RIGHT PANEL — HOURS          -->
+<!-- ============================ -->
+<div class="biz-panel" id="hoursPanel">
+<div class="biz-panel-title biz-panel-title--split">
+<h3>Weekly Hours</h3>
+<span class="biz-muted" id="bizLocalTime">Local time: …</span>
+</div>
+<!-- ============================ -->
+<!-- REGULAR WEEKLY HOURS         -->
+<!-- ============================ -->
+<div class="hours-wrap" id="business-hours-display"></div>
+<!-- ============================ -->
+<!-- TEMPORARY HOURS              -->
+<!-- ============================ -->
+<details class="biz-details" id="temporaryDetails" open="">
+<summary>Temporary Hours</summary>
+<div class="hours-wrap" id="temporary-hours-display"></div>
+</details>
+<!-- ============================ -->
+<!-- HOLIDAY HOURS                -->
+<!-- ============================ -->
+<details class="biz-details" id="holidayDetails">
+<summary>Holiday Hours</summary>
+<div class="hours-wrap" id="holiday-hours-display"></div>
+</details>
+<!-- ============================ -->
+<!-- ACADEMIC SCHEDULE            -->
+<!-- ============================ -->
+<details class="biz-details" hidden="" id="academicDetails">
+<summary>Academic Schedule</summary>
+<div class="hours-wrap" id="academic-hours-display">
+<p class="biz-muted">
             Business availability may be affected by academic commitments.
           </p>
-        </div>
-      </details>
-
-      <div class="biz-divider" role="separator" aria-hidden="true"></div>
-
-      <!-- ============================ -->
-      <!-- CONTACT                      -->
-      <!-- ============================ -->
-      <div class="biz-contact">
-        <h4>Contact</h4>
-        <div id="contact-email-display" class="contact-info"></div>
-      </div>
-    </div>
-  </div>
+</div>
+</details>
+<div aria-hidden="true" class="biz-divider" role="separator"></div>
+<!-- ============================ -->
+<!-- CONTACT                      -->
+<!-- ============================ -->
+<div class="biz-contact">
+<h4>Contact</h4>
+<div class="contact-info" id="contact-email-display"></div>
+</div>
+</div>
+</div>
 </section>
-
-
-
 <!-- ======================================================= -->
 <!-- 💻 TECH INFORMATION SECTION                             -->
-<!-- Includes Onyx search, clear button, sorting, filters     -->
+
 <!-- ======================================================= -->
 
-<div
-  class="tech-section section"
-  id="tech-information-section"
-  data-section-id="tech-info"
->
-
-  <h2>
-    <i class="fas fa-microchip"></i>
-    Tech Information
-  </h2>
-
-  <!-- ======================================================= -->
-  <!-- 🔍 TECH SEARCH / SORT / FILTER BAR                       -->
-  <!-- ======================================================= -->
-
-  <div class="tech-search-sticky">
-
-    <!-- Search + Sort Glass Container -->
-    <div class="search-container unified tech-search-container">
-
-      <!-- Search Row -->
-      <div class="tech-search-top-row">
-
-        <span class="search-icon" aria-hidden="true"></span>
-
-        <input
-          type="search"
-          id="tech-search-input"
-          class="creator-search tech-search-input"
-          placeholder="Search tech devices"
-          aria-label="Search tech items"
-          autocomplete="off"
-        />
-
-        <button
-          type="button"
-          id="tech-search-clear"
-          class="tech-search-clear"
-          aria-label="Clear search"
-          hidden
-        >
-          ×
-        </button>
-
-      </div>
-
-      <!-- Sort Dropdown -->
-      <select
-        id="tech-sort-select"
-        class="sort-inline-select tech-sort-select"
-        aria-label="Sort tech items"
-      >
-        <option value="order">Default Order</option>
-        <option value="name">Name — A → Z</option>
-        <option value="age">Newest First</option>
-        <option value="score">Device Score — High → Low</option>
-        <option value="upgrade">Upgrade Priority</option>
-      </select>
-
-    </div>
-
-    <!-- Filter Chips -->
-    <div class="tech-filter-chips" role="group" aria-label="Filter tech items">
-
-      <button
-        type="button"
-        class="tech-chip active"
-        data-filter="all"
-      >
-        All
-      </button>
-
-      <button
-        type="button"
-        class="tech-chip"
-        data-filter="phone"
-      >
-        Phones
-      </button>
-
-      <button
-        type="button"
-        class="tech-chip"
-        data-filter="tablet"
-      >
-        Tablets
-      </button>
-
-      <button
-        type="button"
-        class="tech-chip"
-        data-filter="computer"
-      >
-        Computers
-      </button>
-
-      <button
-        type="button"
-        class="tech-chip"
-        data-filter="watch"
-      >
-        Watches
-      </button>
-
-      <button
-        type="button"
-        class="tech-chip"
-        data-filter="planned"
-      >
-        Planned
-      </button>
-
-      <button
-        type="button"
-        class="tech-chip"
-        data-filter="archived"
-      >
-        Archived
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- ======================================================= -->
-  <!-- 📱 DYNAMIC TECH ITEMS LIST                               -->
-  <!-- Populated by loadAndDisplayTechItems()                   -->
-  <!-- ======================================================= -->
-
-  <div id="tech-items-list-dynamic" class="tech-items-list">
-    <p>Loading Tech Info...</p>
-  </div>
-
+<div class="useful-links-section section" data-section-id="useful-links" id="useful-links-section">
+<h2 class="section-title">Useful Links</h2>
+<div class="search-container unified">
+<span class="search-icon"></span>
+<label class="sr-only" for="useful-links-search">Search useful links</label>
+<input class="creator-search" data-target="useful-links-container" id="useful-links-search" placeholder="Search useful links..." type="search"/>
+</div>
+<p class="no-results" id="no-results-useful" style="display:none;">No results found.</p>
+<div class="links-container" id="useful-links-container"></div>
 </div>
 
-      
-      <div class="useful-links-section section" id="useful-links-section" data-section-id="useful-links">
-        <h2 class="section-title">Useful Links</h2>
-
-        <div class="search-container unified">
-          <span class="search-icon"></span>
-          <input
-            type="text"
-            class="creator-search"
-            placeholder="Search useful links..."
-            data-target="useful-links-container"
-          />
-        </div>
-
-        <p class="no-results" id="no-results-useful" style="display:none;">No results found.</p>
-
-        <div class="links-container" id="useful-links-container"></div>
-      </div>
-
-      <div class="disabilities-section section" id="disabilities-section" data-section-id="disabilities">
-        <h2>Disabilities</h2>
-        <p>I have the following disabilities:</p>
-
-        <div class="search-container unified">
-          <span class="search-icon"></span>
-          <input
-            type="text"
-            class="creator-search"
-            placeholder="Search disabilities..."
-            data-target="disabilities-list-placeholder"
-          />
-        </div>
-
-        <p class="no-results" id="no-results-disabilities" style="display:none;">No results found.</p>
-
-        <ul id="disabilities-list-placeholder"></ul>
-      </div>
-
-    </div><!-- /#rearrangeable-container -->
-
-    <!-- ============================== -->
+</div><!-- /#rearrangeable-container -->
+<!-- ============================== -->
 <!-- LOCKED (NOT REARRANGEABLE)     -->
 <!-- ============================== -->
-
 <!-- LOCKED: Version -->
-<div id="version-info-section" class="section no-rearrange">
-  <div class="version-header">Version Information</div>
 
-  <ul class="version-list">
-    <li id="version-info">
-      <span class="version-label">🔢 <strong>Version:</strong></span>
-      <span class="version-value">Detecting...</span>
-    </li>
-
-    <li id="build-info">
-      <span class="version-label">🏗️ <strong>Build:</strong></span>
-      <span class="version-value">Detecting...</span>
-    </li>
-
-    <li id="release-track-info">
-      <span class="version-label">🧪 <strong>Release Track:</strong></span>
-      <span class="version-value">Detecting...</span>
-    </li>
-
-    <li id="revamp-info">
-      <span class="version-label">🚧 <strong>Revamp Status:</strong></span>
-      <span class="version-value">Detecting...</span>
-    </li>
-
-    <li id="target-release-info">
-      <span class="version-label">📅 <strong>Target Release:</strong></span>
-      <span class="version-value">Detecting...</span>
-    </li>
-
-    <li id="synced-info">
-      <span class="version-label">🕒 <strong>Synced:</strong></span>
-      <span class="version-value" id="synced">Detecting...</span>
-    </li>
-
-    <li id="os-info">
-      <span class="version-label">💻 <strong>OS:</strong></span>
-      <span class="version-value" id="os">Detecting...</span>
-    </li>
-
-    <li id="device-info">
-      <span class="version-label">📱 <strong>Device:</strong></span>
-      <span class="version-value" id="device">Detecting...</span>
-    </li>
-
-    <li id="browser-info">
-      <span class="version-label">🌐 <strong>Browser:</strong></span>
-      <span class="version-value" id="browser">Detecting...</span>
-    </li>
-
-    <li id="resolution-info">
-      <span class="version-label">🖥️ <strong>Resolution:</strong></span>
-      <span class="version-value" id="resolution">Detecting...</span>
-    </li>
-
-    <li id="connection-info">
-      <span class="version-label">📶 <strong>Connection:</strong></span>
-      <span class="version-value" id="connection">Detecting...</span>
-    </li>
-
-    <li id="network-info">
-      <span class="version-label">📡 <strong>Network:</strong></span>
-      <span class="version-value" id="network">Detecting...</span>
-    </li>
-
-    <li id="sunrise-info">
-      <span class="version-label">🌅 <strong>Sunrise:</strong></span>
-      <span class="version-value" id="sunrise">Loading...</span>
-    </li>
-
-    <li id="sunset-info">
-      <span class="version-label">🌇 <strong>Sunset:</strong></span>
-      <span class="version-value" id="sunset">Loading...</span>
-    </li>
-
-    <li id="weather-info">
-      <span class="version-label">🌤️ <strong>Weather:</strong></span>
-      <span class="version-value" id="weather">Detecting...</span>
-    </li>
-  </ul>
-</div>
-
-    <!-- LOCKED: Legal -->
-    <div id="legal-section" class="section no-rearrange">
-      <div class="legal-header">Legal Notices</div>
-      <div class="copy-protection-message">
+<!-- LOCKED: Legal -->
+<div class="section no-rearrange" id="legal-section">
+<div class="legal-header">Legal Notices</div>
+<div class="copy-protection-message">
         A watermark protects this content. Unauthorized use is prohibited.
       </div>
-      <div class="legal-protection-message">
+<div class="legal-protection-message">
         All content and materials on this website are legally protected.
       </div>
-      <div class="watermark-note">Protected by Watermark</div>
-    </div>
+<div class="watermark-note">Protected by Watermark</div>
+</div>
+<!-- LOCKED: Footer -->
+<footer class="no-rearrange" id="site-footer">
+<p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
+</footer>
+</div><!-- /.container -->
+<!-- Scroll To Top -->
+<button aria-label="Scroll to top" class="scroll-to-top hidden" id="scrollToTopBtn" type="button">
+<svg class="progress-ring" viewbox="0 0 50 50">
+<circle class="progress-bg" cx="25" cy="25" r="22"></circle>
+<circle class="progress-indicator" cx="25" cy="25" id="progressIndicator" r="22"></circle>
+</svg>
+<div class="arrow-icon" id="scrollArrow"></div>
+<span class="percentage" id="scrollPercent">0%</span>
 
-    <!-- LOCKED: Footer -->
-    <footer class="no-rearrange" id="site-footer">
-      <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
-    </footer>
-
-  </div><!-- /.container -->
-
-  <!-- Scroll To Top -->
-  <div class="scroll-to-top hidden" id="scrollToTopBtn" aria-label="Scroll to top">
-    <svg class="progress-ring" viewBox="0 0 50 50">
-      <circle class="progress-bg" cx="25" cy="25" r="22"></circle>
-      <circle class="progress-indicator" id="progressIndicator" cx="25" cy="25" r="22"></circle>
-    </svg>
-    <div class="arrow-icon" id="scrollArrow"></div>
-    <span class="percentage" id="scrollPercent">0%</span>
-  </div>
-
-  <!-- Main Scripts -->
-  <script src="script.js"></script>
-  <script src="autoRefresh.js"></script>
-  <script src="ai-features.js"></script>
-
-  <!-- Firebase Messaging SDK - compat only -->
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging-compat.js"></script>
-
-  <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-  <script src="settings.js"></script>
-  <script src="version.js"></script>
-  <script src="device.js"></script>
-
-  <script src="ai-chat-section.js"></script>
-  <script type="module" src="displayShoutouts.js"></script>
-
-  <!-- Rearranging -->
-  <script src="rearrange.js"></script>
-
-  <!-- Live activity -->
-  <script type="module" src="live-activity.js"></script>
-
-  <!-- Luminance watcher -->
-  <script>
+<!-- Main Scripts -->
+<script src="script.js"></script>
+<script src="autoRefresh.js"></script>
+<script src="ai-features.js"></script>
+<script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+<script src="settings.js"></script>
+<script src="version.js"></script>
+<script src="device.js"></script>
+<script src="ai-chat-section.js"></script>
+<script src="displayShoutouts.js" type="module"></script>
+<!-- Rearranging -->
+<script src="rearrange.js"></script>
+<!-- Live activity -->
+<script src="live-activity.js" type="module"></script>
+<!-- Luminance watcher -->
+<script>
     (function(){
       const html = document.documentElement;
       const body = document.body;
@@ -1078,9 +499,8 @@
       });
     })();
   </script>
-
-  <!-- Service Worker -->
-  <script>
+<!-- Service Worker -->
+<script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
@@ -1090,56 +510,49 @@
       });
     }
   </script>
-
-<nav class="onyx-dock" aria-label="Primary navigation">
-  <span class="dock-active-lens" aria-hidden="true"></span>
-
-  <a href="/" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
-        <path d="M3.5 10.65 12 3.5l8.5 7.15v8.6A1.75 1.75 0 0 1 18.75 21H15a1 1 0 0 1-1-1v-5a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H5.25a1.75 1.75 0 0 1-1.75-1.75v-8.6Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Home</span>
-  </a>
-
-  <a href="/beta" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
-        <path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Beta</span>
-  </a>
-
-
-  <a href="/education" class="dock-item" data-education-link>
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Education</span>
-  </a>
-  <a href="/resume" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
-        <path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Resume</span>
-  </a>
-
-  <a href="/settings" class="dock-item">
-    <span class="dock-icon dock-icon-settings" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.36 2.54A1.68 1.68 0 0 1 12 1.25c.78 0 1.46.53 1.64 1.29l.24.98c.08.34.32.61.64.75.32.13.69.11.99-.07l.86-.52a1.69 1.69 0 0 1 2.07.26l1.62 1.62c.55.55.66 1.41.26 2.07l-.52.86c-.18.3-.2.67-.07.99.14.32.41.56.75.64l.98.24A1.68 1.68 0 0 1 22.75 12c0 .78-.53 1.46-1.29 1.64l-.98.24c-.34.08-.61.32-.75.64-.13.32-.11.69.07.99l.52.86c.4.66.29 1.52-.26 2.07l-1.62 1.62c-.55.55-1.41.66-2.07.26l-.86-.52c-.3-.18-.67-.2-.99-.07-.32.14-.56.41-.64.75l-.24.98A1.68 1.68 0 0 1 12 22.75c-.78 0-1.46-.53-1.64-1.29l-.24-.98a1.13 1.13 0 0 0-.64-.75 1.13 1.13 0 0 0-.99.07l-.86.52c-.66.4-1.52.29-2.07-.26l-1.62-1.62a1.69 1.69 0 0 1-.26-2.07l.52-.86c.18-.3.2-.67.07-.99a1.13 1.13 0 0 0-.75-.64l-.98-.24A1.68 1.68 0 0 1 1.25 12c0-.78.53-1.46 1.29-1.64l.98-.24c.34-.08.61-.32.75-.64.13-.32.11-.69-.07-.99l-.52-.86a1.69 1.69 0 0 1 .26-2.07l1.62-1.62a1.69 1.69 0 0 1 2.07-.26l.86.52c.3.18.67.2.99.07.32-.14.56-.41.64-.75l.24-.98ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.75a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Settings</span>
-  </a>
+<nav aria-label="Primary navigation" class="onyx-dock">
+<span aria-hidden="true" class="dock-active-lens"></span>
+<a class="dock-item" href="/">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24">
+<path d="M3.5 10.65 12 3.5l8.5 7.15v8.6A1.75 1.75 0 0 1 18.75 21H15a1 1 0 0 1-1-1v-5a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H5.25a1.75 1.75 0 0 1-1.75-1.75v-8.6Z"></path>
+</svg>
+</span>
+<span class="dock-label">Home</span>
+</a>
+<a class="dock-item" href="/beta">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24">
+<path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
+</svg>
+</span>
+<span class="dock-label">Beta</span>
+</a>
+<a class="dock-item" data-education-link="" href="/education">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.4 8.35 12 3.5l9.6 4.85L12 13.2 2.4 8.35Zm3.1 2.15v5.15c0 1.95 2.9 3.55 6.5 3.55s6.5-1.6 6.5-3.55V10.5L12 13.8l-6.5-3.3Zm14.15.7v5.45a.85.85 0 1 0 1.7 0v-6.3l-1.7.85Z"></path>
+</svg>
+</span>
+<span class="dock-label">Education</span>
+</a>
+<a class="dock-item" href="/resume">
+<span aria-hidden="true" class="dock-icon">
+<svg focusable="false" viewbox="0 0 24 24">
+<path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
+</svg>
+</span>
+<span class="dock-label">Resume</span>
+</a>
+<a class="dock-item" href="/settings">
+<span aria-hidden="true" class="dock-icon dock-icon-settings">
+<svg focusable="false" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10.36 2.54A1.68 1.68 0 0 1 12 1.25c.78 0 1.46.53 1.64 1.29l.24.98c.08.34.32.61.64.75.32.13.69.11.99-.07l.86-.52a1.69 1.69 0 0 1 2.07.26l1.62 1.62c.55.55.66 1.41.26 2.07l-.52.86c-.18.3-.2.67-.07.99.14.32.41.56.75.64l.98.24A1.68 1.68 0 0 1 22.75 12c0 .78-.53 1.46-1.29 1.64l-.98.24c-.34.08-.61.32-.75.64-.13.32-.11.69.07.99l.52.86c.4.66.29 1.52-.26 2.07l-1.62 1.62c-.55.55-1.41.66-2.07.26l-.86-.52c-.3-.18-.67-.2-.99-.07-.32.14-.56.41-.64.75l-.24.98A1.68 1.68 0 0 1 12 22.75c-.78 0-1.46-.53-1.64-1.29l-.24-.98a1.13 1.13 0 0 0-.64-.75 1.13 1.13 0 0 0-.99.07l-.86.52c-.66.4-1.52.29-2.07-.26l-1.62-1.62a1.69 1.69 0 0 1-.26-2.07l.52-.86c.18-.3.2-.67.07-.99a1.13 1.13 0 0 0-.75-.64l-.98-.24A1.68 1.68 0 0 1 1.25 12c0-.78.53-1.46 1.29-1.64l.98-.24c.34-.08.61-.32.75-.64.13-.32.11-.69-.07-.99l-.52-.86a1.69 1.69 0 0 1 .26-2.07l1.62-1.62a1.69 1.69 0 0 1 2.07-.26l.86.52c.3.18.67.2.99.07.32-.14.56-.41.64-.75l.24-.98ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.75a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" fill-rule="evenodd"></path>
+</svg>
+</span>
+<span class="dock-label">Settings</span>
+</a>
 </nav>
-
 <script>
   (() => {
     function initializeOnyxDock() {
@@ -1795,8 +1208,7 @@
     }
   })();
 </script>
-
-<script data-education-link-settings>
+<script data-education-link-settings="">
 (() => {
   const syncEducationLinks = () => {
     try {
@@ -1812,6 +1224,5 @@
   });
 })();
 </script>
-
-</body>
+</button></body>
 </html>
