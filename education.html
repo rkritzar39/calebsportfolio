@@ -32,10 +32,10 @@
         <p class="eyebrow">Academic portfolio</p>
         <h1>Education</h1>
         <p id="education-intro">My coursework, degree progress, skills, academic projects, and journey at the University of Toledo.</p>
-        <div class="hero-actions">
+        <div id="education-public-actions" hidden><div class="hero-actions">
           <button id="print-summary" type="button"><i class="fa-solid fa-print"></i> Unofficial Summary</button>
           <button id="export-json" type="button" class="secondary-action"><i class="fa-solid fa-download"></i> Export Data</button>
-        </div>
+        </div></div>
       </div>
       <div class="hero-orb" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></div>
     </header>
@@ -53,7 +53,7 @@
     <section id="education-loading" class="education-state glass" role="status">
       <i class="fa-solid fa-spinner fa-spin"></i> Loading academic portfolio…
     </section>
-    <section id="education-unavailable" class="education-state glass" hidden>
+    <section id="education-unavailable" class="education-state glass" role="status" hidden>
       <i class="fa-solid fa-lock"></i><h2>Education page unavailable</h2><p>This portfolio is not currently public.</p>
     </section>
     <p id="education-error" class="education-error" role="alert" hidden></p>
