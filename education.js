@@ -1,148 +1,207 @@
-export const EDUCATION_PUBLIC_PATH = ["education_public", "portfolio"];
-export const EDUCATION_PUBLIC_VERSION = 1;
+import { db } from "./firebase-init.js";
+import { doc, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { EDUCATION_PUBLIC_PATH, EDUCATION_PUBLIC_VERSION } from "./education-public.js";
+const $=id=>document.getElementById(id), arr=v=>Array.isArray(v)?v:[], esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const POINTS={A:4,"A-":3.67,"B+":3.33,B:3,"B-":2.67,"C+":2.33,C:2,"C-":1.67,"D+":1.33,D:1,"D-":.67,F:0,WF:0};
+const MODES={letter:{label:"Standard Letter",grades:"A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F",note:"Earned quality points are included in GPA."},"grade-no-credit":{label:"Grade / No Credit",grades:"A, A-, B+, B, B-, C+, C, C-, D+, D, D-, NC",note:"Successful outcomes retain the posted letter grade; NC earns no credit and is excluded from GPA."},"pass-no-credit":{label:"Pass / No Credit",grades:"PS, NC",note:"PS earns credit; neither PS nor NC affects GPA."},"satisfactory-unsatisfactory":{label:"Satisfactory / Unsatisfactory",grades:"S, U",note:"S earns credit; neither result affects GPA."},audit:{label:"Audit",grades:"AU",note:"No earned credit and no GPA effect."},transfer:{label:"Transfer",grades:"TR / TC",note:"Accepted credit is tracked separately and excluded from institutional GPA by default."},custom:{label:"Custom",grades:"Configured per course",note:"Uses the course's explicit GPA and credit settings."}};
 
-export const EDUCATION_PRIVACY_LABELS = {
-  showCumulativeGpa: "Cumulative GPA from published grades",
-  showSemesterGpa: "Semester GPA and GPA trend from published grades",
-  showCourseGrades: "Grades for courses marked Public",
-  showCompletedCredits: "Earned-credit totals and degree progress",
-  showAttemptedCredits: "Attempted-credit totals",
-  showPlannedCourses: "Planned courses",
-  showTransferCredits: "Transfer courses and transfer entries",
-  showAchievements: "Achievements",
-  showCertifications: "Certifications",
-  showProjects: "Projects",
-  showGoals: "Goals and milestones",
-  showAcademicStanding: "Academic year, standing, and enrollment status"
-};
-
-export const EDUCATION_LIST_FIELDS = {
-  requirements: "requirements",
-  timeline: "timeline",
-  goals: "goals",
-  plannedCourses: "planned",
-  achievements: "achievements",
-  certifications: "certifications",
-  projects: "projects",
-  skills: "skills",
-  transferCredits: "transfers"
-};
-
-const OPTIONAL_LISTS = {
-  goals: "showGoals",
-  plannedCourses: "showPlannedCourses",
-  achievements: "showAchievements",
-  certifications: "showCertifications",
-  projects: "showProjects",
-  transferCredits: "showTransferCredits"
-};
-
-const PROFILE_FIELDS = [
-  "institution", "college", "program", "intendedProgram", "major", "minor",
-  "concentration", "expectedGraduation"
-];
-const CARD_FIELDS = ["title", "name", "course", "status", "date", "issuer", "institution", "description"];
-const COURSE_FIELDS = ["code", "name", "subject", "requirementArea", "gradingMode", "status"];
-
-function list(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function strings(source, keys) {
-  return Object.fromEntries(keys.filter(key => typeof source?.[key] === "string")
-    .map(key => [key, source[key]]));
-}
-
-function safeUrl(value) {
-  if (typeof value !== "string") return undefined;
-  try {
-    const url = new URL(value);
-    if (["https:", "http:"].includes(url.protocol) && !url.username && !url.password) return url.href;
-  } catch {
-    // Unusable URLs are left out of the public copy.
+function gradingOutcome(course) {
+  const grade = String(course.grade || "").trim().toUpperCase();
+  if (!grade) return {};
+  switch (course.gradingMode || "letter") {
+    case "letter":
+    case "grade-no-credit":
+      return Object.hasOwn(POINTS, grade) ? { points: POINTS[grade], earned: !["F", "WF"].includes(grade) } : {};
+    case "pass-no-credit": return { earned: grade === "PS" };
+    case "satisfactory-unsatisfactory": return { earned: grade === "S" };
+    case "transfer": return { earned: ["TR", "TC", "ACCEPTED"].includes(grade) };
+    case "custom":
+      return { earned: course.earnsCredit === true, points: course.affectsGpa === true ? course.qualityPointsPerCredit : undefined };
+    default: return {};
   }
-  return undefined;
 }
 
-function approvedEntry(entry) {
-  return entry && typeof entry === "object" && !Array.isArray(entry) &&
-    (entry.visibility == null || entry.visibility === "public" || entry.visibility === "no-grade") &&
-    !["draft", "preview", "archived", "private"].includes(String(entry.status || "").trim().toLowerCase());
-}
-
-function publicCards(entries) {
-  return list(entries).filter(approvedEntry).map(entry => {
-    const card = strings(entry, CARD_FIELDS);
-    const url = safeUrl(entry.url);
-    if (url) card.url = url;
-    return card;
-  });
-}
-
-function publicCourses(courses, privacy) {
-  return list(courses).filter(course => {
-    if (!["public", "no-grade"].includes(course?.visibility)) return false;
-    const status = String(course.status || "Planned").trim().toLowerCase();
-    if (status === "planned" && !privacy.showPlannedCourses) return false;
-    if ((status === "transfer" || course.gradingMode === "transfer") && !privacy.showTransferCredits) return false;
-    return true;
-  }).map(course => {
-    const result = strings(course, COURSE_FIELDS);
-    if (Number.isFinite(course.credits) && course.credits >= 0) result.credits = course.credits;
-    result.skills = list(course.skills).filter(skill => typeof skill === "string");
-    if (course.visibility === "public" && privacy.showCourseGrades && typeof course.grade === "string" && course.grade.trim()) {
-      result.grade = course.grade;
-      if (course.gradingMode === "custom") {
-        if (typeof course.affectsGpa === "boolean") result.affectsGpa = course.affectsGpa;
-        if (typeof course.earnsCredit === "boolean") result.earnsCredit = course.earnsCredit;
-        if (Number.isFinite(course.qualityPointsPerCredit)) result.qualityPointsPerCredit = course.qualityPointsPerCredit;
-      }
+function metrics(courses) {
+  let attempted = 0, earned = 0, gpaHours = 0, quality = 0;
+  for (const course of courses) {
+    const credits = Number.isFinite(course.credits) ? course.credits : 0;
+    if (["planned", "dropped"].includes(String(course.status || "Planned").trim().toLowerCase())) continue;
+    attempted += credits;
+    const { earned: earnsCredit, points } = gradingOutcome(course);
+    if (earnsCredit) earned += credits;
+    if (Number.isFinite(points)) {
+      gpaHours += credits;
+      quality += credits * points;
     }
-    return result;
-  });
+  }
+  return { attempted, earned, gpaHours, gpa: gpaHours ? quality / gpaHours : null };
 }
 
-export function makePublishedEducation(draft) {
-  const privacy = Object.fromEntries(Object.keys(EDUCATION_PRIVACY_LABELS)
-    .map(key => [key, draft.privacy?.[key] === true]));
-  const profile = strings(draft.profile, PROFILE_FIELDS);
-  if (privacy.showAcademicStanding) {
-    Object.assign(profile, strings(draft.profile, ["academicYear", "academicStanding", "enrollmentStatus"]));
-  }
-  const degree = strings(draft.degree, ["name"]);
-  if (Number.isFinite(draft.degree?.requiredCredits) && draft.degree.requiredCredits > 0) {
-    degree.requiredCredits = draft.degree.requiredCredits;
-  }
+const empty = message => `<p class="empty-state">${esc(message)}</p>`;
 
-  const semesters = list(draft.semesters).filter(approvedEntry).map(term => ({
-    ...strings(term, ["name", "dates", "status"]),
-    current: term.current === true,
-    courses: publicCourses(term.courses, privacy)
-  })).filter(term => term.courses.length > 0);
-
-  const published = {
-    schemaVersion: EDUCATION_PUBLIC_VERSION,
-    ...strings(draft, ["intro"]),
-    profile,
-    degree,
-    privacy,
-    semesters,
-    // Manual totals and progress may include private courses. Derive public totals from the public rows.
-    requirements: list(draft.requirements).filter(approvedEntry).map(entry => ({
-      ...strings(entry, ["name"]),
-      ...(Number.isFinite(entry.required) && entry.required > 0 ? { required: entry.required } : {})
-    })),
-    timeline: publicCards(draft.timeline ?? draft.milestones),
-    skills: list(draft.skills).flatMap(skill => {
-      if (typeof skill === "string") return [skill];
-      return approvedEntry(skill) && typeof skill.name === "string" ? [strings(skill, ["name", "level"])] : [];
-    })
-  };
-  if (typeof draft.currentTerm === "string" && semesters.some(term => term.name === draft.currentTerm)) {
-    published.currentTerm = draft.currentTerm;
-  }
-  for (const [field, setting] of Object.entries(OPTIONAL_LISTS)) {
-    if (privacy[setting]) published[field] = publicCards(draft[field]);
-  }
-  return published;
+function cards(id, items, kind, enabled = true) {
+  const element = $(id);
+  element.closest("section.glass, article.glass").style.display = enabled ? "" : "none";
+  element.innerHTML = enabled && items.length ? items.map(item => {
+    const link = /^https?:\/\//i.test(item.url || "")
+      ? `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">View details</a>` : "";
+    return `<article class="info-card"><div class="card-top">
+      <h3>${esc(item.title || item.name || item.course || "Untitled")}</h3>
+      ${item.status ? `<span class="badge">${esc(item.status)}</span>` : ""}
+    </div><p>${esc([item.date, item.issuer, item.institution, item.description].filter(Boolean).join(" • "))}</p>${link}</article>`;
+  }).join("") : empty(`No ${kind} published yet.`);
 }
+
+function semesterHTML(semester, privacy, filteredCourses = semester.courses) {
+  const summary = metrics(arr(semester.courses));
+  const courses = arr(filteredCourses).map(course => {
+    const mode = Object.hasOwn(MODES, course.gradingMode || "letter") ? MODES[course.gradingMode || "letter"] : MODES.custom;
+    return `<article class="course-row">
+      <div><strong>${esc(course.code)} ${esc(course.name || "Untitled course")}</strong>
+      <span>${esc([course.subject, course.requirementArea].filter(Boolean).join(" • "))}</span></div>
+      <span>${Number.isFinite(course.credits) ? `${course.credits} cr` : ""}</span>
+      <span class="badge">${mode.label}</span><span>${esc(course.status || "Planned")}</span>
+      ${privacy.showCourseGrades && course.grade ? `<strong>${esc(course.grade)}</strong>` : ""}
+    </article>`;
+  }).join("");
+  return `<article class="semester-card"><header><div><h3>${esc(semester.name || "Semester")}</h3>
+    <p>${esc(semester.dates)} ${semester.status ? `• ${esc(semester.status)}` : ""}</p></div><div>
+    ${privacy.showCompletedCredits ? `<strong>${summary.earned} earned credits from published grades</strong>` : ""}
+    ${privacy.showSemesterGpa && summary.gpa != null ? `<span>Published GPA ${summary.gpa.toFixed(2)}</span>` : ""}
+    </div></header><div class="course-table">${courses || empty("No courses listed.")}</div></article>`;
+}
+
+function renderCourses(data) {
+  const query = $("course-search").value.trim().toLowerCase();
+  const mode = $("course-mode-filter").value;
+  const status = $("course-status-filter").value;
+  $("semester-list").innerHTML = data.semesters.map(semester => {
+    const courses = arr(semester.courses).filter(course =>
+      (!query || [course.code, course.name, course.subject, course.skills].join(" ").toLowerCase().includes(query)) &&
+      (!mode || (course.gradingMode || "letter") === mode) && (!status || (course.status || "Planned") === status)
+    );
+    return courses.length ? semesterHTML(semester, data.privacy, courses) : "";
+  }).join("") || empty("No matching courses.");
+}
+
+function render(data) {
+  const { privacy, semesters, profile } = data;
+  const courses = semesters.flatMap(term => arr(term.courses));
+  const summary = metrics(courses);
+  $("education-intro").textContent = data.intro || "My coursework, progress, credentials, projects, and academic journey.";
+  const stats = [
+    ["Semesters", semesters.length, "calendar"],
+    ["Courses", courses.length, "book"],
+    ["In progress", courses.filter(course => course.status === "In Progress").length, "spinner"]
+  ];
+  if (privacy.showCompletedCredits) stats.push(["Credits earned from published grades", summary.earned, "layer-group"]);
+  if (privacy.showProjects) stats.push(["Projects", arr(data.projects).length, "diagram-project"]);
+  if (privacy.showCertifications) stats.push(["Credentials", arr(data.certifications).length, "certificate"]);
+  $("stats-grid").innerHTML = stats.map(([label, value, icon]) =>
+    `<article><i class="fa-solid fa-${icon}" aria-hidden="true"></i><strong>${value}</strong><span>${label}</span></article>`
+  ).join("");
+
+  const required = data.degree?.requiredCredits || 120;
+  const percent = Math.min(100, 100 * summary.earned / required);
+  $("degree-name").textContent = data.degree?.name || profile.program || "Degree requirements";
+  $("degree-ring").style.display = privacy.showCompletedCredits ? "" : "none";
+  $("degree-ring").setAttribute("aria-label", `${percent.toFixed(1)}% complete based on published grades`);
+  $("degree-percent").textContent = privacy.showCompletedCredits ? `${percent.toFixed(1)}%` : "";
+  $("degree-ring").style.setProperty("--progress", `${privacy.showCompletedCredits ? percent * 3.6 : 0}deg`);
+  $("degree-progress-bar").parentElement.style.display = privacy.showCompletedCredits ? "" : "none";
+  $("degree-progress-bar").style.width = `${privacy.showCompletedCredits ? percent : 0}%`;
+  $("degree-credit-label").textContent = privacy.showCompletedCredits
+    ? `${summary.earned} of ${required} credits based on published grades` : `${required} credits required`;
+  $("requirement-list").innerHTML = arr(data.requirements).map(item =>
+    `<div><span>${esc(item.name)}</span><strong>${Number.isFinite(item.required) ? `${item.required} required` : ""}</strong></div>`
+  ).join("") || empty("No requirement groups published.");
+
+  const fields = [
+    ["Institution", profile.institution], ["College", profile.college], ["Program", profile.program],
+    ["Intended program", profile.intendedProgram], ["Major", profile.major], ["Minor", profile.minor],
+    ["Concentration", profile.concentration], ["Expected graduation", profile.expectedGraduation]
+  ];
+  if (privacy.showAcademicStanding) fields.push(
+    ["Academic year", profile.academicYear], ["Academic standing", profile.academicStanding], ["Enrollment", profile.enrollmentStatus]
+  );
+  $("profile-grid").innerHTML = fields.filter(([, value]) => value).map(([label, value]) =>
+    `<article><span>${label}</span><strong>${esc(value)}</strong></article>`
+  ).join("") || empty("Academic profile details will appear here.");
+
+  renderCourses(data);
+  const current = semesters.find(term => term.current) || semesters.find(term => data.currentTerm && term.name === data.currentTerm);
+  $("current-semester").innerHTML = current ? semesterHTML(current, privacy) : empty("No current semester published.");
+
+  const analytics = [];
+  if (privacy.showCumulativeGpa) analytics.push(`<article><h3>GPA from published grades</h3>
+    <strong>${summary.gpa?.toFixed(2) ?? "—"}</strong><span>${summary.gpaHours} published GPA hours</span></article>`);
+  if (privacy.showAttemptedCredits) analytics.push(`<article><h3>Attempted credits</h3>
+    <strong>${summary.attempted}</strong><span>From published courses</span></article>`);
+  if (privacy.showCompletedCredits && privacy.showAttemptedCredits) analytics.push(`<article>
+    <h3>Credit completion from published data</h3><strong>${summary.attempted ? Math.round(100 * summary.earned / summary.attempted) : 0}%</strong>
+    <span>${summary.earned} earned of ${summary.attempted} attempted</span></article>`);
+  if (privacy.showSemesterGpa) {
+    const terms = semesters.map(term => ({ name: term.name, gpa: metrics(arr(term.courses)).gpa }))
+      .filter(term => term.gpa != null);
+    analytics.push(`<article class="wide"><h3>Semester GPA trend from published grades</h3>
+      ${terms.length ? `<ul>${terms.map(term => `<li>${esc(term.name || "Semester")}: ${term.gpa.toFixed(2)}</li>`).join("")}</ul>`
+        : empty("No graded coursework published.")}</article>`);
+  }
+  $("analytics-grid").innerHTML = analytics.join("") || empty("No analytics published.");
+  cards("timeline-list", arr(data.timeline), "timeline entries");
+  cards("goal-list", arr(data.goals), "goals", privacy.showGoals);
+  cards("planned-list", arr(data.plannedCourses), "planned courses", privacy.showPlannedCourses);
+  cards("achievement-list", arr(data.achievements), "achievements", privacy.showAchievements);
+  cards("certification-list", arr(data.certifications), "certifications", privacy.showCertifications);
+  $("credentials").style.display = privacy.showAchievements || privacy.showCertifications ? "" : "none";
+  document.querySelector('a[href="#credentials"]').style.display = privacy.showAchievements || privacy.showCertifications ? "" : "none";
+  cards("project-list", arr(data.projects), "projects", privacy.showProjects);
+  document.querySelector('a[href="#projects"]').style.display = privacy.showProjects ? "" : "none";
+  cards("transfer-list", arr(data.transferCredits), "transfer credits", privacy.showTransferCredits);
+  $("skill-list").innerHTML = arr(data.skills).map(skill =>
+    `<span>${esc(typeof skill === "string" ? skill : skill.name)}${skill.level ? ` · ${esc(skill.level)}` : ""}</span>`
+  ).join("") || empty("No skills published.");
+  $("grading-modes").innerHTML = Object.values(MODES).map(mode =>
+    `<article><h3>${mode.label}</h3><strong>${mode.grades}</strong><p>${mode.note}</p></article>`
+  ).join("");
+}
+
+function download(data) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "unofficial-academic-portfolio.json";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function init() {
+  $("year").textContent = new Date().getFullYear();
+  try {
+    const snapshot = await getDocFromServer(doc(db, ...EDUCATION_PUBLIC_PATH));
+    if (!snapshot.exists()) {
+      $("education-unavailable").hidden = false;
+      return;
+    }
+    const data = snapshot.data();
+    if (data.schemaVersion !== EDUCATION_PUBLIC_VERSION) throw new Error("Unsupported published Education version.");
+    render(data);
+    const updated = data.updatedAt?.toDate?.();
+    if (updated) $("education-updated").textContent = updated.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    for (const id of ["course-search", "course-mode-filter", "course-status-filter"]) {
+      $(id).addEventListener(id === "course-search" ? "input" : "change", () => renderCourses(data));
+    }
+    $("print-summary").onclick = () => print();
+    $("export-json").onclick = () => download(data);
+    $("education-content").hidden = false;
+    $("education-public-actions").hidden = false;
+  } catch (error) {
+    console.error("Published Education load failed", error);
+    $("education-error").textContent = "Education information could not be loaded.";
+    $("education-error").hidden = false;
+  } finally {
+    $("education-loading").hidden = true;
+  }
+}
+
+void init();
